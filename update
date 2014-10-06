@@ -47,3 +47,4 @@ git add --all
 git commit -m "Update to version ${TAGNAME}"
 git tag --annotate "Version ${TAGNAME}"
 git push origin
+git push --tags
