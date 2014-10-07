@@ -21,7 +21,7 @@ build-script() {
 }
 
 if [[ ! -d $GITREPO ]]; then
-  git clone $GITURL $GITREPO
+  git clone $GITURL $GITREPO --depth 10
 fi
 
 cd $GITREPO
