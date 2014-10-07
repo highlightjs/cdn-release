@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 GITREPO="highlight.js"
-GITURL="https://github.com/isagalaev/highlight.js.git"
+GITURL="git://github.com/isagalaev/highlight.js.git"
 
 build-script() {
   local BUILDFILE=`ls tools/build.*`
