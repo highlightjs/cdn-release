@@ -20,6 +20,10 @@ build-script() {
   $RUN $BUILDFILE $*
 }
 
+# Update this repository first, just to be on the safe side
+git fetch orgin
+git merge origin/master
+
 if [[ ! -d $GITREPO ]]; then
   git clone $GITURL $GITREPO --depth 10
 fi
