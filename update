@@ -21,7 +21,7 @@ build-script() {
 }
 
 # Update this repository first, just to be on the safe side
-git fetch orgin
+git fetch origin
 git merge origin/master
 
 if [[ ! -d $GITREPO ]]; then
