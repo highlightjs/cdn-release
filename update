@@ -31,7 +31,7 @@ fi
 cd $GITREPO
 
 # Grab the latest tagged version
-TAGNAME=`git tag --list | sort --reverse | head -n 1`
+TAGNAME=`git tag --list | sort --version-sort --reverse | head -n 1`
 BUILDDIR="../build"
 
 git pull
@@ -47,8 +47,13 @@ git checkout master
 
 cd ..
 
+# Update version in package.json
+sed -i "s#\"version\": \".*\"#\"version\": \"${TAGNAME}\"#" package.json
+
 git add --all
 git commit -m "Update to version ${TAGNAME}"
 git tag --annotate $TAGNAME -m "Version ${TAGNAME}"
 git push origin
 git push --tags
+
+npm publish
