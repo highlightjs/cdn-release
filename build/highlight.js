@@ -1,5 +1,5 @@
 /*
-  Highlight.js 10.0.0 (51906fbb)
+  Highlight.js 10.0.1 (33af2ea5)
   License: BSD-3-Clause
   Copyright (c) 2006-2020, Ivan Sagalaev
 */
@@ -870,7 +870,7 @@
   return COMMON_KEYWORDS.includes(word.toLowerCase());
   }
 
-  var version = "10.0.0";
+  var version = "10.0.1";
 
   /*
   Syntax highlighting with language autodetection.
@@ -1309,6 +1309,22 @@
       }
     }
 
+    // returns a valid highlight result, without actually
+    // doing any actual work, auto highlight starts with
+    // this and it's possible for small snippets that
+    // auto-detection may not find a better match
+    function justTextHighlightResult(code) {
+      const result = {
+        relevance: 0,
+        emitter: new options.__emitter(options),
+        value: escape$1(code),
+        illegal: false,
+        top: PLAINTEXT_LANGUAGE
+      };
+      result.emitter.addText(code);
+      return result;
+    }
+
     /*
     Highlighting with language detection. Accepts a string with the code to
     highlight. Returns an object with the following properties:
@@ -1322,11 +1338,7 @@
     */
     function highlightAuto(code, languageSubset) {
       languageSubset = languageSubset || options.languages || Object.keys(languages);
-      var result = {
-        relevance: 0,
-        emitter: new options.__emitter(options),
-        value: escape$1(code)
-      };
+      var result = justTextHighlightResult(code);
       var second_best = result;
       languageSubset.filter(getLanguage).filter(autoDetection).forEach(function(name) {
         var current = _highlight(name, code, false);
@@ -1455,7 +1467,7 @@
       window.addEventListener('DOMContentLoaded', initHighlighting, false);
     }
 
-    var PLAINTEXT_LANGUAGE = { disableAutodetect: true };
+    const PLAINTEXT_LANGUAGE = { disableAutodetect: true, name: 'Plain text' };
 
     function registerLanguage(name, language) {
       var lang;
