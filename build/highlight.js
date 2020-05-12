@@ -1,5 +1,5 @@
 /*
-  Highlight.js 10.0.2 (e29f8f7d)
+  Highlight.js 10.0.3 (a4b1bd2d)
   License: BSD-3-Clause
   Copyright (c) 2006-2020, Ivan Sagalaev
 */
@@ -867,7 +867,7 @@ var hljs = (function () {
   return COMMON_KEYWORDS.includes(word.toLowerCase());
   }
 
-  var version = "10.0.2";
+  var version = "10.0.3";
 
   /*
   Syntax highlighting with language autodetection.
@@ -3300,7 +3300,7 @@ hljs.registerLanguage('javascript', function () {
           beginKeywords: 'constructor', end: /\{/, excludeEnd: true
         },
         {
-          begin:'(get|set)\\s*(?=' + IDENT_RE+ '\\()',
+          begin:'(get|set)\\s+(?=' + IDENT_RE+ '\\()',
           end: /{/,
           keywords: "get set",
           contains: [
