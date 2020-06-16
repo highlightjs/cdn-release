@@ -1,5 +1,5 @@
 /*
-  Highlight.js 10.1.0 (74de6eaa)
+  Highlight.js 10.1.1 (93fd0d73)
   License: BSD-3-Clause
   Copyright (c) 2006-2020, Ivan Sagalaev
 */
@@ -1219,7 +1219,7 @@ var hljs = (function () {
     return COMMON_KEYWORDS.includes(keyword.toLowerCase());
   }
 
-  var version = "10.1.0";
+  var version = "10.1.1";
 
   /*
   Syntax highlighting with language autodetection.
@@ -1234,6 +1234,7 @@ var hljs = (function () {
 
   /**
    * @param {any} hljs - object that is extended (legacy)
+   * @returns {HLJSApi}
    */
   const HLJS = function(hljs) {
     // Convenience variables for build-in objects
@@ -3739,7 +3740,7 @@ hljs.registerLanguage('java', function () {
             either(
               concat(SEQUENCE_ALLOWING_UNDERSCORES('a-fA-F0-9'), /\./, SEQUENCE_ALLOWING_UNDERSCORES('a-fA-F0-9')),
               concat(SEQUENCE_ALLOWING_UNDERSCORES('a-fA-F0-9'), /\.?/),
-              concat(/\./, SEQUENCE_ALLOWING_UNDERSCORES('a-fA-F0-9')),
+              concat(/\./, SEQUENCE_ALLOWING_UNDERSCORES('a-fA-F0-9'))
             ),
             /([pP][+-]?(\d+))?/,
             /[fFdDlL]?/ // decimal & fp mixed for simplicity
