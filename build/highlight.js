@@ -1,5 +1,5 @@
 /*
-  Highlight.js 10.1.1 (93fd0d73)
+  Highlight.js 10.1.2 (edd73d24)
   License: BSD-3-Clause
   Copyright (c) 2006-2020, Ivan Sagalaev
 */
@@ -1219,7 +1219,7 @@ var hljs = (function () {
     return COMMON_KEYWORDS.includes(keyword.toLowerCase());
   }
 
-  var version = "10.1.1";
+  var version = "10.1.2";
 
   /*
   Syntax highlighting with language autodetection.
@@ -1243,9 +1243,9 @@ var hljs = (function () {
 
     // Global internal variables used within the highlight.js library.
     /** @type {Record<string, Language>} */
-    var languages = {};
+    var languages = Object.create(null);
     /** @type {Record<string, string>} */
-    var aliases = {};
+    var aliases = Object.create(null);
     /** @type {HLJSPlugin[]} */
     var plugins = [];
 
