@@ -1,5 +1,5 @@
 /*
-  Highlight.js 10.3.0 (97f9e888)
+  Highlight.js 10.3.1 (3797c108)
   License: BSD-3-Clause
   Copyright (c) 2006-2020, Ivan Sagalaev
 */
@@ -1263,7 +1263,7 @@ var hljs = (function () {
     return COMMON_KEYWORDS.includes(keyword.toLowerCase());
   }
 
-  var version = "10.3.0";
+  var version = "10.3.1";
 
   // @ts-nocheck
 
