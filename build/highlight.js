@@ -1,5 +1,5 @@
 /*
-  Highlight.js 10.3.1 (3797c108)
+  Highlight.js 10.3.2 (31e1fc40)
   License: BSD-3-Clause
   Copyright (c) 2006-2020, Ivan Sagalaev
 */
@@ -1263,7 +1263,7 @@ var hljs = (function () {
     return COMMON_KEYWORDS.includes(keyword.toLowerCase());
   }
 
-  var version = "10.3.1";
+  var version = "10.3.2";
 
   // @ts-nocheck
 
@@ -4349,7 +4349,12 @@ hljs.registerLanguage('javascript', function () {
     return joined;
   }
 
-  /* eslint-disable no-unreachable */
+  /*
+  Language: JavaScript
+  Description: JavaScript (JS) is a lightweight, interpreted, or just-in-time compiled programming language with first-class functions.
+  Category: common, scripting
+  Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  */
 
   /** @type LanguageFn */
   function javascript(hljs) {
@@ -7761,7 +7766,12 @@ hljs.registerLanguage('typescript', function () {
     return joined;
   }
 
-  /* eslint-disable no-unreachable */
+  /*
+  Language: JavaScript
+  Description: JavaScript (JS) is a lightweight, interpreted, or just-in-time compiled programming language with first-class functions.
+  Category: common, scripting
+  Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  */
 
   /** @type LanguageFn */
   function javascript(hljs) {
