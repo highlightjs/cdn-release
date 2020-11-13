@@ -6,12 +6,28 @@
       "syntax"
    ],
    "homepage": "https://highlightjs.org/",
-   "version": "10.3.2",
+   "version": "10.4.0-beta0",
    "author": {
       "name": "Ivan Sagalaev",
       "email": "maniac@softwaremaniacs.org"
    },
    "contributors": [
+      {
+         "name": "Egor Rogov",
+         "email": "e.rogov@postgrespro.ru"
+      },
+      {
+         "name": "Vladimir Jimenez",
+         "email": "me@allejo.io"
+      },
+      {
+         "name": "Jeremy Hull",
+         "email": "sourdrums@gmail.com"
+      },
+      {
+         "name": "Oleg Efimov",
+         "email": "efimovov@gmail.com"
+      },
       {
          "name": "Gidi Meir Morris",
          "email": "gidi@gidi.io"
@@ -31,22 +47,6 @@
       {
          "name": "Sang Dang",
          "email": "sang.dang@polku.io"
-      },
-      {
-         "name": "Josh Goebel",
-         "email": "hello@joshgoebel.com"
-      },
-      {
-         "name": "Ivan Sagalaev (original author)",
-         "email": "maniac@softwaremaniacs.org"
-      },
-      {
-         "name": "Jeremy Hull",
-         "email": "sourdrums@gmail.com"
-      },
-      {
-         "name": "Oleg Efimov",
-         "email": "efimovov@gmail.com"
       },
       {
          "name": "Peter Leonov",
@@ -1139,6 +1139,46 @@
       {
          "name": "Michael Newton",
          "email": "miken32@github"
+      },
+      {
+         "name": "Richard Gibson",
+         "email": "gibson042@github"
+      },
+      {
+         "name": "Fredrik Ekre",
+         "email": "ekrefredrik@gmail.com"
+      },
+      {
+         "name": "Jan Pilzer",
+         "email": "Hirse@github"
+      },
+      {
+         "name": "Jonathan Sharpe",
+         "email": "mail@jonrshar.pe"
+      },
+      {
+         "name": "Michael Rush",
+         "email": "michaelrush@gmail.com"
+      },
+      {
+         "name": "Florian Bezdeka",
+         "email": "florian@bezdeka.de"
+      },
+      {
+         "name": "Marat Nagayev",
+         "email": "nagaevmt@yandex.ru"
+      },
+      {
+         "name": "Patrick Scheibe",
+         "email": "patrick@halirutan.de"
+      },
+      {
+         "name": "Kyle Brown",
+         "email": "kylebrown9@github"
+      },
+      {
+         "name": "Marcus Ortiz",
+         "email": "mportiz08@gmail.com"
       }
    ],
    "bugs": {
@@ -1168,34 +1208,34 @@
       "node": "*"
    },
    "devDependencies": {
-      "@typescript-eslint/eslint-plugin": "^4.4.0",
-      "@typescript-eslint/parser": "^4.4.0",
+      "@typescript-eslint/eslint-plugin": "^4.6.1",
+      "@typescript-eslint/parser": "^4.6.1",
       "clean-css": "^4.2.3",
       "cli-table": "^0.3.1",
       "colors": "^1.1.2",
-      "commander": "^6.1.0",
+      "commander": "^6.2.0",
       "del": "^6.0.0",
       "dependency-resolver": "^2.0.1",
-      "eslint": "^7.11.0",
-      "eslint-config-standard": "^14.1.1",
+      "eslint": "^7.12.1",
+      "eslint-config-standard": "^16.0.1",
       "eslint-plugin-import": "^2.22.1",
       "eslint-plugin-node": "^11.1.0",
       "eslint-plugin-promise": "^4.2.1",
-      "eslint-plugin-standard": "^4.0.1",
+      "eslint-plugin-standard": "^4.0.2",
       "glob": "^7.1.6",
       "glob-promise": "^3.4.0",
       "handlebars": "^4.7.6",
       "js-beautify": "^1.13.0",
       "jsdom": "^16.4.0",
       "lodash": "^4.17.20",
-      "mocha": "^8.1.3",
-      "rollup": "^2.29.0",
+      "mocha": "^8.2.1",
+      "rollup": "^2.33.1",
       "rollup-plugin-commonjs": "^10.1.0",
       "rollup-plugin-json": "^4.0.0",
       "should": "^13.2.3",
-      "terser": "^5.3.4",
+      "terser": "^5.3.8",
       "tiny-worker": "^2.3.0",
-      "typescript": "^4.0.3"
+      "typescript": "^4.0.5"
    },
    "dependencies": {}
 }
