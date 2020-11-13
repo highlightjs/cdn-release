@@ -1,5 +1,5 @@
 /*
-  Highlight.js 10.4.0-beta0 (f3051422)
+  Highlight.js 10.4.0-beta0 (f023c373)
   License: BSD-3-Clause
   Copyright (c) 2006-2020, Ivan Sagalaev
 */
