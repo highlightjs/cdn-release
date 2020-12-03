@@ -1,7 +1,7 @@
-hljs.registerLanguage("ebnf",(()=>{"use strict";return a=>{
-const e=a.COMMENT(/\(\*/,/\*\)/);return{name:"Extended Backus-Naur Form",
-illegal:/\S/,contains:[e,{className:"attribute",
-begin:/^[ ]*[a-zA-Z][a-zA-Z_-]*([\s_-]+[a-zA-Z][a-zA-Z]*)*/},{begin:/=/,
-end:/[.;]/,contains:[e,{className:"meta",begin:/\?.*\?/},{className:"string",
-variants:[a.APOS_STRING_MODE,a.QUOTE_STRING_MODE,{begin:"`",end:"`"}]}]}]}}
+hljs.registerLanguage("ebnf",(()=>{"use strict";return e=>{
+const a=e.COMMENT(/\(\*/,/\*\)/);return{name:"Extended Backus-Naur Form",
+illegal:/\S/,contains:[a,{className:"attribute",
+begin:/^[ ]*[a-zA-Z]+([\s_-]+[a-zA-Z]+)*/},{begin:/=/,end:/[.;]/,contains:[a,{
+className:"meta",begin:/\?.*\?/},{className:"string",
+variants:[e.APOS_STRING_MODE,e.QUOTE_STRING_MODE,{begin:"`",end:"`"}]}]}]}}
 })());

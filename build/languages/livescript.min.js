@@ -24,10 +24,10 @@ aliases:["ls"],keywords:r,illegal:/\/\*/,
 contains:l.concat([t.COMMENT("\\/\\*","\\*\\/"),t.HASH_COMMENT_MODE,{
 begin:"(#=>|=>|\\|>>|-?->|!->)"},{className:"function",contains:[s,d],
 returnBegin:!0,variants:[{
-begin:"("+i+"\\s*(?:=|:=)\\s*)?(\\(.*\\))?\\s*\\B->\\*?",end:"->\\*?"},{
-begin:"("+i+"\\s*(?:=|:=)\\s*)?!?(\\(.*\\))?\\s*\\B[-~]{1,2}>\\*?",
+begin:"("+i+"\\s*(?:=|:=)\\s*)?(\\(.*\\)\\s*)?\\B->\\*?",end:"->\\*?"},{
+begin:"("+i+"\\s*(?:=|:=)\\s*)?!?(\\(.*\\)\\s*)?\\B[-~]{1,2}>\\*?",
 end:"[-~]{1,2}>\\*?"},{
-begin:"("+i+"\\s*(?:=|:=)\\s*)?(\\(.*\\))?\\s*\\B!?[-~]{1,2}>\\*?",
+begin:"("+i+"\\s*(?:=|:=)\\s*)?(\\(.*\\)\\s*)?\\B!?[-~]{1,2}>\\*?",
 end:"!?[-~]{1,2}>\\*?"}]},{className:"class",beginKeywords:"class",end:"$",
 illegal:/[:="\[\]]/,contains:[{beginKeywords:"extends",endsWithParent:!0,
 illegal:/[:="\[\]]/,contains:[s]},s]},{begin:i+":",end:":",returnBegin:!0,

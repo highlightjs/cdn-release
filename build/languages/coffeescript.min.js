@@ -16,7 +16,7 @@ end:"///",contains:[o,r.HASH_COMMENT_MODE]},{begin:"//[gim]{0,3}(?=\\W)",
 relevance:0},{begin:/\/(?![ *]).*?(?![\\]).\/[gim]{0,3}(?=\W)/}]},{begin:"@"+s
 },{subLanguage:"javascript",excludeBegin:!0,excludeEnd:!0,variants:[{
 begin:"```",end:"```"},{begin:"`",end:"`"}]}];o.contains=c
-;const l=r.inherit(r.TITLE_MODE,{begin:s}),d="(\\(.*\\))?\\s*\\B[-=]>",g={
+;const l=r.inherit(r.TITLE_MODE,{begin:s}),d="(\\(.*\\)\\s*)?\\B[-=]>",g={
 className:"params",begin:"\\([^\\(]",returnBegin:!0,contains:[{begin:/\(/,
 end:/\)/,keywords:t,contains:["self"].concat(c)}]};return{name:"CoffeeScript",
 aliases:["coffee","cson","iced"],keywords:t,illegal:/\/\*/,

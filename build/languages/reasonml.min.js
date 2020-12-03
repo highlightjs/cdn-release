@@ -13,7 +13,7 @@ relevance:0,contains:[{className:"identifier",begin:a,relevance:0}]}],m={
 className:"function",relevance:0,keywords:r,variants:[{
 begin:"\\s(\\(\\.?.*?\\)|"+n+")\\s*=>",end:"\\s*=>",returnBegin:!0,relevance:0,
 contains:[{className:"params",variants:[{begin:n},{
-begin:"~?[a-z$_][0-9a-zA-Z$_]*(s*:s*[a-z$_][0-9a-z$_]*((s*('?[a-z$_][0-9a-z$_]*s*(,'?[a-z$_][0-9a-z$_]*)*)?s*))?)?(s*:s*[a-z$_][0-9a-z$_]*((s*('?[a-z$_][0-9a-z$_]*s*(,'?[a-z$_][0-9a-z$_]*)*)?s*))?)?"
+begin:"~?[a-z$_][0-9a-zA-Z$_]*(\\s*:\\s*[a-z$_][0-9a-z$_]*(\\(\\s*('?[a-z$_][0-9a-z$_]*\\s*(,'?[a-z$_][0-9a-z$_]*\\s*)*)?\\))?){0,2}"
 },{begin:/\(\s*\)/}]}]},{begin:"\\s\\(\\.?[^;\\|]*\\)\\s*=>",end:"\\s=>",
 returnBegin:!0,relevance:0,contains:[{className:"params",relevance:0,variants:[{
 begin:n,end:"(,|\\n|\\))",relevance:0,contains:[c,{className:"typing",begin:":",
@@ -22,11 +22,11 @@ begin:"\\(\\.\\s"+n+"\\)\\s*=>"}]};g.push(m);const d={className:"constructor",
 begin:a+"\\(",end:"\\)",illegal:"\\n",keywords:r,
 contains:[e.QUOTE_STRING_MODE,c,{className:"params",begin:"\\b"+n}]},u={
 className:"pattern-match",begin:"\\|",returnBegin:!0,keywords:r,end:"=>",
-relevance:0,contains:[d,c,{relevance:0,className:"constructor",begin:a}]},_={
+relevance:0,contains:[d,c,{relevance:0,className:"constructor",begin:a}]},v={
 className:"module-access",keywords:r,returnBegin:!0,variants:[{
 begin:"\\b("+a+"\\.)+"+n},{begin:"\\b("+a+"\\.)+\\(",end:"\\)",returnBegin:!0,
 contains:[m,{begin:"\\(",end:"\\)",skip:!0}].concat(g)},{
-begin:"\\b("+a+"\\.)+\\{",end:/\}/}],contains:g};return b.push(_),{
+begin:"\\b("+a+"\\.)+\\{",end:/\}/}],contains:g};return b.push(v),{
 name:"ReasonML",aliases:["re"],keywords:r,illegal:"(:-|:=|\\$\\{|\\+=)",
 contains:[e.COMMENT("/\\*","\\*/",{illegal:"^(#,\\/\\/)"}),{
 className:"character",begin:"'(\\\\[^']+|[^'])'",illegal:"\\n",relevance:0
@@ -37,4 +37,4 @@ className:"operator",begin:i,illegal:"--\x3e",relevance:0
 },t,e.C_LINE_COMMENT_MODE,u,m,{className:"module-def",
 begin:"\\bmodule\\s+"+n+"\\s+"+a+"\\s+=\\s+\\{",end:/\}/,returnBegin:!0,
 keywords:r,relevance:0,contains:[{className:"module",relevance:0,begin:a},{
-begin:/\{/,end:/\}/,skip:!0}].concat(g)},_]}}})());
+begin:/\{/,end:/\}/,skip:!0}].concat(g)},v]}}})());

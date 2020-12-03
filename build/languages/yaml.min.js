@@ -10,7 +10,7 @@ end:"\\]",contains:[l],illegal:"\\n",relevance:0},b=[{className:"attr",
 variants:[{begin:"\\w[\\w :\\/.-]*:(?=[ \t]|$)"},{
 begin:'"\\w[\\w :\\/.-]*":(?=[ \t]|$)'},{begin:"'\\w[\\w :\\/.-]*':(?=[ \t]|$)"
 }]},{className:"meta",begin:"^---\\s*$",relevance:10},{className:"string",
-begin:"[\\|>]([1-9]?[+-])?[ ]*\\n( +)[^\\n]+\\n(\\2[^\\n]+\\n?)*"},{
+begin:"[\\|>]([1-9]?[+-])?[ ]*\\n( +)[^ ][^\\n]*\\n(\\2[^\\n]+\\n?)*"},{
 begin:"<%[%=-]?",end:"[%-]?%>",subLanguage:"ruby",excludeBegin:!0,excludeEnd:!0,
 relevance:0},{className:"type",begin:"!\\w+!"+a},{className:"type",
 begin:"!<"+a+">"},{className:"type",begin:"!"+a},{className:"type",begin:"!!"+a

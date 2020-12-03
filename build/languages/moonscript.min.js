@@ -8,7 +8,7 @@ keywords:n},t=[e.inherit(e.C_NUMBER_MODE,{starts:{end:"(\\s*/)?",relevance:0}
 contains:[e.BACKSLASH_ESCAPE]},{begin:/"/,end:/"/,
 contains:[e.BACKSLASH_ESCAPE,a]}]},{className:"built_in",begin:"@__"+e.IDENT_RE
 },{begin:"@"+e.IDENT_RE},{begin:e.IDENT_RE+"\\\\"+e.IDENT_RE}];a.contains=t
-;const i=e.inherit(e.TITLE_MODE,{begin:s}),r="(\\(.*\\))?\\s*\\B[-=]>",l={
+;const i=e.inherit(e.TITLE_MODE,{begin:s}),r="(\\(.*\\)\\s*)?\\B[-=]>",l={
 className:"params",begin:"\\([^\\(]",returnBegin:!0,contains:[{begin:/\(/,
 end:/\)/,keywords:n,contains:["self"].concat(t)}]};return{name:"MoonScript",
 aliases:["moon"],keywords:n,illegal:/\/\*/,

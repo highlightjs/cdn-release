@@ -35,10 +35,10 @@ contains:[a,E,e.C_LINE_COMMENT_MODE,e.C_BLOCK_COMMENT_MODE]},{className:"meta",
 begin:"^\\s*\\[",excludeBegin:!0,end:"\\]",excludeEnd:!0,contains:[{
 className:"meta-string",begin:/"/,end:/"/}]},{
 beginKeywords:"new return throw await else",relevance:0},{className:"function",
-begin:"("+_+"\\s+)+"+e.IDENT_RE+"\\s*(<.+>)?\\s*\\(",returnBegin:!0,
+begin:"("+_+"\\s+)+"+e.IDENT_RE+"\\s*(<.+>\\s*)?\\(",returnBegin:!0,
 end:/\s*[{;=]/,excludeEnd:!0,keywords:n,contains:[{
 beginKeywords:"public private protected static internal protected abstract async extern override unsafe virtual new sealed partial",
-relevance:0},{begin:e.IDENT_RE+"\\s*(<.+>)?\\s*\\(",returnBegin:!0,
+relevance:0},{begin:e.IDENT_RE+"\\s*(<.+>\\s*)?\\(",returnBegin:!0,
 contains:[e.TITLE_MODE,E],relevance:0},{className:"params",begin:/\(/,end:/\)/,
 excludeBegin:!0,excludeEnd:!0,keywords:n,relevance:0,
 contains:[g,i,e.C_BLOCK_COMMENT_MODE]

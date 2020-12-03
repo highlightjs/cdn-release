@@ -8,6 +8,5 @@ built_in:"abs and acos asin atan ceil cd chdir clearglobal cosh cos cumprod deff
 },illegal:'("|#|/\\*|\\s+/\\w+)',contains:[{className:"function",
 beginKeywords:"function",end:"$",contains:[e.UNDERSCORE_TITLE_MODE,{
 className:"params",begin:"\\(",end:"\\)"}]},{
-begin:"[a-zA-Z_][a-zA-Z_0-9]*('+[\\.']*|[\\.']+)",end:"",relevance:0},{
-begin:"\\[",end:"\\]'*[\\.']*",relevance:0,contains:n
-},e.COMMENT("//","$")].concat(n)}}})());
+begin:"[a-zA-Z_][a-zA-Z_0-9]*[\\.']+",relevance:0},{begin:"\\[",
+end:"\\][\\.']*",relevance:0,contains:n},e.COMMENT("//","$")].concat(n)}}})());
