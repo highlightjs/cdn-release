@@ -2,7 +2,7 @@ hljs.registerLanguage("xml",(()=>{"use strict";function e(e){
 return e?"string"==typeof e?e:e.source:null}function n(e){return a("(?=",e,")")}
 function a(...n){return n.map((n=>e(n))).join("")}function s(...n){
 return"("+n.map((n=>e(n))).join("|")+")"}return e=>{
-const t=a(/[A-Z_]/,a("(",/[A-Z0-9_.-]+:/,")?"),/[A-Z0-9_.-]*/),i={
+const t=a(/[A-Z_]/,a("(",/[A-Z0-9_.-]*:/,")?"),/[A-Z0-9_.-]*/),i={
 className:"symbol",begin:/&[a-z]+;|&#[0-9]+;|&#x[a-f0-9]+;/},r={begin:/\s/,
 contains:[{className:"meta-keyword",begin:/#?[a-z_][a-z1-9_-]+/,illegal:/\n/}]
 },c=e.inherit(r,{begin:/\(/,end:/\)/}),l=e.inherit(e.APOS_STRING_MODE,{

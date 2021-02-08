@@ -6,7 +6,7 @@
       "syntax"
    ],
    "homepage": "https://highlightjs.org/",
-   "version": "10.5.0",
+   "version": "10.6.0",
    "author": {
       "name": "Ivan Sagalaev",
       "email": "maniac@softwaremaniacs.org"
@@ -308,7 +308,9 @@
       "Marcus Ortiz <mportiz08@gmail.com>",
       "Guillaume Grossetie <ggrossetie@yuzutech.fr>",
       "Steven Van Impe <steven.vanimpe@icloud.com>",
-      "Martin Dørum <martid0311@gmail.com>"
+      "Martin Dørum <martid0311@gmail.com>",
+      "John Haugeland <stonecypher@gmail.com>",
+      "davidhcefx <davidhu0903ex3@gmail.com>"
    ],
    "bugs": {
       "url": "https://github.com/highlightjs/highlight.js/issues"
@@ -340,13 +342,13 @@
    "devDependencies": {
       "@rollup/plugin-commonjs": "^17.0.0",
       "@rollup/plugin-json": "^4.1.0",
-      "@rollup/plugin-node-resolve": "^11.0.1",
+      "@rollup/plugin-node-resolve": "^11.1.0",
       "@typescript-eslint/eslint-plugin": "^4.6.1",
       "@typescript-eslint/parser": "^4.6.1",
-      "clean-css": "^4.2.3",
+      "clean-css": "^5.0.1",
       "cli-table": "^0.3.1",
       "colors": "^1.1.2",
-      "commander": "^6.2.0",
+      "commander": "^7.0.0",
       "deep-freeze-es6": "^1.4.1",
       "del": "^6.0.0",
       "dependency-resolver": "^2.0.1",
@@ -355,11 +357,9 @@
       "eslint-plugin-import": "^2.22.1",
       "eslint-plugin-node": "^11.1.0",
       "eslint-plugin-promise": "^4.2.1",
-      "eslint-plugin-standard": "^5.0.0",
       "glob": "^7.1.6",
-      "glob-promise": "^3.4.0",
+      "glob-promise": "^4.0.1",
       "handlebars": "^4.7.6",
-      "js-beautify": "^1.13.0",
       "jsdom": "^16.4.0",
       "lodash": "^4.17.20",
       "mocha": "^8.2.1",

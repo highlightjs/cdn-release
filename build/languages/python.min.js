@@ -1,7 +1,7 @@
 hljs.registerLanguage("python",(()=>{"use strict";return e=>{const n={
-keyword:"and as assert async await break class continue def del elif else except finally for  from global if import in is lambda nonlocal|10 not or pass raise return try while with yield",
-built_in:"__import__ abs all any ascii bin bool breakpoint bytearray bytes callable chr classmethod compile complex delattr dict dir divmod enumerate eval exec filter float format frozenset getattr globals hasattr hash help hex id input int isinstance issubclass iter len list locals map max memoryview min next object oct open ord pow print property range repr reversed round set setattr slice sorted staticmethod str sum super tuple type vars zip",
-literal:"__debug__ Ellipsis False None NotImplemented True"},a={
+keyword:["and","as","assert","async","await","break","class","continue","def","del","elif","else","except","finally","for","","from","global","if","import","in","is","lambda","nonlocal|10","not","or","pass","raise","return","try","while","with","yield"],
+built_in:["__import__","abs","all","any","ascii","bin","bool","breakpoint","bytearray","bytes","callable","chr","classmethod","compile","complex","delattr","dict","dir","divmod","enumerate","eval","exec","filter","float","format","frozenset","getattr","globals","hasattr","hash","help","hex","id","input","int","isinstance","issubclass","iter","len","list","locals","map","max","memoryview","min","next","object","oct","open","ord","pow","print","property","range","repr","reversed","round","set","setattr","slice","sorted","staticmethod","str","sum","super","tuple","type","vars","zip"],
+literal:["__debug__","Ellipsis","False","None","NotImplemented","True"]},a={
 className:"meta",begin:/^(>>>|\.\.\.) /},s={className:"subst",begin:/\{/,
 end:/\}/,keywords:n,illegal:/#/},i={begin:/\{\{/,relevance:0},r={
 className:"string",contains:[e.BACKSLASH_ESCAPE],variants:[{

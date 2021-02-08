@@ -1,12 +1,12 @@
 hljs.registerLanguage("htmlbars",(()=>{"use strict";function e(e){
 return e?"string"==typeof e?e:e.source:null}function n(...n){
 return n.map((n=>e(n))).join("")}return a=>{const t=function(a){const t={
-"builtin-name":"action bindattr collection component concat debugger each each-in get hash if in input link-to loc log lookup mut outlet partial query-params render template textarea unbound unless view with yield"
+"builtin-name":["action","bindattr","collection","component","concat","debugger","each","each-in","get","hash","if","in","input","link-to","loc","log","lookup","mut","outlet","partial","query-params","render","template","textarea","unbound","unless","view","with","yield"]
 },s=/\[\]|\[[^\]]+\]/,i=/[^\s!"#%&'()*+,.\/;<=>@\[\\\]^`{|}~]+/,r=((...n)=>"("+n.map((n=>e(n))).join("|")+")")(/""|"[^"]+"/,/''|'[^']+'/,s,i),l=n(n("(",/\.|\.\/|\//,")?"),r,(c=n(/(\.|\/)/,r),
 n("(",c,")*")));var c;const o=n("(",s,"|",i,")(?==)"),m={begin:l,
-lexemes:/[\w.\/]+/},d=a.inherit(m,{keywords:{literal:"true false undefined null"
-}}),g={begin:/\(/,end:/\)/},b={className:"attr",begin:o,relevance:0,starts:{
-begin:/=/,end:/=/,starts:{
+lexemes:/[\w.\/]+/},d=a.inherit(m,{keywords:{
+literal:["true","false","undefined","null"]}}),g={begin:/\(/,end:/\)/},b={
+className:"attr",begin:o,relevance:0,starts:{begin:/=/,end:/=/,starts:{
 contains:[a.NUMBER_MODE,a.QUOTE_STRING_MODE,a.APOS_STRING_MODE,d,g]}}},u={
 contains:[a.NUMBER_MODE,a.QUOTE_STRING_MODE,a.APOS_STRING_MODE,{begin:/as\s+\|/,
 keywords:{keyword:"as"},end:/\|/,contains:[{begin:/\w+/}]},b,d,g],returnEnd:!0

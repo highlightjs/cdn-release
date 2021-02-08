@@ -9,7 +9,7 @@ $pattern:/:?[\w-]+/,literal:n,
 keyword:r+" :"+r.split(" ").join(" :")+" :"+"global local beep delay put len typeof pick log time set find environment terminal error execute parse resolve toarray tobool toid toip toip6 tonum tostr totime".split(" ").join(" :")
 },contains:[{variants:[{begin:/\/\*/,end:/\*\//},{begin:/\/\//,end:/$/},{
 begin:/<\//,end:/>/}],illegal:/./},e.COMMENT("^#","$"),s,t,i,{
-begin:/[\w-]+=([^\s{}[\]()]+)/,relevance:0,returnBegin:!0,contains:[{
+begin:/[\w-]+=([^\s{}[\]()>]+)/,relevance:0,returnBegin:!0,contains:[{
 className:"attribute",begin:/[^=]+/},{begin:/=/,endsWithParent:!0,relevance:0,
 contains:[s,t,i,{className:"literal",begin:"\\b("+n.split(" ").join("|")+")\\b"
 },{begin:/("[^"]*"|[^\s{}[\]]+)/}]}]},{className:"number",begin:/\*[0-9a-fA-F]+/

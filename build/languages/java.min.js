@@ -17,8 +17,8 @@ relevance:0},{className:"doctag",begin:"@[A-Za-z]+"}]}),{
 begin:/import java\.[a-z]+\./,keywords:"import",relevance:2
 },e.C_LINE_COMMENT_MODE,e.C_BLOCK_COMMENT_MODE,e.APOS_STRING_MODE,e.QUOTE_STRING_MODE,{
 className:"class",beginKeywords:"class interface enum",end:/[{;=]/,
-excludeEnd:!0,keywords:"class interface enum",illegal:/[:"\[\]]/,contains:[{
-beginKeywords:"extends implements"},e.UNDERSCORE_TITLE_MODE]},{
+excludeEnd:!0,relevance:1,keywords:"class interface enum",illegal:/[:"\[\]]/,
+contains:[{beginKeywords:"extends implements"},e.UNDERSCORE_TITLE_MODE]},{
 beginKeywords:"new throw return else",relevance:0},{className:"class",
 begin:"record\\s+"+e.UNDERSCORE_IDENT_RE+"\\s*\\(",returnBegin:!0,excludeEnd:!0,
 end:/[{;=]/,keywords:n,contains:[{beginKeywords:"record"},{
