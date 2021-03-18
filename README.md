@@ -2,7 +2,7 @@
 
 ![npm](https://badgen.net/npm/v/highlight.js)
 ![beta](https://badgen.net/npm/v/highlight.js/beta)
-[![license](https://badgen.net/github/license/highlightjs/highlight.js?color=cyan)](https://github.com/highlightjs/highlight.js/blob/master/LICENSE)
+[![license](https://badgen.net/github/license/highlightjs/highlight.js?color=cyan)](https://github.com/highlightjs/highlight.js/blob/main/LICENSE)
 
 This is the repository for the CDN release of Highlight.js that can be found on
 [cdnjs][1], [jsDelivr][2], and [unpkg][3]. If you were looking for the main
@@ -16,11 +16,11 @@ This repository is also published to NPM as [@highlightjs/cdn-assets](https://ww
 
 ### A note on the Git branches here
 
-Note: The `master` branch here includes beta releases.  If you're looking for
+Note: The `main` branch here includes beta releases.  If you're looking for
 the latest stable release code you want either one of the `stable` branches:
 
 - [10-stable][10-stable] - The latest supported and maintained releases.
-- [9-stable][9-stable] - The prior major version.  ([you probably do not want this](https://github.com/highlightjs/highlight.js/blob/master/SECURITY.md))
+- [9-stable][9-stable] - The prior major version.  ([you probably do not want this](https://github.com/highlightjs/highlight.js/blob/main/SECURITY.md))
 
 [1]: https://cdnjs.com/libraries/highlight.js
 [2]: http://www.jsdelivr.com/#!highlight.js
