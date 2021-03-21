@@ -6,11 +6,11 @@ To do this you simply need to add the `integrity` attribute for each JavaScript 
 
 ```html
 <script
-  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.0/highlight.min.js"
-  integrity="sha384-2SdHLSjvbvrtEhYKXx/vfncoGbYMMJ0pk3gx1FyFR1DMtFnnD3tmtIJr/1B88xhv"></script>
+  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/highlight.min.js"
+  integrity="sha384-DmE/PJ3PvpXS92Z4Sn7vSRTqJd0T/2xkGtNgm2JaZFczBOZdCf3XbZOwnRHDgjAA"></script>
 <!-- including any other grammars you might need to load -->
 <script
-  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.0/languages/go.min.js"
+  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/languages/go.min.js"
   integrity="sha384-r//R3lkWktD0i/068BOYOm3KJWtJa/Jod3Bqpe6BjNfQcwjrkAQE8E1WOgG+kMLB"></script>
 ```
 
@@ -19,8 +19,8 @@ The full list of digests for every file can be found below.
 ### Digests
 
 ```
-sha384-Yon5hJ8K5QHy486RYYi7hFD0p219KKyMmRbwojp/VuLEQ8EdPNnKa/D7RbVS+mfR highlight.js
-sha384-2SdHLSjvbvrtEhYKXx/vfncoGbYMMJ0pk3gx1FyFR1DMtFnnD3tmtIJr/1B88xhv highlight.min.js
+sha384-sqe71g/dlWlrRISGdLyItBvDCIfl9R+ajHukOjLG170F+sBSjdMervc+vdhSvCI0 highlight.js
+sha384-DmE/PJ3PvpXS92Z4Sn7vSRTqJd0T/2xkGtNgm2JaZFczBOZdCf3XbZOwnRHDgjAA highlight.min.js
 sha384-drSCJz+Uf5VQh0+swr3WO+o+gEJ37PsQdi2+6PEIiaGoHt9sNS1/z5pUFN4y34az languages/1c.min.js
 sha384-7apqh9UrywWnvcxicn3u69b6szdsa6D2HdEsWd2/k+Y0dEDwueRNf5X41NI64vSv languages/ada.min.js
 sha384-QCw8P5JGQy032rDry/zg1r3bKF4QfRKbmr+BNqbz9yJMwHAep5TKJoLvw47Ndqnd languages/angelscript.min.js
@@ -31,6 +31,7 @@ sha384-ekfzauKoi8h4q0eMBHbGmNRDw0ldJqgTyUHSDm91+tvfLqRDpKH5qhnd0NCGOOZ9 language
 sha384-Fh4pQaH2FHYw5g0CeCcCroXDiXQSqtlp7SRMClWOAXz+llK5Z6GGOoGMgFRuIubD languages/autoit.min.js
 sha384-HrH//tYXHXNZwR/o04uJOdnlWauibuxyZYIQPPIQLdVxl87Zv3azuciiHKygOfRf languages/avrasm.min.js
 sha384-08r+3TH9onFPvLk8Cvx0wWcdbdfY6dpbljOuYLPJIjdMAXAJ8QQSGXqzQ0eBVWZT languages/awk.min.js
+sha384-CTzGMmHfPnxR/asrb5EO6EYC9oJ9Tzxeo2SdpzFVtKr313+XS/+vKded4oYsHsyI languages/axapta.min.js
 sha384-SWN+Ng21kv/WuKXjywYIeToDaoRLftZ0MDDJekqN5XXEY+P0S8ilo6V3FZ6F+2YH languages/basic.min.js
 sha384-8WkRsic3IfuEOAoW3fx1K9B7LYiF6aY7qffBK0eIp8RkAdyRcaMgcvqSgemibYo+ languages/bnf.min.js
 sha384-nVdb9je5Cld82zXJ013LQtWBPWUMZl/gsDrsTTb/iGqca9gX56yc+PKMQfqeLBHQ languages/brainfuck.min.js
@@ -45,7 +46,6 @@ sha384-NVSuN4IZtOjwawaHnxLrooJPnO97cp21MucCP9ruGpt8DfGddZDRRgGFXQxzHqi0 language
 sha384-v5GKAd16DjIWpWmnBvlmhzU6uOJQZPUZ/qre77lXdg4kuN7kt5L2OIqrTlBvtmZo languages/cos.min.js
 sha384-ftdjNYapTzatmwg4z1FroT33gTsfAJ/tOb6lFodfUjhZbCA5tnaqJrLxWm+2BvdD languages/crmsh.min.js
 sha384-DwTCrQgzJE5ijIPjGtjKYaQzW/rxXEvTbmNWRNyCDGtGei2ZuVh3hkotW77FoOhU languages/crystal.min.js
-sha384-CTzGMmHfPnxR/asrb5EO6EYC9oJ9Tzxeo2SdpzFVtKr313+XS/+vKded4oYsHsyI languages/axapta.min.js
 sha384-3DKlcWTOfE3r53/YXlZ5P7TSNIrkuZDDiDTEuOO0JAia/pIZiJjcicnG/cBLQmwr languages/csharp.min.js
 sha384-CWMyrfhWZ2oKTZVv/J83HcGCfRZcCpxRO36/nOvYtWUtcDIQnEZJWJshUeIqlkEo languages/csp.min.js
 sha384-U7gCsZ9Gp3d5IQcZdxAwN0GhwIgayYh0W050kxsy1JK5eA7N5UkLfd5XpGEss6gq languages/d.min.js
