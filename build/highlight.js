@@ -1,5 +1,5 @@
 /*
-  Highlight.js 10.7.1 (421b23b0)
+  Highlight.js 10.7.2 (00233d63)
   License: BSD-3-Clause
   Copyright (c) 2006-2021, Ivan Sagalaev
 */
@@ -1236,7 +1236,7 @@ var hljs = (function () {
       return mode;
     }
 
-    var version = "10.7.1";
+    var version = "10.7.2";
 
     // @ts-nocheck
 
@@ -1469,6 +1469,11 @@ var hljs = (function () {
     */
 
     /**
+     * @type {Record<string, boolean>}
+     */
+    const seenDeprecations = {};
+
+    /**
      * @param {string} message
      */
     const error = (message) => {
@@ -1488,7 +1493,10 @@ var hljs = (function () {
      * @param {string} message
      */
     const deprecated = (version, message) => {
+      if (seenDeprecations[`${version}/${message}`]) return;
+
       console.log(`Deprecated as of ${version}. ${message}`);
+      seenDeprecations[`${version}/${message}`] = true;
     };
 
     /*
