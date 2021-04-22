@@ -6,7 +6,7 @@
       "syntax"
    ],
    "homepage": "https://highlightjs.org/",
-   "version": "11.0.0-alpha0",
+   "version": "11.0.0-alpha1",
    "author": {
       "name": "Ivan Sagalaev",
       "email": "maniac@softwaremaniacs.org"
@@ -32,6 +32,7 @@
       "type": "git",
       "url": "git://github.com/highlightjs/highlight.js.git"
    },
+   "type": "commonjs",
    "main": "./lib/index.js",
    "types": "./types/index.d.ts",
    "scripts": {
@@ -84,5 +85,24 @@
       "terser": "^5.3.8",
       "tiny-worker": "^2.3.0",
       "typescript": "^4.0.5"
+   },
+   "exports": {
+      ".": {
+         "require": "./lib/index.js",
+         "import": "./es/index.js"
+      },
+      "./package.json": "./package.json",
+      "./lib/common": {
+         "require": "./lib/common.js",
+         "import": "./es/common.js"
+      },
+      "./lib/core": {
+         "require": "./lib/core.js",
+         "import": "./es/core.js"
+      },
+      "./lib/languages/*": {
+         "require": "./lib/languages/*.js",
+         "import": "./es/languages/*.js"
+      }
    }
 }

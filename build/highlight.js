@@ -1,5 +1,5 @@
 /*!
-  Highlight.js v11.0.0-alpha0 (git: 8c19c8cfbb)
+  Highlight.js v11.0.0-alpha1 (git: a8a291a612)
   (c) 2006-2021 Ivan Sagalaev and other contributors
   License: BSD-3-Clause
  */
@@ -37,6 +37,9 @@ var hljs = (function () {
     deepFreezeEs6.default = _default;
 
     
+    /** @typedef {import('highlight.js').CompiledMode} CompiledMode */
+    /** @implements CallbackResponse */
+
     class Response {
       /**
        * @param {CompiledMode} mode
@@ -117,10 +120,13 @@ var hljs = (function () {
      * @param {string} name
      * @param {{prefix:string}} options
      */
-    const expandClassName = (name, { prefix }) => {
+    const expandScopeName = (name, { prefix }) => {
       if (name.includes(".")) {
         const pieces = name.split(".");
-        return pieces.map(x => `${prefix}${x}`).join(" ");
+        return [
+          `${prefix}${pieces.shift()}`,
+          ...(pieces.map((x, i) => `${x}${"_".repeat(i + 1)}`))
+        ].join(" ");
       }
       return `${prefix}${name}`;
     };
@@ -154,11 +160,13 @@ var hljs = (function () {
       openNode(node) {
         if (!emitsWrappingTags(node)) return;
 
-        let className = node.kind;
-        if (!node.sublanguage) {
-          className = expandClassName(className, { prefix: this.classPrefix });
+        let scope = node.kind;
+        if (node.sublanguage) {
+          scope = `language-${scope}`;
+        } else {
+          scope = expandScopeName(scope, { prefix: this.classPrefix });
         }
-        this.span(className);
+        this.span(scope);
       }
 
       /**
@@ -191,6 +199,7 @@ var hljs = (function () {
 
     /** @typedef {{kind?: string, sublanguage?: boolean, children: Node[]} | string} Node */
     /** @typedef {{kind?: string, sublanguage?: boolean, children: Node[]} } DataNode */
+    /** @typedef {import('highlight.js').Emitter} Emitter */
     /**  */
 
     class TokenTree {
@@ -440,10 +449,10 @@ var hljs = (function () {
     // is currently an exercise for the caller. :-)
     /**
      * @param {(string | RegExp)[]} regexps
-     * @param {string} separator
+     * @param {{joinWith: string}} opts
      * @returns {string}
      */
-    function _eitherRewriteBackreferences(regexps) {
+    function _rewriteBackreferences(regexps, { joinWith }) {
       let numCaptures = 0;
 
       return regexps.map((regex) => {
@@ -471,8 +480,11 @@ var hljs = (function () {
           }
         }
         return out;
-      }).map(re => `(${re})`).join("|");
+      }).map(re => `(${re})`).join(joinWith);
     }
+
+    /** @typedef {import('highlight.js').Mode} Mode */
+    /** @typedef {import('highlight.js').ModeCallback} ModeCallback */
 
     // Common regexps
     const MATCH_NOTHING_RE = /\b\B/;
@@ -496,7 +508,7 @@ var hljs = (function () {
           /\b.*/);
       }
       return inherit$1({
-        className: 'meta',
+        scope: 'meta',
         begin: beginShebang,
         end: /$/,
         relevance: 0,
@@ -512,14 +524,14 @@ var hljs = (function () {
       begin: '\\\\[\\s\\S]', relevance: 0
     };
     const APOS_STRING_MODE = {
-      className: 'string',
+      scope: 'string',
       begin: '\'',
       end: '\'',
       illegal: '\\n',
       contains: [BACKSLASH_ESCAPE]
     };
     const QUOTE_STRING_MODE = {
-      className: 'string',
+      scope: 'string',
       begin: '"',
       end: '"',
       illegal: '\\n',
@@ -539,7 +551,7 @@ var hljs = (function () {
     const COMMENT = function(begin, end, modeOptions = {}) {
       const mode = inherit$1(
         {
-          className: 'comment',
+          scope: 'comment',
           begin,
           end,
           contains: []
@@ -547,7 +559,7 @@ var hljs = (function () {
         modeOptions
       );
       mode.contains.push({
-        className: 'doctag',
+        scope: 'doctag',
         // hack to avoid the space from being included. the space is necessary to
         // match here to prevent the plain text rule below from gobbling up doctags
         begin: '[ ]*(?=(TODO|FIXME|NOTE|BUG|OPTIMIZE|HACK|XXX):)',
@@ -605,17 +617,17 @@ var hljs = (function () {
     const C_BLOCK_COMMENT_MODE = COMMENT('/\\*', '\\*/');
     const HASH_COMMENT_MODE = COMMENT('#', '$');
     const NUMBER_MODE = {
-      className: 'number',
+      scope: 'number',
       begin: NUMBER_RE,
       relevance: 0
     };
     const C_NUMBER_MODE = {
-      className: 'number',
+      scope: 'number',
       begin: C_NUMBER_RE,
       relevance: 0
     };
     const BINARY_NUMBER_MODE = {
-      className: 'number',
+      scope: 'number',
       begin: BINARY_NUMBER_RE,
       relevance: 0
     };
@@ -628,7 +640,7 @@ var hljs = (function () {
       // (which will then blow up when regex's `illegal` sees the newline)
       begin: /(?=\/[^/\n]*\/)/,
       contains: [{
-        className: 'regexp',
+        scope: 'regexp',
         begin: /\//,
         end: /\/[gimuy]*/,
         illegal: /\n/,
@@ -644,12 +656,12 @@ var hljs = (function () {
       }]
     };
     const TITLE_MODE = {
-      className: 'title',
+      scope: 'title',
       begin: IDENT_RE$1,
       relevance: 0
     };
     const UNDERSCORE_TITLE_MODE = {
-      className: 'title',
+      scope: 'title',
       begin: UNDERSCORE_IDENT_RE,
       relevance: 0
     };
@@ -704,6 +716,11 @@ var hljs = (function () {
         END_SAME_AS_BEGIN: END_SAME_AS_BEGIN
     });
 
+    /**
+    @typedef {import('highlight.js').CallbackResponse} CallbackResponse
+    @typedef {import('highlight.js').CompilerExt} CompilerExt
+    */
+
     // Grammar extensions / plugins
     // See: https://github.com/highlightjs/highlight.js/issues/2833
 
@@ -728,13 +745,24 @@ var hljs = (function () {
      * @param {RegExpMatchArray} match
      * @param {CallbackResponse} response
      */
-    function skipIfhasPrecedingDot(match, response) {
+    function skipIfHasPrecedingDot(match, response) {
       const before = match.input[match.index - 1];
       if (before === ".") {
         response.ignoreMatch();
       }
     }
 
+    /**
+     *
+     * @type {CompilerExt}
+     */
+    function scopeClassName(mode, _parent) {
+      // eslint-disable-next-line no-undefined
+      if (mode.className !== undefined) {
+        mode.scope = mode.className;
+        delete mode.className;
+      }
+    }
 
     /**
      * `beginKeywords` syntactic sugar
@@ -750,7 +778,7 @@ var hljs = (function () {
       // doesn't allow spaces in keywords anyways and we still check for the boundary
       // first
       mode.begin = '\\b(' + mode.beginKeywords.split(' ').join('|') + ')(?!\\.)(?=\\b|\\s)';
-      mode.__beforeBegin = skipIfhasPrecedingDot;
+      mode.__beforeBegin = skipIfHasPrecedingDot;
       mode.keywords = mode.keywords || mode.beginKeywords;
       delete mode.beginKeywords;
 
@@ -830,7 +858,7 @@ var hljs = (function () {
       'value' // common variable name
     ];
 
-    const DEFAULT_KEYWORD_CLASSNAME = "keyword";
+    const DEFAULT_KEYWORD_SCOPE = "keyword";
 
     /**
      * Given raw keywords from a language definition, compile them.
@@ -838,22 +866,22 @@ var hljs = (function () {
      * @param {string | Record<string,string|string[]> | Array<string>} rawKeywords
      * @param {boolean} caseInsensitive
      */
-    function compileKeywords(rawKeywords, caseInsensitive, className = DEFAULT_KEYWORD_CLASSNAME) {
+    function compileKeywords(rawKeywords, caseInsensitive, scopeName = DEFAULT_KEYWORD_SCOPE) {
       /** @type KeywordDict */
       const compiledKeywords = {};
 
       // input can be a string of keywords, an array of keywords, or a object with
-      // named keys representing className (which can then point to a string or array)
+      // named keys representing scopeName (which can then point to a string or array)
       if (typeof rawKeywords === 'string') {
-        compileList(className, rawKeywords.split(" "));
+        compileList(scopeName, rawKeywords.split(" "));
       } else if (Array.isArray(rawKeywords)) {
-        compileList(className, rawKeywords);
+        compileList(scopeName, rawKeywords);
       } else {
-        Object.keys(rawKeywords).forEach(function(className) {
+        Object.keys(rawKeywords).forEach(function(scopeName) {
           // collapse all our objects back into the parent object
           Object.assign(
             compiledKeywords,
-            compileKeywords(rawKeywords[className], caseInsensitive, className)
+            compileKeywords(rawKeywords[scopeName], caseInsensitive, scopeName)
           );
         });
       }
@@ -866,16 +894,16 @@ var hljs = (function () {
        *
        * Ex: "for if when while|5"
        *
-       * @param {string} className
+       * @param {string} scopeName
        * @param {Array<string>} keywordList
        */
-      function compileList(className, keywordList) {
+      function compileList(scopeName, keywordList) {
         if (caseInsensitive) {
           keywordList = keywordList.map(x => x.toLowerCase());
         }
         keywordList.forEach(function(keyword) {
           const pair = keyword.split('|');
-          compiledKeywords[pair[0]] = [className, scoreForKeyword(pair[0], pair[1])];
+          compiledKeywords[pair[0]] = [scopeName, scoreForKeyword(pair[0], pair[1])];
         });
       }
     }
@@ -946,29 +974,142 @@ var hljs = (function () {
 
     /* eslint-disable no-throw-literal */
 
+    /**
+    @typedef {import('highlight.js').CompiledMode} CompiledMode
+    */
+
     const MultiClassError = new Error();
 
     /**
+     * Renumbers labeled scope names to account for additional inner match
+     * groups that otherwise would break everything.
+     *
+     * Lets say we 3 match scopes:
+     *
+     *   { 1 => ..., 2 => ..., 3 => ... }
+     *
+     * So what we need is a clean match like this:
+     *
+     *   (a)(b)(c) => [ "a", "b", "c" ]
+     *
+     * But this falls apart with inner match groups:
+     *
+     * (a)(((b)))(c) => ["a", "b", "b", "b", "c" ]
+     *
+     * Our scopes are now "out of alignment" and we're repeating `b` 3 times.
+     * What needs to happen is the numbers are remapped:
+     *
+     *   { 1 => ..., 2 => ..., 5 => ... }
+     *
+     * We also need to know that the ONLY groups that should be output
+     * are 1, 2, and 5.  This function handles this behavior.
      *
      * @param {CompiledMode} mode
+     * @param {Array<RegExp>} regexes
+     * @param {{key: "beginScope"|"endScope"}} opts
      */
-    function MultiClass(mode) {
+    function remapScopeNames(mode, regexes, { key }) {
+      let offset = 0;
+      const scopeNames = mode[key];
+      /** @type Record<number,boolean> */
+      const emit = {};
+      /** @type Record<number,string> */
+      const positions = {};
+
+      for (let i = 1; i <= regexes.length; i++) {
+        positions[i + offset] = scopeNames[i];
+        emit[i + offset] = true;
+        offset += countMatchGroups(regexes[i - 1]);
+      }
+      // we use _emit to keep track of which match groups are "top-level" to avoid double
+      // output from inside match groups
+      mode[key] = positions;
+      mode[key]._emit = emit;
+      mode[key]._multi = true;
+    }
+
+    /**
+     * @param {CompiledMode} mode
+     */
+    function beginMultiClass(mode) {
       if (!Array.isArray(mode.begin)) return;
 
       if (mode.skip || mode.excludeBegin || mode.returnBegin) {
-        error("skip, excludeBegin, returnBegin not compatible with multi-class");
+        error("skip, excludeBegin, returnBegin not compatible with beginScope: {}");
         throw MultiClassError;
       }
 
-      if (typeof mode.className !== "object") {
-        error("className must be object");
+      if (typeof mode.beginScope !== "object" || mode.beginScope === null) {
+        error("beginScope must be object");
         throw MultiClassError;
       }
 
-      const items = mode.begin.map(x => concat("(", x, ")"));
-      mode.begin = concat(...items);
-      mode.isMultiClass = true;
+      remapScopeNames(mode, mode.begin, {key: "beginScope"});
+      mode.begin = _rewriteBackreferences(mode.begin, { joinWith: "" });
     }
+
+    /**
+     * @param {CompiledMode} mode
+     */
+    function endMultiClass(mode) {
+      if (!Array.isArray(mode.end)) return;
+
+      if (mode.skip || mode.excludeEnd || mode.returnEnd) {
+        error("skip, excludeEnd, returnEnd not compatible with endScope: {}");
+        throw MultiClassError;
+      }
+
+      if (typeof mode.endScope !== "object" || mode.endScope === null) {
+        error("endScope must be object");
+        throw MultiClassError;
+      }
+
+      remapScopeNames(mode, mode.end, {key: "endScope"});
+      mode.end = _rewriteBackreferences(mode.end, { joinWith: "" });
+    }
+
+    /**
+     * this exists only to allow `scope: {}` to be used beside `match:`
+     * Otherwise `beginScope` would necessary and that would look weird
+
+      {
+        match: [ /def/, /\w+/ ]
+        scope: { 1: "keyword" , 2: "title" }
+      }
+
+     * @param {CompiledMode} mode
+     */
+    function scopeSugar(mode) {
+      if (mode.scope && typeof mode.scope === "object" && mode.scope !== null) {
+        mode.beginScope = mode.scope;
+        delete mode.scope;
+      }
+    }
+
+    /**
+     * @param {CompiledMode} mode
+     */
+    function MultiClass(mode) {
+      scopeSugar(mode);
+
+      if (typeof mode.beginScope === "string") {
+        mode.beginScope = { _wrap: mode.beginScope };
+      }
+      if (typeof mode.endScope === "string") {
+        mode.endScope = { _wrap: mode.endScope };
+      }
+
+      beginMultiClass(mode);
+      endMultiClass(mode);
+    }
+
+    /**
+    @typedef {import('highlight.js').Mode} Mode
+    @typedef {import('highlight.js').CompiledMode} CompiledMode
+    @typedef {import('highlight.js').Language} Language
+    @typedef {import('highlight.js').HLJSPlugin} HLJSPlugin
+    @typedef {import('highlight.js').CompiledLanguage} CompiledLanguage
+    */
 
     // compilation
 
@@ -978,12 +1119,11 @@ var hljs = (function () {
      * Given the raw result of a language definition (Language), compiles this so
      * that it is ready for highlighting code.
      * @param {Language} language
-     * @param {{plugins: HLJSPlugin[]}} opts
      * @returns {CompiledLanguage}
      */
-    function compileLanguage(language, { plugins }) {
+    function compileLanguage(language) {
       /**
-       * Builds a regex with the case sensativility of the current language
+       * Builds a regex with the case sensitivity of the current language
        *
        * @param {RegExp | string} value
        * @param {boolean} [global]
@@ -1033,7 +1173,7 @@ var hljs = (function () {
             this.exec = () => null;
           }
           const terminators = this.regexes.map(el => el[1]);
-          this.matcherRe = langRe(_eitherRewriteBackreferences(terminators), true);
+          this.matcherRe = langRe(_rewriteBackreferences(terminators, { joinWith: '|' }), true);
           this.lastIndex = 0;
         }
 
@@ -1246,6 +1386,7 @@ var hljs = (function () {
         if (mode.isCompiled) return cmode;
 
         [
+          scopeClassName,
           // do this early so compiler extensions generally don't have to worry about
           // the distinction between match/begin
           compileMatch,
@@ -1382,12 +1523,33 @@ var hljs = (function () {
       return mode;
     }
 
-    var version = "11.0.0-alpha0";
+    var version = "11.0.0-alpha1";
 
     /*
     Syntax highlighting with language autodetection.
     https://highlightjs.org/
     */
+
+    /**
+    @typedef {import('highlight.js').Mode} Mode
+    @typedef {import('highlight.js').CompiledMode} CompiledMode
+    @typedef {import('highlight.js').Language} Language
+    @typedef {import('highlight.js').HLJSApi} HLJSApi
+    @typedef {import('highlight.js').HLJSPlugin} HLJSPlugin
+    @typedef {import('highlight.js').PluginEvent} PluginEvent
+    @typedef {import('highlight.js').HLJSOptions} HLJSOptions
+    @typedef {import('highlight.js').LanguageFn} LanguageFn
+    @typedef {import('highlight.js').HighlightedHTMLElement} HighlightedHTMLElement
+    @typedef {import('highlight.js').BeforeHighlightContext} BeforeHighlightContext
+    @typedef {import('highlight.js/private').MatchType} MatchType
+    @typedef {import('highlight.js/private').KeywordData} KeywordData
+    @typedef {import('highlight.js/private').EnhancedMatch} EnhancedMatch
+    @typedef {import('highlight.js/private').AnnotatedError} AnnotatedError
+    @typedef {import('highlight.js').AutoHighlightResult} AutoHighlightResult
+    @typedef {import('highlight.js').HighlightOptions} HighlightOptions
+    @typedef {import('highlight.js').HighlightResult} HighlightResult
+    */
+
 
     const escape = escapeHTML;
     const inherit = inherit$1;
@@ -1469,7 +1631,7 @@ var hljs = (function () {
        * NEW API
        * highlight(code, {lang, ignoreIllegals})
        *
-       * @param {string} codeOrlanguageName - the language to use for highlighting
+       * @param {string} codeOrLanguageName - the language to use for highlighting
        * @param {string | HighlightOptions} optionsOrCode - the code to highlight
        * @param {boolean} [ignoreIllegals] - whether to ignore illegal matches, default is to bail
        * @param {CompiledMode} [continuation] - current continuation mode, if any
@@ -1482,11 +1644,11 @@ var hljs = (function () {
        * @property {CompiledMode} top - top of the current mode stack
        * @property {boolean} illegal - indicates whether any illegal matches were found
       */
-      function highlight(codeOrlanguageName, optionsOrCode, ignoreIllegals, continuation) {
+      function highlight(codeOrLanguageName, optionsOrCode, ignoreIllegals, continuation) {
         let code = "";
         let languageName = "";
         if (typeof optionsOrCode === "object") {
-          code = codeOrlanguageName;
+          code = codeOrLanguageName;
           ignoreIllegals = optionsOrCode.ignoreIllegals;
           languageName = optionsOrCode.language;
           // continuation not supported at all via the new API
@@ -1496,7 +1658,7 @@ var hljs = (function () {
           // old API
           deprecated("10.7.0", "highlight(lang, code, ...args) has been deprecated.");
           deprecated("10.7.0", "Please use highlight(code, options) instead.\nhttps://github.com/highlightjs/highlight.js/issues/2277");
-          languageName = codeOrlanguageName;
+          languageName = codeOrLanguageName;
           code = optionsOrCode;
         }
 
@@ -1620,16 +1782,19 @@ var hljs = (function () {
          * @param {CompiledMode} mode
          * @param {RegExpMatchArray} match
          */
-        function emitMultiClass(mode, match) {
+        function emitMultiClass(scope, match) {
           let i = 1;
           // eslint-disable-next-line no-undefined
           while (match[i] !== undefined) {
-            const klass = language.classNameAliases[mode.className[i]] || mode.className[i];
+            if (!scope._emit[i]) { i++; continue; }
+            const klass = language.classNameAliases[scope[i]] || scope[i];
             const text = match[i];
-            if (klass) { emitter.addKeyword(text, klass); } else {
+            if (klass) {
+              emitter.addKeyword(text, klass);
+            } else {
               modeBuffer = text;
-              // emitter.addText(text);
               processKeywords();
+              modeBuffer = "";
             }
             i++;
           }
@@ -1640,13 +1805,21 @@ var hljs = (function () {
          * @param {RegExpMatchArray} match
          */
         function startNewMode(mode, match) {
-          if (mode.isMultiClass) {
-            // at this point modeBuffer should just be the match
-            emitMultiClass(mode, match);
-            modeBuffer = "";
-          } else if (mode.className) {
-            emitter.openNode(language.classNameAliases[mode.className] || mode.className);
+          if (mode.scope && typeof mode.scope === "string") {
+            emitter.openNode(language.classNameAliases[mode.scope] || mode.scope);
           }
+          if (mode.beginScope) {
+            // beginScope just wraps the begin match itself in a scope
+            if (mode.beginScope._wrap) {
+              emitter.addKeyword(modeBuffer, language.classNameAliases[mode.beginScope._wrap] || mode.beginScope._wrap);
+              modeBuffer = "";
+            } else if (mode.beginScope._multi) {
+              // at this point modeBuffer should just be the match
+              emitMultiClass(mode.beginScope, match);
+              modeBuffer = "";
+            }
+          }
+
           top = Object.create(mode, { parent: { value: top } });
           return top;
         }
@@ -1688,7 +1861,7 @@ var hljs = (function () {
          */
         function doIgnore(lexeme) {
           if (top.matcher.regexIndex === 0) {
-            // no more regexs to potentially match here, so we move the cursor forward one
+            // no more regexes to potentially match here, so we move the cursor forward one
             // space
             modeBuffer += lexeme[0];
             return 1;
@@ -1747,7 +1920,13 @@ var hljs = (function () {
           if (!endMode) { return NO_MATCH; }
 
           const origin = top;
-          if (origin.skip) {
+          if (top.endScope && top.endScope._wrap) {
+            processBuffer();
+            emitter.addKeyword(lexeme, top.endScope._wrap);
+          } else if (top.endScope && top.endScope._multi) {
+            processBuffer();
+            emitMultiClass(top.endScope, match);
+          } else if (origin.skip) {
             modeBuffer += lexeme;
           } else {
             if (!(origin.returnEnd || origin.excludeEnd)) {
@@ -1759,7 +1938,7 @@ var hljs = (function () {
             }
           }
           do {
-            if (top.className && !top.isMultiClass) {
+            if (top.scope && !top.isMultiClass) {
               emitter.closeNode();
             }
             if (!top.skip && !top.subLanguage) {
@@ -1776,8 +1955,8 @@ var hljs = (function () {
         function processContinuations() {
           const list = [];
           for (let current = top; current !== language; current = current.parent) {
-            if (current.className) {
-              list.unshift(current.className);
+            if (current.scope) {
+              list.unshift(current.scope);
             }
           }
           list.forEach(item => emitter.openNode(item));
@@ -1789,7 +1968,7 @@ var hljs = (function () {
         /**
          *  Process an individual match
          *
-         * @param {string} textBeforeMatch - text preceeding the match (since the last match)
+         * @param {string} textBeforeMatch - text preceding the match (since the last match)
          * @param {EnhancedMatch} [match] - the match itself
          */
         function processLexeme(textBeforeMatch, match) {
@@ -1826,7 +2005,7 @@ var hljs = (function () {
           } else if (match.type === "illegal" && !ignoreIllegals) {
             // illegal match, we do not continue processing
             /** @type {AnnotatedError} */
-            const err = new Error('Illegal lexeme "' + lexeme + '" for mode "' + (top.className || '<unnamed>') + '"');
+            const err = new Error('Illegal lexeme "' + lexeme + '" for mode "' + (top.scope || '<unnamed>') + '"');
             err.mode = top;
             throw err;
           } else if (match.type === "end") {
@@ -1871,7 +2050,7 @@ var hljs = (function () {
           throw new Error('Unknown language: "' + languageName + '"');
         }
 
-        const md = compileLanguage(language, { plugins });
+        const md = compileLanguage(language);
         let result = '';
         /** @type {CompiledMode} */
         let top = continuation || md;
@@ -1924,6 +2103,7 @@ var hljs = (function () {
         } catch (err) {
           if (err.message && err.message.includes('Illegal')) {
             return {
+              language: languageName,
               value: escape(codeToHighlight),
               illegal: true,
               relevance: 0,
@@ -2032,10 +2212,10 @@ var hljs = (function () {
        * @param {string} [resultLang]
        */
       function updateClassName(element, currentLang, resultLang) {
-        const language = currentLang ? aliases[currentLang] : resultLang;
+        const language = (currentLang && aliases[currentLang]) || resultLang;
 
         element.classList.add("hljs");
-        if (language) element.classList.add(language);
+        element.classList.add(`language-${language}`);
       }
 
       /**
@@ -2067,12 +2247,12 @@ var hljs = (function () {
           language: result.language,
           // TODO: remove with version 11.0
           re: result.relevance,
-          relavance: result.relevance
+          relevance: result.relevance
         };
         if (result.secondBest) {
           element.secondBest = {
             language: result.secondBest.language,
-            relavance: result.secondBest.relevance
+            relevance: result.secondBest.relevance
           };
         }
       }
@@ -2294,7 +2474,7 @@ var hljs = (function () {
         }
       }
 
-      // merge all the modes/regexs into our main object
+      // merge all the modes/regexes into our main object
       Object.assign(hljs, MODES$1);
 
       return hljs;
@@ -3199,10 +3379,16 @@ var hljs = (function () {
               keywords: CPP_KEYWORDS
             },
             {
-              beforeMatch: /\b(enum|class|struct|union)\s+/,
-              keywords: "enum class struct union",
-              match: /\w+/,
-              className: "title.class"
+              match: [
+                // extra complexity to deal with `enum class` and `enum struct`
+                /\b(?:enum(?:\s+(?:class|struct))?|class|struct|union)/,
+                /\s+/,
+                /\w+/
+              ],
+              className: {
+                1: "keyword",
+                3: "title.class"
+              }
             }
           ])
       };
@@ -3585,7 +3771,7 @@ var hljs = (function () {
           {
             // [Attributes("")]
             className: 'meta',
-            begin: '^\\s*\\[',
+            begin: '^\\s*\\[(?=[\\w])',
             excludeBegin: true,
             end: '\\]',
             excludeEnd: true,
@@ -3651,15 +3837,15 @@ var hljs = (function () {
     const MODES = (hljs) => {
       return {
         IMPORTANT: {
-          className: 'meta',
+          scope: 'meta',
           begin: '!important'
         },
         HEXCOLOR: {
-          className: 'number',
+          scope: 'number',
           begin: '#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})'
         },
         ATTRIBUTE_SELECTOR_MODE: {
-          className: 'selector-attr',
+          scope: 'selector-attr',
           begin: /\[/,
           end: /\]/,
           illegal: '$',
@@ -3669,7 +3855,7 @@ var hljs = (function () {
           ]
         },
         CSS_NUMBER_MODE: {
-          className: 'number',
+          scope: 'number',
           begin: hljs.NUMBER_RE + '(' +
             '%|em|ex|ch|rem' +
             '|vw|vh|vmin|vmax' +
@@ -4094,7 +4280,7 @@ var hljs = (function () {
 
     /*
     Language: CSS
-    Category: common, css
+    Category: common, css, web
     Website: https://developer.mozilla.org/en-US/docs/Web/CSS
     */
 
@@ -4758,10 +4944,15 @@ var hljs = (function () {
           hljs.APOS_STRING_MODE,
           hljs.QUOTE_STRING_MODE,
           {
-            beforeMatch: /\b(class|interface|enum|extends|implements|new)\s+/,
-            keywords: "class interface enum extends implements new",
-            match: JAVA_IDENT_RE,
-            className: "title.class"
+            match: [
+              /\b(?:class|interface|enum|extends|implements|new)/,
+              /\s+/,
+              JAVA_IDENT_RE
+            ],
+            className: {
+              1: "keyword",
+              3: "title.class"
+            }
           },
           {
             begin: [
@@ -4978,7 +5169,7 @@ var hljs = (function () {
     /*
     Language: JavaScript
     Description: JavaScript (JS) is a lightweight, interpreted, or just-in-time compiled programming language with first-class functions.
-    Category: common, scripting
+    Category: common, scripting, web
     Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript
     */
 
@@ -5422,59 +5613,44 @@ var hljs = (function () {
     Description: JSON (JavaScript Object Notation) is a lightweight data-interchange format.
     Author: Ivan Sagalaev <maniac@softwaremaniacs.org>
     Website: http://www.json.org
-    Category: common, protocols
+    Category: common, protocols, web
     */
 
     function json(hljs) {
+      const ATTRIBUTE = {
+        className: 'attr',
+        begin: /"(\\.|[^\\"\r\n])*"(?=\s*:)/,
+        relevance: 1.01
+      };
+      const PUNCTUATION = {
+        match: /[{}[\],:]/,
+        className: "punctuation",
+        relevance: 0
+      };
+      // normally we would rely on `keywords` for this but using a mode here allows us
+      // to use the very tight `illegal: \S` rule later to flag any other character
+      // as illegal indicating that despite looking like JSON we do not truly have
+      // JSON and thus improve false-positively greatly since JSON will try and claim
+      // all sorts of JSON looking stuff
       const LITERALS = {
-        literal: 'true false null'
+        beginKeywords: [
+          "true",
+          "false",
+          "null"
+        ].join(" ")
       };
-      const ALLOWED_COMMENTS = [
-        hljs.C_LINE_COMMENT_MODE,
-        hljs.C_BLOCK_COMMENT_MODE
-      ];
-      const TYPES = [
-        hljs.QUOTE_STRING_MODE,
-        hljs.C_NUMBER_MODE
-      ];
-      const VALUE_CONTAINER = {
-        end: ',',
-        endsWithParent: true,
-        excludeEnd: true,
-        contains: TYPES,
-        keywords: LITERALS
-      };
-      const OBJECT = {
-        begin: /\{/,
-        end: /\}/,
-        contains: [
-          {
-            className: 'attr',
-            begin: /"/,
-            end: /"/,
-            contains: [hljs.BACKSLASH_ESCAPE],
-            illegal: '\\n'
-          },
-          hljs.inherit(VALUE_CONTAINER, {
-            begin: /:/
-          })
-        ].concat(ALLOWED_COMMENTS),
-        illegal: '\\S'
-      };
-      const ARRAY = {
-        begin: '\\[',
-        end: '\\]',
-        contains: [hljs.inherit(VALUE_CONTAINER)], // inherit is a workaround for a bug that makes shared modes with endsWithParent compile only the ending of one of the parents
-        illegal: '\\S'
-      };
-      TYPES.push(OBJECT, ARRAY);
-      ALLOWED_COMMENTS.forEach(function(rule) {
-        TYPES.push(rule);
-      });
+
       return {
         name: 'JSON',
-        contains: TYPES,
-        keywords: LITERALS,
+        contains: [
+          ATTRIBUTE,
+          PUNCTUATION,
+          hljs.QUOTE_STRING_MODE,
+          LITERALS,
+          hljs.C_NUMBER_MODE,
+          hljs.C_LINE_COMMENT_MODE,
+          hljs.C_BLOCK_COMMENT_MODE
+        ],
         illegal: '\\S'
       };
     }
@@ -5732,7 +5908,7 @@ var hljs = (function () {
     Description: It's CSS, with just a little more.
     Author:   Max Mikhailov <seven.phases.max@gmail.com>
     Website: http://lesscss.org
-    Category: common, css
+    Category: common, css, web
     */
 
     /** @type LanguageFn */
@@ -6136,7 +6312,7 @@ var hljs = (function () {
     /*
     Language: HTML, XML
     Website: https://www.w3.org/XML/
-    Category: common
+    Category: common, web
     Audit: 2020
     */
 
@@ -8176,9 +8352,10 @@ var hljs = (function () {
             ],
           },
           {
-            className: 'number',
             relevance: 0,
-            beforeMatch: /([^a-zA-Z0-9._])/, // not part of an identifier
+            className: {
+              2: "number"
+            },
             variants: [
               // TODO: replace with negative look-behind when available
               // { begin: /(?<![a-zA-Z0-9._])0[xX][0-9a-fA-F]+\.[0-9a-fA-F]*[pP][+-]?\d+i?/ },
@@ -8186,15 +8363,24 @@ var hljs = (function () {
               // { begin: /(?<![a-zA-Z0-9._])(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?[Li]?/ }
               {
                 // Special case: only hexadecimal binary powers can contain fractions.
-                match: /0[xX][0-9a-fA-F]+\.[0-9a-fA-F]*[pP][+-]?\d+i?/,
+                match: [
+                  /[^a-zA-Z0-9._]/, // not part of an identifier
+                  /0[xX][0-9a-fA-F]+\.[0-9a-fA-F]*[pP][+-]?\d+i?/
+                ]
               },
               {
-                match: /0[xX][0-9a-fA-F]+([pP][+-]?\d+)?[Li]?/
+                match: [
+                  /[^a-zA-Z0-9._]/, // not part of an identifier
+                  /0[xX][0-9a-fA-F]+(?:[pP][+-]?\d+)?[Li]?/
+                ]
               },
               {
-                match: /(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?[Li]?/,
+                match: [
+                  /[^a-zA-Z0-9._]/, // not part of an identifier
+                  /(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?[Li]?/
+                ]
               }
-            ],
+            ]
           },
           {
             // infix operator
@@ -8341,13 +8527,15 @@ var hljs = (function () {
           {
             begin: /\B\?\\?\S/
           },
-          { // heredocs
-            begin: /<<[-~]?'?(\w+)\n(?:[^\n]*\n)*?\s*\1\b/,
-            returnBegin: true,
+          // heredocs
+          {
+            // this guard makes sure that we have an entire heredoc and not a false
+            // positive (auto-detect, etc.)
+            begin: concat(
+              /<<[-~]?'?/,
+              lookahead(/(\w+)(?=\W)[^\n]*\n(?:[^\n]*\n)*?\s*\1\b/)
+            ),
             contains: [
-              {
-                begin: /<<[-~]?'?/
-              },
               hljs.END_SAME_AS_BEGIN({
                 begin: /(\w+)/,
                 end: /(\w+)/,
@@ -8889,7 +9077,7 @@ var hljs = (function () {
     Description: Scss is an extension of the syntax of CSS.
     Author: Kurt Emch <kurt@kurtemch.com>
     Website: https://sass-lang.com
-    Category: common, css
+    Category: common, css, web
     */
 
     /** @type LanguageFn */
@@ -9988,6 +10176,7 @@ var hljs = (function () {
       'objcMembers',
       'propertyWrapper',
       'requires_stored_property_inits',
+      'resultBuilder',
       'testable',
       'UIApplicationMain',
       'unknown',
@@ -10727,7 +10916,7 @@ var hljs = (function () {
             begin: /'/
           },
           {
-            // TODO: Use `beforeMatch:` for leading spaces
+            // TODO: Use multi-class for leading spaces
             begin: /([\t ]|^)REM(?=\s)/
           }
         ]
@@ -10735,7 +10924,7 @@ var hljs = (function () {
 
       const DIRECTIVES = {
         className: 'meta',
-        // TODO: Use `beforeMatch:` for indentation once available
+        // TODO: Use multi-class for indentation once available
         begin: /[\t ]*#(const|disable|else|elseif|enable|end|externalsource|if|region)\b/,
         end: /$/,
         keywords: {
