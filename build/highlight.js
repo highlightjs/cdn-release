@@ -1,5 +1,5 @@
 /*!
-  Highlight.js v11.0.0-alpha1 (git: a8a291a612)
+  Highlight.js v11.0.0-beta0 (git: f7e5e3333d)
   (c) 2006-2021 Ivan Sagalaev and other contributors
   License: BSD-3-Clause
  */
@@ -390,7 +390,7 @@ var hljs = (function () {
      * @returns {string}
      */
     function optional(re) {
-      return concat('(', re, ')?');
+      return concat('(?:', re, ')?');
     }
 
     /**
@@ -402,6 +402,17 @@ var hljs = (function () {
       return joined;
     }
 
+    function stripOptionsFromArgs(args) {
+      const opts = args[args.length - 1];
+
+      if (typeof opts === 'object' && opts.constructor === Object) {
+        args.splice(args.length - 1, 1);
+        return opts;
+      } else {
+        return {};
+      }
+    }
+
     /**
      * Any of the passed expresssions may match
      *
@@ -410,7 +421,10 @@ var hljs = (function () {
      * @returns {string}
      */
     function either(...args) {
-      const joined = '(' + args.map((x) => source(x)).join("|") + ")";
+      const opts = stripOptionsFromArgs(args);
+      const joined = '(' +
+        (opts.capture ? "" : "?:") +
+        args.map((x) => source(x)).join("|") + ")";
       return joined;
     }
 
@@ -1523,7 +1537,7 @@ var hljs = (function () {
       return mode;
     }
 
-    var version = "11.0.0-alpha1";
+    var version = "11.0.0-beta0";
 
     /*
     Syntax highlighting with language autodetection.
@@ -1579,6 +1593,7 @@ var hljs = (function () {
       // calling the `hljs.configure` function.
       /** @type HLJSOptions */
       let options = {
+        ignoreUnescapedHTML: false,
         noHighlightRe: /^(no-?highlight)$/i,
         languageDetectRe: /\blang(?:uage)?-([\w-]+)\b/i,
         classPrefix: 'hljs-',
@@ -2230,15 +2245,20 @@ var hljs = (function () {
 
         if (shouldNotHighlight(language)) return;
 
-        // support for v10 API
         fire("before:highlightElement",
           { el: element, language: language });
+
+        // we should be all text, no child nodes
+        if (!options.ignoreUnescapedHTML && element.children.length > 0) {
+          console.warn("One of your code blocks includes unescaped HTML. This is a potentially serious security risk.");
+          console.warn("https://github.com/highlightjs/highlight.js/issues/2886");
+          console.warn(element);
+        }
 
         node = element;
         const text = node.textContent;
         const result = language ? highlight(text, { language, ignoreIllegals: true }) : highlightAuto(text);
 
-        // support for v10 API
         fire("after:highlightElement", { el: element, result, text });
 
         element.innerHTML = result.value;
@@ -2900,6 +2920,12 @@ var hljs = (function () {
             ],
             relevance: 0
           },
+          // allow for multiple declarations, e.g.:
+          // extern void f(int), g(char);
+          {
+            relevance: 0,
+            match: /,/
+          },
           {
             className: 'params',
             begin: /\(/,
@@ -3305,6 +3331,12 @@ var hljs = (function () {
               STRINGS,
               NUMBERS
             ]
+          },
+          // allow for multiple declarations, e.g.:
+          // extern void f(int), g(char);
+          {
+            relevance: 0,
+            match: /,/
           },
           {
             className: 'params',
@@ -5161,7 +5193,6 @@ var hljs = (function () {
 
     const BUILT_INS = [].concat(
       BUILT_IN_GLOBALS,
-      BUILT_IN_VARIABLES,
       TYPES,
       ERROR_TYPES
     );
@@ -5225,7 +5256,8 @@ var hljs = (function () {
         $pattern: IDENT_RE,
         keyword: KEYWORDS,
         literal: LITERALS,
-        built_in: BUILT_INS
+        built_in: BUILT_INS,
+        "variable.language": BUILT_IN_VARIABLES
       };
 
       // https://tc39.es/ecma262/#sec-literals-numeric-literals
@@ -5306,13 +5338,19 @@ var hljs = (function () {
           relevance: 0,
           contains: [
             {
-              className: 'doctag',
-              begin: '@[A-Za-z]+',
+              begin: '(?=@[A-Za-z]+)',
+              relevance: 0,
               contains: [
+                {
+                  className: 'doctag',
+                  begin: '@[A-Za-z]+'
+                },
                 {
                   className: 'type',
                   begin: '\\{',
                   end: '\\}',
+                  excludeEnd: true,
+                  excludeBegin: true,
                   relevance: 0
                 },
                 {
@@ -5380,6 +5418,157 @@ var hljs = (function () {
         contains: PARAMS_CONTAINS
       };
 
+      // ES6 classes
+      const CLASS_OR_EXTENDS = {
+        variants: [
+          {
+            match: [
+              /class/,
+              /\s+/,
+              IDENT_RE$1
+            ],
+            scope: {
+              1: "keyword",
+              3: "title.class"
+            }
+          },
+          {
+            match: [
+              /extends/,
+              /\s+/,
+              concat(IDENT_RE$1, "(", concat(/\./, IDENT_RE$1), ")*")
+            ],
+            scope: {
+              1: "keyword",
+              3: "title.class.inherited"
+            }
+          }
+        ]
+      };
+
+      const CLASS_REFERENCE = {
+        relevance: 0,
+        match: /\b[A-Z][a-z]+([A-Z][a-z]+)*/,
+        className: "title.class",
+        keywords: {
+          _: [
+            // se we still get relevance credit for JS library classes
+            ...TYPES,
+            ...ERROR_TYPES
+          ]
+        }
+      };
+
+      const USE_STRICT = {
+        label: "use_strict",
+        className: 'meta',
+        relevance: 10,
+        begin: /^\s*['"]use (strict|asm)['"]/
+      };
+
+      const FUNCTION_DEFINITION = {
+        variants: [
+          {
+            match: [
+              /function/,
+              /\s+/,
+              IDENT_RE$1,
+              /(?=\s*\()/
+            ]
+          },
+          // anonymous function
+          {
+            match: [
+              /function/,
+              /\s*(?=\()/
+            ]
+          }
+        ],
+        className: {
+          1: "keyword",
+          3: "title.function"
+        },
+        label: "func.def",
+        contains: [ PARAMS ],
+        illegal: /%/
+      };
+
+      const UPPER_CASE_CONSTANT = {
+        relevance: 0,
+        match: /\b[A-Z][A-Z_]+\b/,
+        className: "variable.constant"
+      };
+
+      function noneOf(list) {
+        return concat("(?!", list.join("|"), ")");
+      }
+
+      const FUNCTION_CALL = {
+        match: concat(
+          /\b/,
+          noneOf([
+            ...BUILT_IN_GLOBALS,
+            "super"
+          ]),
+          IDENT_RE$1, lookahead(/\(/)),
+        className: "title.function",
+        relevance: 0
+      };
+
+      const PROPERTY_ACCESS = {
+        begin: concat(/\./, lookahead(
+          concat(IDENT_RE$1, /(?![0-9A-Za-z$_(])/)
+        )),
+        end: IDENT_RE$1,
+        excludeBegin: true,
+        keywords: "prototype",
+        className: "property",
+        relevance: 0
+      };
+
+      const GETTER_OR_SETTER = {
+        match: [
+          /get|set/,
+          /\s+/,
+          IDENT_RE$1,
+          /(?=\()/
+        ],
+        className: {
+          1: "keyword",
+          3: "title.function"
+        },
+        contains: [
+          { // eat to avoid empty params
+            begin: /\(\)/
+          },
+          PARAMS
+        ]
+      };
+
+      const FUNC_LEAD_IN_RE = '(\\(' +
+        '[^()]*(\\(' +
+        '[^()]*(\\(' +
+        '[^()]*' +
+        '\\)[^()]*)*' +
+        '\\)[^()]*)*' +
+        '\\)|' + hljs.UNDERSCORE_IDENT_RE + ')\\s*=>';
+
+      const FUNCTION_VARIABLE = {
+        match: [
+          /const|var|let/, /\s+/,
+          IDENT_RE$1, /\s*/,
+          /=\s*/,
+          lookahead(FUNC_LEAD_IN_RE)
+        ],
+        className: {
+          1: "keyword",
+          3: "title.function"
+        },
+        contains: [
+          PARAMS
+        ]
+      };
+
       return {
         name: 'Javascript',
         aliases: ['js', 'jsx', 'mjs', 'cjs'],
@@ -5393,12 +5582,7 @@ var hljs = (function () {
             binary: "node",
             relevance: 5
           }),
-          {
-            label: "use_strict",
-            className: 'meta',
-            relevance: 10,
-            begin: /^\s*['"]use (strict|asm)['"]/
-          },
+          USE_STRICT,
           hljs.APOS_STRING_MODE,
           hljs.QUOTE_STRING_MODE,
           HTML_TEMPLATE,
@@ -5406,35 +5590,17 @@ var hljs = (function () {
           TEMPLATE_STRING,
           COMMENT,
           NUMBER,
-          { // object attr container
-            begin: concat(/[{,\n]\s*/,
-              // we need to look ahead to make sure that we actually have an
-              // attribute coming up so we don't steal a comma from a potential
-              // "value" container
-              //
-              // NOTE: this might not work how you think.  We don't actually always
-              // enter this mode and stay.  Instead it might merely match `,
-              // <comments up next>` and then immediately end after the , because it
-              // fails to find any actual attrs. But this still does the job because
-              // it prevents the value contain rule from grabbing this instead and
-              // prevening this rule from firing when we actually DO have keys.
-              lookahead(concat(
-                // we also need to allow for multiple possible comments inbetween
-                // the first key:value pairing
-                /(((\/\/.*$)|(\/\*(\*[^/]|[^*])*\*\/))\s*)*/,
-                IDENT_RE$1 + '\\s*:'))),
-            relevance: 0,
-            contains: [
-              {
-                className: 'attr',
-                begin: IDENT_RE$1 + lookahead('\\s*:'),
-                relevance: 0
-              }
-            ]
+          CLASS_REFERENCE,
+          {
+            className: 'attr',
+            begin: IDENT_RE$1 + lookahead(':'),
+            relevance: 0
           },
+          FUNCTION_VARIABLE,
           { // "value" container
             begin: '(' + hljs.RE_STARTERS_RE + '|\\b(case|return|throw)\\b)\\s*',
             keywords: 'return throw case',
+            relevance: 0,
             contains: [
               COMMENT,
               hljs.REGEXP_MODE,
@@ -5443,13 +5609,7 @@ var hljs = (function () {
                 // we have to count the parens to make sure we actually have the
                 // correct bounding ( ) before the =>.  There could be any number of
                 // sub-expressions inside also surrounded by parens.
-                begin: '(\\(' +
-                '[^()]*(\\(' +
-                '[^()]*(\\(' +
-                '[^()]*' +
-                '\\)[^()]*)*' +
-                '\\)[^()]*)*' +
-                '\\)|' + hljs.UNDERSCORE_IDENT_RE + ')\\s*=>',
+                begin: FUNC_LEAD_IN_RE,
                 returnBegin: true,
                 end: '\\s*=>',
                 contains: [
@@ -5478,13 +5638,12 @@ var hljs = (function () {
                 ]
               },
               { // could be a comma delimited list of params to a function call
-                begin: /,/, relevance: 0
+                begin: /,/,
+                relevance: 0
               },
               {
-                className: '',
-                begin: /\s/,
-                end: /\s*/,
-                skip: true
+                match: /\s+/,
+                relevance: 0
               },
               { // JSX
                 variants: [
@@ -5508,32 +5667,18 @@ var hljs = (function () {
                 ]
               }
             ],
-            relevance: 0
           },
-          {
-            className: 'function',
-            beginKeywords: 'function',
-            end: /[{;]/,
-            excludeEnd: true,
-            keywords: KEYWORDS$1,
-            contains: [
-              'self',
-              hljs.inherit(hljs.TITLE_MODE, { begin: IDENT_RE$1 }),
-              PARAMS
-            ],
-            illegal: /%/
-          },
+          FUNCTION_DEFINITION,
           {
             // prevent this from getting swallowed up by function
             // since they appear "function like"
             beginKeywords: "while if switch catch for"
           },
           {
-            className: 'function',
             // we have to count the parens to make sure we actually have the correct
             // bounding ( ).  There could be any number of sub-expressions inside
             // also surrounded by parens.
-            begin: hljs.UNDERSCORE_IDENT_RE +
+            begin: '\\b(?!function)' + hljs.UNDERSCORE_IDENT_RE +
               '\\(' + // first parens
               '[^()]*(\\(' +
                 '[^()]*(\\(' +
@@ -5542,67 +5687,36 @@ var hljs = (function () {
               '\\)[^()]*)*' +
               '\\)\\s*\\{', // end parens
             returnBegin:true,
+            label: "func.def",
             contains: [
               PARAMS,
-              hljs.inherit(hljs.TITLE_MODE, { begin: IDENT_RE$1 }),
+              hljs.inherit(hljs.TITLE_MODE, { begin: IDENT_RE$1, className: "title.function" })
             ]
           },
           // catch ... so it won't trigger the property rule below
           {
-            begin: /\.\.\./,
+            match: /\.\.\./,
             relevance: 0
           },
-          {
-            begin: concat(/\./, lookahead(IDENT_RE$1)),
-            end: IDENT_RE$1,
-            excludeBegin: true,
-            keywords: "prototype",
-            className: "property",
-            relevance: 0
-          },
+          PROPERTY_ACCESS,
           // hack: prevents detection of keywords in some circumstances
           // .keyword()
           // $keyword = x
           {
-            variants: [
-              { begin: '\\.' + IDENT_RE$1 },
-              { begin: '\\$' + IDENT_RE$1 }
-            ],
+            match: '\\$' + IDENT_RE$1,
             relevance: 0
           },
-          { // ES6 class
-            className: 'class',
-            beginKeywords: 'class',
-            end: /[{;=]/,
-            excludeEnd: true,
-            illegal: /[:"[\]]/,
-            contains: [
-              { beginKeywords: 'extends' },
-              hljs.UNDERSCORE_TITLE_MODE
-            ]
-          },
           {
-            begin: /\b(?=constructor)/,
-            end: /[{;]/,
-            excludeEnd: true,
-            contains: [
-              hljs.inherit(hljs.TITLE_MODE, { begin: IDENT_RE$1 }),
-              'self',
-              PARAMS
-            ]
+            match: [ /\bconstructor(?=\s*\()/ ],
+            className: { 1: "title.function" },
+            contains: [ PARAMS ]
           },
+          FUNCTION_CALL,
+          UPPER_CASE_CONSTANT,
+          CLASS_OR_EXTENDS,
+          GETTER_OR_SETTER,
           {
-            begin: '(get|set)\\s+(?=' + IDENT_RE$1 + '\\()',
-            end: /\{/,
-            keywords: "get set",
-            contains: [
-              hljs.inherit(hljs.TITLE_MODE, { begin: IDENT_RE$1 }),
-              { begin: /\(\)/ }, // eat to avoid empty params
-              PARAMS
-            ]
-          },
-          {
-            begin: /\$[(.]/ // relevance booster for a pattern common to JS libs: `$(something)` and `$.something`
+            match: /\$[(.]/ // relevance booster for a pattern common to JS libs: `$(something)` and `$.something`
           }
         ]
       };
@@ -6451,8 +6565,7 @@ var hljs = (function () {
             /*
             The lookahead pattern (?=...) ensures that 'begin' only matches
             '<style' as a single word, followed by a whitespace or an
-            ending braket. The '$' is needed for the lexeme to be recognized
-            by hljs.subMode() that tests lexemes outside the stream.
+            ending bracket.
             */
             begin: /<style(?=\s|>)/,
             end: />/,
@@ -7432,7 +7545,7 @@ var hljs = (function () {
               className: 'regexp',
               variants: [
                 // allow matching common delimiters
-                { begin: PAIRED_DOUBLE_RE("s|tr|y", either(...REGEX_DELIMS)) },
+                { begin: PAIRED_DOUBLE_RE("s|tr|y", either(...REGEX_DELIMS, { capture: true })) },
                 // and then paired delmis
                 { begin: PAIRED_DOUBLE_RE("s|tr|y", "\\(", "\\)") },
                 { begin: PAIRED_DOUBLE_RE("s|tr|y", "\\[", "\\]") },
@@ -7452,7 +7565,7 @@ var hljs = (function () {
                 // prefix is optional with /regex/
                 { begin: PAIRED_RE("(?:m|qr)?", /\//, /\//)},
                 // allow matching common delimiters
-                { begin: PAIRED_RE("m|qr", either(...REGEX_DELIMS), /\1/)},
+                { begin: PAIRED_RE("m|qr", either(...REGEX_DELIMS, { capture: true }), /\1/)},
                 // allow common paired delmins
                 { begin: PAIRED_RE("m|qr", /\(/, /\)/)},
                 { begin: PAIRED_RE("m|qr", /\[/, /\]/)},
@@ -8954,7 +9067,7 @@ var hljs = (function () {
             className: 'string',
             variants: [
               {
-                begin: /r(#*)"(.|\n)*?"\1(?!#)/
+                begin: /b?r(#*)"(.|\n)*?"\1(?!#)/
               },
               {
                 begin: /b?'\\?(x\w{2}|u\w{4}|U\w{8}|.)'/
@@ -9911,6 +10024,7 @@ var hljs = (function () {
       // strings below will be fed into the regular `keywords` engine while regex
       // will result in additional modes being created to scan for those keywords to
       // avoid conflicts with other rules
+      'actor',
       'associatedtype',
       'async',
       'await',
@@ -10229,10 +10343,13 @@ var hljs = (function () {
       // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#ID413
       // https://docs.swift.org/swift-book/ReferenceManual/zzSummaryOfTheGrammar.html
       const DOT_KEYWORD = {
-        className: 'keyword',
-        begin: concat(/\./, lookahead(either(...dotKeywords, ...optionalDotKeywords))),
-        end: either(...dotKeywords, ...optionalDotKeywords),
-        excludeBegin: true
+        match: [
+          /\./,
+          either(...dotKeywords, ...optionalDotKeywords)
+        ],
+        className: {
+          2: "keyword"
+        }
       };
       const KEYWORD_GUARD = {
         // Consume .keyword to prevent highlighting properties and methods as keywords.
@@ -10512,24 +10629,6 @@ var hljs = (function () {
         ]
       };
 
-      // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID362
-      // Matches both the keyword func and the function title.
-      // Grouping these lets us differentiate between the operator function <
-      // and the start of the generic parameter clause (also <).
-      const FUNC_PLUS_TITLE = {
-        beginKeywords: 'func',
-        contains: [
-          {
-            className: 'title',
-            match: either(QUOTED_IDENTIFIER.match, identifier, operator),
-            // Required to make sure the opening < of the generic parameter clause
-            // isn't parsed as a second title.
-            endsParent: true,
-            relevance: 0
-          },
-          WHITESPACE
-        ]
-      };
       const GENERIC_PARAMETERS = {
         begin: /</,
         end: />/,
@@ -10574,11 +10673,18 @@ var hljs = (function () {
         endsParent: true,
         illegal: /["']/
       };
+      // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID362
       const FUNCTION = {
-        className: 'function',
-        match: lookahead(/\bfunc\b/),
+        match: [
+          /func/,
+          /\s+/,
+          either(QUOTED_IDENTIFIER.match, identifier, operator)
+        ],
+        className: {
+          1: "keyword",
+          3: "title.function"
+        },
         contains: [
-          FUNC_PLUS_TITLE,
           GENERIC_PARAMETERS,
           FUNCTION_PARAMETERS,
           WHITESPACE
@@ -10592,11 +10698,12 @@ var hljs = (function () {
       // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID375
       // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID379
       const INIT_SUBSCRIPT = {
-        className: 'function',
-        match: /\b(subscript|init[?!]?)\s*(?=[<(])/,
-        keywords: {
-          keyword: "subscript init init? init!",
-          $pattern: /\w+[?!]?/
+        match: [
+          /\b(?:subscript|init[?!]?)/,
+          /\s*(?=[<(])/,
+        ],
+        className: {
+          1: "keyword"
         },
         contains: [
           GENERIC_PARAMETERS,
@@ -10607,40 +10714,34 @@ var hljs = (function () {
       };
       // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID380
       const OPERATOR_DECLARATION = {
-        beginKeywords: 'operator',
-        end: hljs.MATCH_NOTHING_RE,
-        contains: [
-          {
-            className: 'title',
-            match: operator,
-            endsParent: true,
-            relevance: 0
-          }
-        ]
+        match: [
+          /operator/,
+          /\s+/,
+          operator
+        ],
+        className: {
+          1: "keyword",
+          3: "title"
+        }
       };
 
       // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID550
       const PRECEDENCEGROUP = {
-        beginKeywords: 'precedencegroup',
-        end: hljs.MATCH_NOTHING_RE,
-        contains: [
-          {
-            className: 'title',
-            match: typeIdentifier,
-            relevance: 0
-          },
-          {
-            begin: /{/,
-            end: /}/,
-            relevance: 0,
-            endsParent: true,
-            keywords: [
-              ...precedencegroupKeywords,
-              ...literals
-            ],
-            contains: [ TYPE ]
-          }
-        ]
+        begin: [
+          /precedencegroup/,
+          /\s+/,
+          typeIdentifier
+        ],
+        className: {
+          1: "keyword",
+          3: "title"
+        },
+        contains: [ TYPE ],
+        keywords: [
+          ...precedencegroupKeywords,
+          ...literals
+        ],
+        end: /}/
       };
 
       // Add supported submodes to string interpolation.
@@ -10677,13 +10778,13 @@ var hljs = (function () {
           FUNCTION,
           INIT_SUBSCRIPT,
           {
-            className: 'class',
-            beginKeywords: 'struct protocol class extension enum',
+            beginKeywords: 'struct protocol class extension enum actor',
             end: '\\{',
             excludeEnd: true,
             keywords: KEYWORDS,
             contains: [
               hljs.inherit(hljs.TITLE_MODE, {
+                className: "title.class",
                 begin: /[A-Za-z$_][\u00C0-\u02B80-9A-Za-z$_]*/
               }),
               ...KEYWORD_MODES
@@ -10761,7 +10862,8 @@ var hljs = (function () {
         $pattern: IDENT_RE,
         keyword: KEYWORDS.concat(TS_SPECIFIC_KEYWORDS),
         literal: LITERALS,
-        built_in: BUILT_INS.concat(TYPES)
+        built_in: BUILT_INS.concat(TYPES),
+        "variable.language": BUILT_IN_VARIABLES
       };
       const DECORATOR = {
         className: 'meta',
@@ -10792,7 +10894,7 @@ var hljs = (function () {
       // JS use strict rule purposely excludes `asm` which makes no sense
       swapMode(tsLanguage, "use_strict", USE_STRICT);
 
-      const functionDeclaration = tsLanguage.contains.find(m => m.className === "function");
+      const functionDeclaration = tsLanguage.contains.find(m => m.label === "func.def");
       functionDeclaration.relevance = 0; // () => {} is more typical in TypeScript
 
       Object.assign(tsLanguage, {
