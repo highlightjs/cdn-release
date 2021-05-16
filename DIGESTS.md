@@ -6,11 +6,11 @@ To do this you simply need to add the `integrity` attribute for each JavaScript 
 
 ```html
 <script
-  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.0-beta0/highlight.min.js"
-  integrity="sha384-2UHBD+km2oT43ZDPc85P0tgg26hygz1vZb3ydlLu9ITsHmA4jj3/CzPJxM5Rkihs"></script>
+  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.0-beta1/highlight.min.js"
+  integrity="sha384-pA3mpJvEhf/IyTTsw12TX+ddwHnNWAKnzCciMJXDDhSTuLoG2WOwZF90suJw6hk5"></script>
 <!-- including any other grammars you might need to load -->
 <script
-  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.0-beta0/languages/go.min.js"
+  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.0-beta1/languages/go.min.js"
   integrity="sha384-rFquZ/snj+7+GynX2xDPDsD7DQIE6w8n91ynSWfX8Q0Pg9UmITvNLOf/noTwAKmF"></script>
 ```
 
@@ -19,16 +19,16 @@ The full list of digests for every file can be found below.
 ### Digests
 
 ```
-sha384-8UyyuiDKaDEyUYvu6nYpbBEG/iVmM9CsFjoRzfWBEKzI5qKdXRtKnKeUd3ZWrlip highlight.js
-sha384-2UHBD+km2oT43ZDPc85P0tgg26hygz1vZb3ydlLu9ITsHmA4jj3/CzPJxM5Rkihs highlight.min.js
-sha384-drSCJz+Uf5VQh0+swr3WO+o+gEJ37PsQdi2+6PEIiaGoHt9sNS1/z5pUFN4y34az languages/1c.min.js
+sha384-YuCuGwmPuVRAnD8Vj4ScQy1hLEuCnLaVyXiFKrk/D5Ww1gewtmnyy8FZL/31onj2 highlight.js
+sha384-pA3mpJvEhf/IyTTsw12TX+ddwHnNWAKnzCciMJXDDhSTuLoG2WOwZF90suJw6hk5 highlight.min.js
+sha384-NWHdaIpFOBbCQOkrmIusM6AZ5LR3bByH8AuX8qS3Lzb2MuHwnjPs/YWJ39d/fY/X languages/1c.min.js
 sha384-9RPpdBWEe4KUcJFCsNL8VJ1jqedvQoBq516fGycfsKte9lhnenclSG6Mjy7AT8Vs languages/ada.min.js
 sha384-boH1YwT5yf1m2dGRJ29v5ftrLFsCggP4qAs4V+bgeMxfDLY7EuiTAX6M0s/3FdVs languages/angelscript.min.js
 sha384-Je0foifKgCmfdf8VFALOpZPTxMmBr2lVTrGyckwAFqxRkwSP0FSX815odFlT0bm0 languages/apache.min.js
 sha384-cEtMoSAOLzyNurRfL72D4drh7qBI+HxCXZqq7a8kC4inqqjwxfyor+YaE0Cf5Wgc languages/arcade.min.js
 sha384-/ypFLY/qLDzfVh946ts6uLxFnMdd1OaNj5jFMhYlyU0cXFo94i4uME++tItZQ6lb languages/armasm.min.js
 sha384-ekfzauKoi8h4q0eMBHbGmNRDw0ldJqgTyUHSDm91+tvfLqRDpKH5qhnd0NCGOOZ9 languages/autohotkey.min.js
-sha384-ymdywucjk98TAThS1FoRiwon7vYnn/AMBi8kaoIZ/3a1eoydHk4RvyqhRbs6lrd7 languages/autoit.min.js
+sha384-L++m3J5d/M1YKs4EJdJeq0Tw7/cTvGII2NRBE56bEIfs2MRzoQdgjtHxrYVfS9PS languages/autoit.min.js
 sha384-HrH//tYXHXNZwR/o04uJOdnlWauibuxyZYIQPPIQLdVxl87Zv3azuciiHKygOfRf languages/avrasm.min.js
 sha384-08r+3TH9onFPvLk8Cvx0wWcdbdfY6dpbljOuYLPJIjdMAXAJ8QQSGXqzQ0eBVWZT languages/awk.min.js
 sha384-CTzGMmHfPnxR/asrb5EO6EYC9oJ9Tzxeo2SdpzFVtKr313+XS/+vKded4oYsHsyI languages/axapta.min.js
@@ -45,7 +45,8 @@ sha384-x//ggWQQKDYM6gkxzOdTUJNX9tNhjYBuM1SkQ3kgwzlFH9cxNW2meFXccjs06ubh language
 sha384-zIzbw2+p3dvIa3HYzspStzjsMnhXv9hym5T73mwgX9Eft+3fO7uKD8PcRfA5R454 languages/coq.min.js
 sha384-v5GKAd16DjIWpWmnBvlmhzU6uOJQZPUZ/qre77lXdg4kuN7kt5L2OIqrTlBvtmZo languages/cos.min.js
 sha384-ftdjNYapTzatmwg4z1FroT33gTsfAJ/tOb6lFodfUjhZbCA5tnaqJrLxWm+2BvdD languages/crmsh.min.js
-sha384-4oVayUOMkMm0v/uJnhfW7l0ErN3IuSFZXNEUCPyQEw19mCEsTBDcX6wl2PMY+GMU languages/csharp.min.js
+sha384-88JkWwNayhl9Ja5lgaf1UPoeLwX1jfohOrLxQjBKxZ8yYTpjRmCohxq3UlcrqOZU languages/crystal.min.js
+sha384-ZMZvVuwjmyQZVI2/G1sLpV3t67pTjgaznfcjMLWBAvnYPNuBPPuO3HGHaL9TNKuQ languages/csharp.min.js
 sha384-nyGSSznhfBEJNxBQbPC1vxP5aCZr1uU19UR8L42rnqp2OYJaw6VNjoo1qlvh+qrd languages/csp.min.js
 sha384-U7gCsZ9Gp3d5IQcZdxAwN0GhwIgayYh0W050kxsy1JK5eA7N5UkLfd5XpGEss6gq languages/d.min.js
 sha384-IwT78OT+drWD6uZDtlQ1MPv1l+oBBQ2bw4bDO/h0ppyyZaat6+/fLH27nMMbwlJl languages/dart.min.js
@@ -55,7 +56,7 @@ sha384-l9oHXaPrFvCUzBWeWxRprSw6C11OyBUifUpGa1CNXkEUp5fjePj4hy5vc6qPOdbR language
 sha384-I+z5IZiIygedPh/wLvEHFxs5Fyj0T0rl/EbhA4wgWGEB7HALHs7P9F7xKicdtOJH languages/dockerfile.min.js
 sha384-1KblKzwWMeKzANM67G8jtX/iVcu9gWg186SAerNEyFEAaVf/CT6A3Yt1nghWIcUv languages/dos.min.js
 sha384-h1tymHrmjF6qHhlYUBgndg/C+JRW37k1DfQ2CK14v89SaaquAy+uraeUG6jo3maJ languages/dsconfig.min.js
-sha384-TJnjLV9lardVMw5fhoC0u3AbSpUlZuaX4B7KCspyKNgDf9T2jURjMtv5suDjJeEB languages/dts.min.js
+sha384-4cgleTf4Eq1r9v7USKdkw9ghg9GIU1aOxKPevUJ617oLmEBgQ42TbGJFo3K8QdUz languages/dts.min.js
 sha384-eRpOUosqGr0qHiFQ+oDbuaSdW/FHVDQInPmFFzVQxIeENRTHi1XgXAYAAAM4gqmO languages/dust.min.js
 sha384-Q0Ts0Jv2mssitdPxryEM6VqtRnQFOlbb9Vheuq8tqae6awyZGIUfGXc3Pfg4ulua languages/ebnf.min.js
 sha384-g6d+vtBJCZ1oxjyuGW1gOHZQFPjQfMRSpNKgmnVlOVEcSVoZ54SsEDLWBot5CIA2 languages/elixir.min.js
@@ -66,7 +67,7 @@ sha384-EVG2ykU4i7v6DO9LrIZdkB6/Ekt0Vawfye1agmt+rO4vQsEpzOaPRc3NS9kliOQT language
 sha384-mT8N74tT/sPcE8PZtnmyFIRU5fjO8zA8UAO5OZXJAfnEKnsUShBkH+EtbhAgSAyq languages/fix.min.js
 sha384-1pNKcn/eUPoi7a93PFN3an59PKllY37Nx6CosIdD7gdzJt5W+dfzoEY17DOQSghn languages/flix.min.js
 sha384-/Zvkw1aQl1DFEbY829d0X3SOiTLgW+f9JJ4ByJvhqtekANE8YqdGNp5Tz5SDy/Yc languages/fsharp.min.js
-sha384-S7O4FRU0dafodwzRcOSEb9BH4YF4O/K2p1OEGnJDSqotUHDT0bG8HNgmrd7X6750 languages/gauss.min.js
+sha384-yYD7vwVX/n24QYi4KOxbhorMu1v7GEWrYb51FpPw2yx+8ImoB74Ym4PKUFeVj68C languages/gauss.min.js
 sha384-VqhnLZaoi8MMPtN7ANKk1HXrePth9prmlp49Qp2SwptiKXN9tKanf9xN131VOrzN languages/gcode.min.js
 sha384-UrhPOS61XL9sxSH0QTYN5ueghirkShyVSExy9Uk2fHlz7o52c8RNaC/jSlwm1nWr languages/gherkin.min.js
 sha384-XzQKGNJ4KcJ8kEVY8fvcva98uBNQxJ2Sf4THPGRYNrDSYdq5Hvv9MWROT4QKzZkP languages/glsl.min.js
@@ -76,8 +77,8 @@ sha384-218AnjVhYQEt8rui2FaUPKZCy72cGv4u5OrJ0LeKLGbuubyLmr/6Vn4JOmHWyT+w language
 sha384-dRUQqwjD3mqL20+kf0z88cGulyJRGIwID94dnkdNxhXX5xyKfX0IgwbgtoKYvuMP languages/gradle.min.js
 sha384-TuCAvKjEp94xVfmw7VRAnjoDDQcQoZvs6cY/8g2TYQ3+OR8NQJqJAn9mqGJjozC8 languages/haml.min.js
 sha384-hP6+W7Cbc2Vq7E5YIwkiT+03DZqfu7d0VS5UwnqZDCS/Z3GR0jytu0rtkjZl2koX languages/haskell.min.js
-sha384-bBjF9iksqKGrNHoolJBNEiCQb+7A/POecLfB2lL/KCq0Lqgdl6KBcbxzLpbV7igV languages/haxe.min.js
-sha384-PYi+8aIiMs0S/m1tc0v4x7PGA/D5evr2yCdM1Pd42WWx7Nwhnq33CIDBQwG4Xjgt languages/hsp.min.js
+sha384-/U7Z1pMVnsIUVVFUzqwN0BVLE2aPBTxlgJ1nxLAbxqFmEwseYuqldvCa+bHzBazy languages/haxe.min.js
+sha384-BgDBQKSkaGVW7mIG9RC8yDBuEmdivDxVHbluywpULCC0hmUHIZFXrpxbKgoRSG7R languages/hsp.min.js
 sha384-tDlnxREZ8YUhfMnZaffeZ4lzV8kTk4GJfn3OPmR1hkbYdIhMhUnXbjyvImr0b+Mu languages/hy.min.js
 sha384-i/Dy05ktXQgVDzV8G9rgRhR9Ve3MAzMYUFj9d9IfX9RihNdqW/ChfJuIJrjpwn6d languages/inform7.min.js
 sha384-OZrcb8T5rFffiSUdGVKpUl6VyUmurmdo/BH/KMJPHftEncDtj51ED7pJYy6gl793 languages/isbl.min.js
@@ -92,16 +93,15 @@ sha384-rOn7ZE80mgLvW2pa1lp742RyNYqwLSxssGrE8AP6wBgUQz3NYr06/vdFh/+s2n6j language
 sha384-9kZBNYc/QPKNzj6Ku9SHyDi08cgAPfsJxQSA5MqG15TZJfjcWz6dmlB++S0vO77I languages/livecodeserver.min.js
 sha384-HmgZCYX+hU72QMMdHOuDGXhyf/2rr5PKG7PcdrGzha8Ed69tO5NJGpiHWEA4VSmE languages/lsl.min.js
 sha384-SACfbePzEJYN1viOIfsms0xZvfdXdbKfO64gDJtKg13yf70gEi1Utdl/J6FnqzUJ languages/lua.min.js
-sha384-EAL/it1j0MqvRD8plWZNZF1ZjItmj8YSap6kr7sqMRBnKgdgsqKt8gBSGMJdWgss languages/makefile.min.js
+sha384-G68nrCZ7IJTh97tAt18Ch3Y1MbYbfFz2QTojG13niQgEy6mE3z/O7pK2mPMmEOul languages/makefile.min.js
 sha384-QRD3fIQmXsE0yF4A2U60TsArKVOpaAmQjefrs9sT7KodViyWgldExqROBSoMQtZv languages/matlab.min.js
-sha384-AFHLJOa1EafnyxE9WE5dqwtERSz4AKPUA1SkT6s6n93kb+5LVXiKG98LD3eA3wEf languages/crystal.min.js
 sha384-bfWKUx4btBNitySjJcBCzFFUcjtIAWeZ+6LajvcSVT0q3z/Ae3gyKB2TD9mx7jMZ languages/maxima.min.js
 sha384-ao5HZEdfYEBgfF5EpW2SUyeQu1OXfZ9nscRMOB9rz0cfu4xCuSh3fH16/M3NFv4s languages/mel.min.js
 sha384-BPFnVLkR+rNfiJN+UckGPNwq8714h+qCUPPAD9WqyjLER9jvEzdi9T1LmeZB8TsX languages/mercury.min.js
 sha384-ydRxb07zddIsmM8w0RB2qGAOsBEEwpQpadYXQZ67GVVQVk0WgJZy2MIfjbTLhBy+ languages/mipsasm.min.js
 sha384-NPnXMjgnbHWx4voFBLZ81vbTbPBjYFWdIv/U4HHdwJzyieZWk71Wx+c8Ca3ylW6A languages/mizar.min.js
 sha384-5l8YArFQyj6YihJ3Edflfbd/4iKOC4M6RKIEbXEo3I4j1YW6BvFcOGtuuH5tjMlH languages/mojolicious.min.js
-sha384-L39ot82OCLYxcvdtdL/NLtm+H5dQ7LWjf7D2c6fGKtN7YmyKJG2sNP2YqprBs1oz languages/monkey.min.js
+sha384-GpzZGV/0BGFGmOurqr62CQ8r3PFGEcZwla9g8DCqa780nc6newvzR8onoZowOL7f languages/monkey.min.js
 sha384-dXmkV5N9R5RvQbK1F/sGRnCHwRaw4vWydZK9tIFgiV7t1zt/0vUWhe/pa3q2v9mI languages/moonscript.min.js
 sha384-Nu+3W452wQ9CRWqF//Yeu9pyDqzf2HKj+wDUuuHXN8mRurZOfmnjcCxUqyUSRWFf languages/n1ql.min.js
 sha384-sgWucxTS2gCIAIXKqIefw8aK36kUAO2MUtlAkw9UJPGVvKnZ+dwIb5ObcBmaTsSN languages/nestedtext.min.js
@@ -109,9 +109,9 @@ sha384-AHjsZRctm1tPgnHqr7cECeQtjgpPUn+z0KCtwNg1W3hN1mKFp0jtr3MeS1f0Sv6C language
 sha384-cdsvqZdhFtN9f2OOD8IGrKnUjtyPXpjvZbsaoJavMpbdBp7QnmLV3E8d7gd//QzK languages/nix.min.js
 sha384-AY4iFmq9UsA9u1c3TwbK8gFZr1gidEukjA3WhpuNEJlnLdGC/TxGz5LtXNWUNTkJ languages/node-repl.min.js
 sha384-hXlN5RjcNCZyc1k+7cJhyQoyGX+e8UVQsTdUV9c++mSTUbzebDBO8X0PRTi2h+QS languages/nsis.min.js
-sha384-GYrKXCduCPwZwEwrzdo0l5MzeBj2ngsddnBArD13aGhLYZeHwfIJTMeTvHYwVnV8 languages/objectivec.min.js
+sha384-fLSWW/NfoD6buM/dzSMA+B32Rp3HT67VEGK489Nu2VnQ/ODn3BWfoO41VwT7OOaD languages/objectivec.min.js
 sha384-jMoDjaiOyioys+8cwaG8y2/X3WBIIu/1IM7ReKA/2FyNpaJyABE4uBPTa39IaEHO languages/ocaml.min.js
-sha384-HdOG5GpBq1iSzLDvtwVgM63z8qVoKAVhueHGxEn9p94zdeEKxWBhaQE0dTF3f0NB languages/openscad.min.js
+sha384-mJBCDIN38WaB6lnbaJZbIhgX5AU7RuRDzqMHMttxClkmbrfBD3CMiA/3fPePopwW languages/openscad.min.js
 sha384-aFvVIDZmt0iEHWm1kaafmdtHk7aiDRIDPWLdGcXUctR3Jsh65FiXkguKzifvAdey languages/oxygene.min.js
 sha384-1EkoPHKgQ14NaBML6WQwpaqU3QsSw3O3PQ7AnC5QIpTURbEMD5qAKwmg49hq3Wwp languages/parser3.min.js
 sha384-LogvK0btBQrFE0ouYeISK6ijqbqBtIM4BXdaNvT3I8pUf1h6EctnRZaWjL3qe99Q languages/pf.min.js
@@ -129,7 +129,7 @@ sha384-B9EdM1QAzGUr4qTBiEvBUrPXD/hoMJXBpz/5sfSD7RwVfQDfj2tHax8AJpmf41MD language
 sha384-iBlKb7y8L90GXzSSIo5JthJr+sECJJJ0+UMxgTm27S2ooAqUegzWDIi7MRGx4ufV languages/purebasic.min.js
 sha384-8r7q1IleicED+patBjtcTVgGn82qTptKmtQzpP4wistVDwA+62/iI3Gz3pjrzs8h languages/python-repl.min.js
 sha384-63eoubbwL/MravQEWQSuISRuMiRwhe1vy9KswfyCH4mLNelSyghDegOtv9G+GHEm languages/q.min.js
-sha384-XN4H46LZvk1Hjr4vDcpwPJelA2JhiBqSedUfqyDzWuYzOTOaK5VXXCkqIQWTLlO8 languages/reasonml.min.js
+sha384-WDF9o9MbMkRaZeUvjJw7pUQvlVjN7eRudoKdmnipYc8+gmHqNF52jpd0lGWYMQjY languages/reasonml.min.js
 sha384-BvRpA1zFC2KJWr1c1+ir4XhGxlsgEEiSmNNsh7oeRoR1wxFMxrzOWmLvySOptOKU languages/rib.min.js
 sha384-rWTFYkdCHaEf9omY+BRJyNguub90kpgODCOCpwWC8rmEdxmxBioWfWQihlX+8ZjM languages/roboconf.min.js
 sha384-pc7x6lDWQNIJX2AXpJzaqoopM2QfiuLPVfdZfrg1Z0/B50HsTXgHslfsQO8A9JCG languages/routeros.min.js
@@ -142,19 +142,19 @@ sha384-LSVP0g+BUMQY4fhVYXy145iiivTHgGm2q4bBKhrkKJMq+neZVKcB7IcOURt5uylB language
 sha384-8R0LlbUQpEtb8UI2YA72ZGv4uAnVk1fru9/yU0Xe5Lak8NmE03d4e30Htp6A+znw languages/smali.min.js
 sha384-rqAIAPSvVyIQ9brMmJ9QOOstapIHRGE4jkhTBXH8BE7r0h6cJDPw3FtiVKqWaTAt languages/smalltalk.min.js
 sha384-ew0YHyO4cpPE+njECIRXJvQuOV6UlJMNOIUve+D39F41XlhbJ3p/rV0Ti3EEUIGu languages/sml.min.js
-sha384-supWvFYnx3EfPhDMmsU2+6fnrtkFX6pXdtl9xQPQgVJcjqbR4zvIuC+djEDBt5uC languages/sqf.min.js
+sha384-I3w52bZpP2hcVMtWr+fd++Emsoyqs+3G4wAdQ3hvaB08UpFi9U5foHMODMwUjZU3 languages/sqf.min.js
 sha384-05O+FSgLZILrrJqXkwfNuxIuCcMRu6G6t1aLMn8I1/sZqE62Ld9EdRcqIgCu2Qlp languages/stan.min.js
 sha384-mcyrVjnaNodZ7qybeG1GowZdlKbS7Ef0iS6FndHGtZaID0zK5e2T59F1Bf0tiX6v languages/stata.min.js
 sha384-nKsqyS8C93+xpR6vSZgSzDBXagi+n+rS/XOv/3vf09D8ActIjCHNpiWKSaRwV5Jh languages/step21.min.js
 sha384-+HXbvTy+b3v6gn1TCWkeyFs2Z4XSR3E+YY0dNiDB3O2+30Q8cKgqiZfRuOxToUgq languages/subunit.min.js
-sha384-eBwSxH7cVV95IDDF6N4EYWp7BM3AK5XgvhQEY//JzXOBDvGbe17nGTID12kHdm62 languages/taggerscript.min.js
+sha384-B+ccgMjAzMxf3g0cvkI8BxkipUwXIttZvTHo7KtPkaXg3HCBJn8/M7iDj9bkNmN/ languages/taggerscript.min.js
 sha384-9r/yEiDmY4E2GmU76nfV6BjePlLBG8L2XAscHmkqT0GHlZeRcYCmylYej6Ioz594 languages/tap.min.js
 sha384-+HDOQBqRvqe7MqvlBJpbpxCvrhYFqbk6L3BRYOAwe4OckRHQg6j6BUCzxURwegUu languages/thrift.min.js
 sha384-ZC8FUTkNn/jcWNTcvXlOsjvHarq28Vs/LFR0hI/UoQsyOeQmM6ECvK1odvFXtS+R languages/tp.min.js
 sha384-qpcjkah3zGaeyumclm/MdIGEYQNr1S9Z5kunzoAbQx86EaWX9lF/kX7IN/GS9PV1 languages/twig.min.js
 sha384-bD9CFTHJTTQJParMjUiBvStm6x1dxG5nMDNRwhsWYnlrdMnABOlcb2gDQrV6FJvt languages/vala.min.js
 sha384-T+xrXZwGuakQQNp0tTCZ27b+53/W8sP1GfIrNW1e5kDiiGQwxTbxicSBEDaE0nzS languages/vbscript-html.min.js
-sha384-9QoUTfMOY5r2ItJn3R7hXcupWN+h0noPCygzIGWwccXJjLCUMRO5a14YrXnfnAHM languages/verilog.min.js
+sha384-I/2wIqESBef500lpJ/QPD6/Z2pb6W4vef4yz8eKdPwugFS12P3KAUc+LEsZVMMk4 languages/verilog.min.js
 sha384-wlRh6KR1mY1TpC2nlWlgg3Tq4FMCKztEpIMz1RKp6/S0XMdV7sFR/TocI7nrkbCy languages/vhdl.min.js
 sha384-wuW2s2ERjSzQBiHY4f183pON5WDEIGVZcXGlgVw+hAyJM/PA4mtHGTEjwkb+EpEi languages/vim.min.js
 sha384-fyAJ3VJZiGzG81NZvP0/d6kCqoi4AcIy38WuzdUZbtwKCShAcZZSK0N5XEea+NUf languages/x86asm.min.js
@@ -164,19 +164,19 @@ sha384-abeixzzZ05eZgGmXLe2EtRtR9T2jDVgA8Lhz7IKoj0tWq1+ko3qpsrSo0eweTZVv language
 sha384-+M/YColDaI1z5pftDUPxi/0RBiRR7Xm6sXnd1XmugHNlKP1S33xH9DSeG3KWUQLm languages/zephir.min.js
 sha384-3VbsSBnv1eeMbYKX8Bt/tQb7utmhuPZAJW4OXoVhYTxN0frz1YI32LqnOngydKSp languages/abnf.min.js
 sha384-I+OMngbuO3AP53k6ta+x45OtllZleLs11AKTr5B00mJPycr4RNSMYWJaL8LUB3KJ languages/accesslog.min.js
-sha384-dmrLQQwlfODLYqL4wEA131eveTFmEen3oWGr3WeSW9odBgG73MMUl67PUlxvAnWl languages/actionscript.min.js
+sha384-47MBMFEL/pUOgVlSxBPCS9gRp5aPQ+KRXRj7+FAh6aJwNag9ep1q+v+wyUMIhAkE languages/actionscript.min.js
 sha384-84q4TSlDiNrzNiRMvUNhxqELuLzbX0CZT2f0EtjjqZ54tG+xlFK5eDOF+S8Pehj/ languages/applescript.min.js
 sha384-jw2gEjCRHPj2RXW1vCPGeEHE4fixRL2hHSp6xs2ak5X6hLhFPlztJnRpyANZZ0xB languages/asciidoc.min.js
 sha384-USET+805UPk+cALknI5/hL/S9d0F4eIGWUOfgb/4JnHxXV2mgqEsB3GedDFYFcW/ languages/aspectj.min.js
 sha384-5FzHOY/fBHJ56z2IOJwkr9Q1gzJll72Y9cmxw1MJOEX0DZuEkSpoEdZ1HpMUqhMd languages/bash.min.js
-sha384-jP/LhsKGWJM5ouoQLrGQa+qNrR6oSeJKjh5RYz3m9JcR2lPKCXtXDIBVO+2jdvs6 languages/c.min.js
+sha384-HDuv/itO5FCUQ+NjjACWB3sYitrIcbYA80An2YzfrHXt+mYlU+X6C4ykyC0mVb+I languages/c.min.js
 sha384-hf6kHeR2UvAFPP+DkcnDZBHntFKjqlDwhi6hP8BLBK4Wihzci3eg4OCXH6xuTG0H languages/coffeescript.min.js
-sha384-x2uI/LXQXgo0Q9iBk5rnxJhw4D4WTE9ucqvJd49Ccr5GgKHj21Wbk7cUCvdqaopL languages/cpp.min.js
+sha384-7RaF4lt7ZqXu87Z2CQODpfhT58E1IQfli1AtRl5F9FYHNl4OG/z9gZoWZNTNrvY5 languages/cpp.min.js
 sha384-t8wAvsvWGJhCU9O6LJ/VoqH2rBjwyAmXEP953n3+8iJH8A61rlrOzYkMyfBroS6u languages/css.min.js
 sha384-MblaGx4cKJLmLbCb4ZALL7J8rBhaT7UpN4rZ58LJmbnby5cNmFxPrbNLPPr5qczv languages/diff.min.js
 sha384-d/i79mEEitmTXCjmb2Xn/m98r1+zWXnmrBNQNIQ7oP/fbF1osWDpcT6GSdeymWPM languages/erlang-repl.min.js
 sha384-v4CIFhGhfa9UZWSnbKZB1ncTKkmk7rOeq3m1QSUwG+3/x8KUVCwdqVQIFg4teK3e languages/fortran.min.js
-sha384-71G7qSkRjEbi8ZQeXbEuQ2xeHzodS1UJ7eSs1fm3DVDQNGY+2ntthT5Vks1cCf9Q languages/gams.min.js
+sha384-DVa2W43qIuZQDMl/gPIO6eIWZrLCZfIT1mWqBkdI7+2gBFrb12jAXANatdUvxkoc languages/gams.min.js
 sha384-LKFJfTUmR/Cew/UuBxT0kMHBUupq8oEaen8Gv7JHP6fL3+tvyGc1G0g7z1hawODi languages/groovy.min.js
 sha384-NP+H0kYrFWzOOf87RSfQamsIXtMYDQXTw+3xi5kqx/SiMXYRpYFabUI+kpy2IEGo languages/handlebars.min.js
 sha384-E29JHEt0l3hO2SDAnqxQyBgryQEePyDtw2gwZC/j6HE+HQdnCR11iiGO3Wu0QeGJ languages/http.min.js
@@ -184,9 +184,9 @@ sha384-SXGr6fZ6qpiGTLpJLSoFM1mNmunBRYxQqiqynKlduFNgwBng53pL7L4Pgr1y6emF language
 sha384-Hj8Q7Pxe6/LujOTiM3IO7cxEa4+wpWNObpCIIGrmA6kjK1NuDvHPcrTKMWwbEs5f languages/irpf90.min.js
 sha384-ZuB3nYZLO9gnPO2VqALbexG8KfIWQj7zLu/xyC6XVolO3igsRoUMG8/lvoUlbQlx languages/java.min.js
 sha384-9n4biM8mFbjrht4f7M2gaTHr1BuRH8v0bPVrRF57Wu6WhFWKmsV0BMIwX8J/tBKy languages/javascript.min.js
-sha384-2VZlOY1GGeHpmEPnJhVKDbeZsznNuBOtxH+TRYwHDEXilmYAXXs1NYXDyuAKC5mn languages/kotlin.min.js
+sha384-jm8TPFMrHKUL4HlE6x9eY0apvhabYDmXVOIx5HYwClSb2TF14kRC+Jv95sYsdxsM languages/kotlin.min.js
 sha384-qzGQ76GkCNeO2meFv7id/23SsBIxXs81dy4vu5kI+LLDMig6ICd/KWMMu7eGE+GT languages/latex.min.js
-sha384-vnc0FHWEwc2aMwY58DlHUItoqWAVpYlOGkXZk8fb/XfxB909Sp5RqtRtC3G7DUAW languages/less.min.js
+sha384-EXUY/3c6Iz1/aJQmbdPY/xNye9eeSTH4RtexqXxoNLvYmVzhH++5KlYLqa04X9qy languages/less.min.js
 sha384-sJcA7X9nUa1VB+vWsM12P0utMY39uyBCaCmGS0JMNmY1E4CaGizBTmvZrvatu6j7 languages/livescript.min.js
 sha384-i+QgEvhcuCJYJvF5HzebUkMp/u3V2faoIoHThuq2bLGH7NQYbdXOAW0W4z7k5SjN languages/llvm.min.js
 sha384-M4Qtyn+cFpVbub3Hqd+7bVpVMrsVMfajiJIvUlixvhSuNjrS//2gV2HOA7/Wh+EV languages/markdown.min.js
@@ -194,21 +194,22 @@ sha384-ynyGSwe6iiAamaRqvLD33DxSxLMsNHlwSwKHC9iCqordPQ0PeFFm/rPXFY9ninyB language
 sha384-kQ6X8lDIoXQZnshIcJ8fT6Gs4IvkypEE0h8TT8rWDW8iKb9T01hV4DqjNcr5yRsU languages/nginx.min.js
 sha384-o7ZK/6fHNWwhch0E4EgenW4zhAiUSsc+z+bCMOuhpvPB63HEy9EdrELysH/tDwjQ languages/perl.min.js
 sha384-NQtg0cypBkcBchzbHYrTe9EygoXZSyeL2D3/5dsdhxrkMO0MqS2qPGKgoD227YnY languages/processing.min.js
-sha384-0vJD5VnlSZVa5IsjGQqk5alfk5FlgxIkYlokJbwygBP17RyJ3CxVDb9eQgZhEzo8 languages/python.min.js
 sha384-YKEyFfSCVDXIuwx1m0vPetRPRuSJ3Ip40qqdRXtVn+WjKnZm0rAAxRmMci0SuSQL languages/qml.min.js
-sha384-6TLaR6YXa98L3gx883Vpl+erG1LN1rvyRPo60jI+3T1sm260dtU78fPFCU8ZUFrM languages/r.min.js
+sha384-M+uA8ZMSBV8cB/jj8ueZp7kIx11hSCDtaJ6WSSaaLo/2P5qEk6Axbx5ZmYxgLyct languages/r.min.js
 sha384-RprusKl3T6nZrhTdeJq19NnJ3CxgW4lNISvsQyfRN1nG91w4OxcOthmi/2vWOOC+ languages/ruby.min.js
-sha384-8pLPIwHB43kK7KVs3CpV2BhBvhsB4gISB8qa6CkNzxC9ffzTbzCgw5X52zMmIgyG languages/rust.min.js
+sha384-Baxu4Qer5viZqqAQcnxh+i/J6tE/8Qro381atu+kATFaRgcILgvzkBYWwinuHfAE languages/rust.min.js
 sha384-fL4JP9xXgA2N8CSvWg+eHtEWy/HZQv2r9hNVl+jPS6hJjfbWvGCZRnob0Avkced3 languages/sas.min.js
 sha384-eVBof2id0xa5ZECURNi2NNurZplMsgvQhYVyJ3LiAdpInd4yS9Cg1bltOt56orjI languages/scss.min.js
 sha384-jTSv5OSo63I9RRDU0+wsa0s849Lr5XaP+bzCirO5SLuALI7lQT2n7KDAPp2lL/eO languages/sql.min.js
 sha384-I42hR+D7KmHHBlUnDx7s8uyVeSiNo2RN4+63iwIb8hS7yWf1SpRFppJ6VCXH2rcw languages/stylus.min.js
 sha384-c/uzJXluwx2S/CIbYoakO2A8/6h3/SFC0+9+hVpn6wSz85d+EcB+ynbgzh4HlBCk languages/swift.min.js
 sha384-L1XKDn/O4OMhriFBxuluGjESzKs34WLI/UJblgoZcbm0pzz8h0i4WEc9gdlR2gln languages/tcl.min.js
-sha384-nP1r1X0JUOcgrtxZnx86C73+NabFmDJ6cZCIN4YctaNisb3eo1qJVQdq0E1rowP4 languages/vbnet.min.js
+sha384-0+nuGcJ35I9lTMF9+hd/6W0i7c7NFkrX50h3OnmRrYJJBC/YVnc5svCmuiFaLYPD languages/vbnet.min.js
 sha384-nXIAIIg2Ktcs/Bam/v2lEA31CET1vVWNgh5+yEvCiAy7UCWKP40bq8iKP7Vexks5 languages/vbscript.min.js
 sha384-rjmtwa+GNpBIIaWw/XclgTwEKMz2/4AS3hSovpqWqMN9gPyk7AWG/Kzmc1gYpM2G languages/wasm.min.js
-sha384-xjNCPNTUqxNFYAdYERTi27+wS4665ZNMZ0WrwVL8BqIy0KPz+KNRufWmfbyCA340 languages/xml.min.js
-sha384-giEG/Vzzqh1OfV+fUKQadD84tSwugqs/PCCK4AyG4DcwXunEDp01TIzzSxnheie3 languages/arduino.min.js
+sha384-+pXdCds0wXviRE2B/evtGknrlUtVx76fQ8M8E3IIbYWgRiMsCdN3XTq3Og63YzAB languages/wren.min.js
+sha384-5jb/wREyFbOi0NSOWl4qH4/Azy7KtKIcKOMVk0KVRdSd8aG83qqJ/lF0/DZJxcA/ languages/xml.min.js
+sha384-pAAQS55mmaCj8ouQ/30hLnFDVkHyZvhLkMWs0HJcA00YcUTJaHbt6XeF8zfx9VmE languages/arduino.min.js
+sha384-+JFQe5X4KzIPS+4r8UIy72rf+fiwWAuKh1MarlKyB3FPrfSKkDV/wycfA3Q5VLZf languages/python.min.js
 sha384-14Eq5Oa0E7ZLD0ykcS5sylkowWMCSmCkgdEXEUguTO4tH/HGpOuSydLNIMVTCmbS languages/typescript.min.js
 ```

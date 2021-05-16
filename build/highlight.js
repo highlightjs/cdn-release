@@ -1,10 +1,12 @@
 /*!
-  Highlight.js v11.0.0-beta0 (git: f7e5e3333d)
+  Highlight.js v11.0.0-beta1 (git: bc7ef3d912)
   (c) 2006-2021 Ivan Sagalaev and other contributors
   License: BSD-3-Clause
  */
 var hljs = (function () {
     'use strict';
+
+    var deepFreezeEs6 = {exports: {}};
 
     function deepFreeze(obj) {
         if (obj instanceof Map) {
@@ -32,9 +34,10 @@ var hljs = (function () {
         return obj;
     }
 
-    var deepFreezeEs6 = deepFreeze;
-    var _default = deepFreeze;
-    deepFreezeEs6.default = _default;
+    deepFreezeEs6.exports = deepFreeze;
+    deepFreezeEs6.exports.default = deepFreeze;
+
+    var deepFreeze$1 = deepFreezeEs6.exports;
 
     
     /** @typedef {import('highlight.js').CompiledMode} CompiledMode */
@@ -882,7 +885,7 @@ var hljs = (function () {
      */
     function compileKeywords(rawKeywords, caseInsensitive, scopeName = DEFAULT_KEYWORD_SCOPE) {
       /** @type KeywordDict */
-      const compiledKeywords = {};
+      const compiledKeywords = Object.create(null);
 
       // input can be a string of keywords, an array of keywords, or a object with
       // named keys representing scopeName (which can then point to a string or array)
@@ -1537,7 +1540,7 @@ var hljs = (function () {
       return mode;
     }
 
-    var version = "11.0.0-beta0";
+    var version = "11.0.0-beta1";
 
     /*
     Syntax highlighting with language autodetection.
@@ -1568,6 +1571,7 @@ var hljs = (function () {
     const escape = escapeHTML;
     const inherit = inherit$1;
     const NO_MATCH = Symbol("nomatch");
+    const MAX_KEYWORD_HITS = 7;
 
     /**
      * @param {any} hljs - object that is extended (legacy)
@@ -1597,6 +1601,7 @@ var hljs = (function () {
         noHighlightRe: /^(no-?highlight)$/i,
         languageDetectRe: /\blang(?:uage)?-([\w-]+)\b/i,
         classPrefix: 'hljs-',
+        cssSelector: 'pre code',
         languages: null,
         // beta configuration options, subject to change, welcome to discuss
         // https://github.com/highlightjs/highlight.js/issues/1086
@@ -1677,6 +1682,10 @@ var hljs = (function () {
           code = optionsOrCode;
         }
 
+        // https://github.com/highlightjs/highlight.js/issues/3149
+        // eslint-disable-next-line no-undefined
+        if (ignoreIllegals === undefined) { ignoreIllegals = true; }
+
         /** @type {BeforeHighlightContext} */
         const context = {
           code,
@@ -1709,15 +1718,16 @@ var hljs = (function () {
        * @returns {HighlightResult} - result of the highlight operation
       */
       function _highlight(languageName, codeToHighlight, ignoreIllegals, continuation) {
+        const keywordHits = Object.create(null);
+
         /**
          * Return keyword data if a match is a keyword
          * @param {CompiledMode} mode - current mode
-         * @param {RegExpMatchArray} match - regexp match data
+         * @param {string} matchText - the textual match
          * @returns {KeywordData | false}
          */
-        function keywordData(mode, match) {
-          const matchText = language.case_insensitive ? match[0].toLowerCase() : match[0];
-          return Object.prototype.hasOwnProperty.call(mode.keywords, matchText) && mode.keywords[matchText];
+        function keywordData(mode, matchText) {
+          return mode.keywords[matchText];
         }
 
         function processKeywords() {
@@ -1733,13 +1743,15 @@ var hljs = (function () {
 
           while (match) {
             buf += modeBuffer.substring(lastIndex, match.index);
-            const data = keywordData(top, match);
+            const word = language.case_insensitive ? match[0].toLowerCase() : match[0];
+            const data = keywordData(top, word);
             if (data) {
               const [kind, keywordRelevance] = data;
               emitter.addText(buf);
               buf = "";
 
-              relevance += keywordRelevance;
+              keywordHits[word] = (keywordHits[word] || 0) + 1;
+              if (keywordHits[word] <= MAX_KEYWORD_HITS) relevance += keywordRelevance;
               if (kind.startsWith("_")) {
                 // _ implied for relevance only, do not highlight
                 // by applying a class name
@@ -2310,7 +2322,7 @@ var hljs = (function () {
           return;
         }
 
-        const blocks = document.querySelectorAll('pre code');
+        const blocks = document.querySelectorAll(options.cssSelector);
         blocks.forEach(highlightElement);
       }
 
@@ -2490,7 +2502,7 @@ var hljs = (function () {
         // @ts-ignore
         if (typeof MODES$1[key] === "object") {
           // @ts-ignore
-          deepFreezeEs6(MODES$1[key]);
+          deepFreeze$1(MODES$1[key]);
         }
       }
 
@@ -2747,7 +2759,7 @@ var hljs = (function () {
         begin: /#\s*[a-z]+\b/,
         end: /$/,
         keywords: {
-          'meta-keyword':
+          keyword:
             'if else elif endif define undef warning error line ' +
             'pragma _Pragma ifdef ifndef include'
         },
@@ -2757,10 +2769,10 @@ var hljs = (function () {
             relevance: 0
           },
           hljs.inherit(STRINGS, {
-            className: 'meta-string'
+            className: 'string'
           }),
           {
-            className: 'meta-string',
+            className: 'string',
             begin: /<.*?>/
           },
           C_LINE_COMMENT_MODE,
@@ -3006,6 +3018,9 @@ var hljs = (function () {
     Language: C++
     Category: common, system
     Website: https://isocpp.org
+
+    TODO: Properly handle common namespaces (std, chrono, etc.).
+    TODO: Properly handle type traits and type trait helper types (_t) and values (_v).
     */
 
     /** @type LanguageFn */
@@ -3028,8 +3043,9 @@ var hljs = (function () {
         optional(NAMESPACE_RE) +
         '[a-zA-Z_]\\w*' + optional(TEMPLATE_ARGUMENT_RE) +
       ')';
+
       const CPP_PRIMITIVE_TYPES = {
-        className: 'keyword',
+        className: 'type',
         begin: '\\b[a-z\\d_]*_t\\b'
       };
 
@@ -3046,7 +3062,7 @@ var hljs = (function () {
             contains: [ hljs.BACKSLASH_ESCAPE ]
           },
           {
-            begin: '(u8?|U|L)?\'(' + CHARACTER_ESCAPES + "|.)",
+            begin: '(u8?|U|L)?\'(' + CHARACTER_ESCAPES + '|.)',
             end: '\'',
             illegal: '.'
           },
@@ -3078,7 +3094,7 @@ var hljs = (function () {
         begin: /#\s*[a-z]+\b/,
         end: /$/,
         keywords: {
-          'meta-keyword':
+          keyword:
             'if else elif endif define undef warning error line ' +
             'pragma _Pragma ifdef ifndef include'
         },
@@ -3088,10 +3104,10 @@ var hljs = (function () {
             relevance: 0
           },
           hljs.inherit(STRINGS, {
-            className: 'meta-string'
+            className: 'string'
           }),
           {
-            className: 'meta-string',
+            className: 'string',
             begin: /<.*?>/
           },
           C_LINE_COMMENT_MODE,
@@ -3107,38 +3123,214 @@ var hljs = (function () {
 
       const FUNCTION_TITLE = optional(NAMESPACE_RE) + hljs.IDENT_RE + '\\s*\\(';
 
-      const COMMON_CPP_HINTS = [
+      // https://en.cppreference.com/w/cpp/keyword
+      const RESERVED_KEYWORDS = [
+        'alignas',
+        'alignof',
+        'and',
+        'and_eq',
+        'asm',
+        'atomic_cancel',
+        'atomic_commit',
+        'atomic_noexcept',
+        'auto',
+        'bitand',
+        'bitor',
+        'break',
+        'case',
+        'catch',
+        'class',
+        'co_await',
+        'co_return',
+        'co_yield',
+        'compl',
+        'concept',
+        'const',
+        'const_cast|10',
+        'consteval',
+        'constexpr',
+        'constinit',
+        'continue',
+        'decltype',
+        'default',
+        'delete',
+        'do',
+        'dynamic_cast|10',
+        'else',
+        'enum',
+        'explicit',
+        'export',
+        'extern',
+        'false',
+        'final',
+        'for',
+        'friend',
+        'goto',
+        'if',
+        'import',
+        'inline',
+        'module',
+        'mutable',
+        'namespace',
+        'new',
+        'noexcept',
+        'not',
+        'not_eq',
+        'nullptr',
+        'operator',
+        'or',
+        'or_eq',
+        'override',
+        'private',
+        'protected',
+        'public',
+        'reflexpr',
+        'register',
+        'reinterpret_cast|10',
+        'requires',
+        'return',
+        'signed',
+        'sizeof',
+        'static',
+        'static_assert',
+        'static_cast|10',
+        'struct',
+        'switch',
+        'synchronized',
+        'template',
+        'this',
+        'thread_local',
+        'throw',
+        'transaction_safe',
+        'transaction_safe_dynamic',
+        'true',
+        'try',
+        'typedef',
+        'typeid',
+        'typename',
+        'union',
+        'unsigned',
+        'using',
+        'virtual',
+        'volatile',
+        'while',
+        'xor',
+        'xor_eq,'
+      ];
+
+      // https://en.cppreference.com/w/cpp/keyword
+      const RESERVED_TYPES = [
+        'bool',
+        'char',
+        'char16_t',
+        'char32_t',
+        'char8_t',
+        'double',
+        'float',
+        'int',
+        'long',
+        'short',
+        'void',
+        'wchar_t'
+      ];
+
+      const TYPES = [
+        'any',
+        'array',
+        'async',
+        'auto_ptr',
+        'barrier',
+        'binary_semaphore',
+        'bitset',
+        'complex',
+        'condition_variable',
+        'condition_variable_any',
+        'counting_semaphore',
+        'deque',
+        'false_type',
+        'function',
+        'future',
+        'imaginary',
+        'initializer_list',
+        'istringstream',
+        'jthread',
+        'latch',
+        'list',
+        'lock_guard',
+        'map',
+        'multimap',
+        'multiset',
+        'mutex',
+        'optional',
+        'ostringstream',
+        'packaged_task',
+        'pair',
+        'promise',
+        'priority_queue',
+        'queue',
+        'recursive_mutex',
+        'recursive_timed_mutex',
+        'scoped_lock',
+        'set',
+        'shared_future',
+        'shared_lock',
+        'shared_mutex',
+        'shared_timed_mutex',
+        'shared_ptr',
+        'stack',
+        'string',
+        'string_view',
+        'stringstream',
+        'timed_mutex',
+        'thread',
+        'true_type',
+        'tuple',
+        'unique_lock',
+        'unique_ptr',
+        'unordered_map',
+        'unordered_multimap',
+        'unordered_multiset',
+        'unordered_set',
+        'variant',
+        'vector',
+        'weak_ptr',
+        'wstring',
+        'wstring_view'
+      ];
+
+      const COMMON_FUNCTIONS = [
+        'abort',
+        'abs',
+        'acos',
+        'apply',
+        'as_const',
         'asin',
-        'atan2',
         'atan',
+        'atan2',
         'calloc',
         'ceil',
-        'cosh',
+        'cerr',
+        'cin',
+        'clog',
         'cos',
+        'cosh',
+        'cout',
+        'declval',
+        'endl',
+        'exchange',
         'exit',
         'exp',
         'fabs',
         'floor',
         'fmod',
+        'forward',
         'fprintf',
         'fputs',
         'free',
         'frexp',
-        'auto_ptr',
-        'deque',
-        'list',
-        'queue',
-        'stack',
-        'vector',
-        'map',
-        'set',
-        'pair',
-        'bitset',
-        'multiset',
-        'multimap',
-        'unordered_set',
         'fscanf',
         'future',
+        'invoke',
         'isalnum',
         'isalpha',
         'iscntrl',
@@ -3150,30 +3342,39 @@ var hljs = (function () {
         'isspace',
         'isupper',
         'isxdigit',
-        'tolower',
-        'toupper',
         'labs',
+        'launder',
         'ldexp',
-        'log10',
         'log',
+        'log10',
+        'make_pair',
+        'make_shared',
+        'make_shared_for_overwrite',
+        'make_tuple',
+        'make_unique',
         'malloc',
-        'realloc',
         'memchr',
         'memcmp',
         'memcpy',
         'memset',
         'modf',
+        'move',
         'pow',
         'printf',
         'putchar',
         'puts',
+        'realloc',
         'scanf',
-        'sinh',
         'sin',
+        'sinh',
         'snprintf',
         'sprintf',
         'sqrt',
         'sscanf',
+        'std',
+        'stderr',
+        'stdin',
+        'stdout',
         'strcat',
         'strchr',
         'strcmp',
@@ -3187,64 +3388,47 @@ var hljs = (function () {
         'strrchr',
         'strspn',
         'strstr',
-        'tanh',
+        'swap',
         'tan',
-        'unordered_map',
-        'unordered_multiset',
-        'unordered_multimap',
-        'priority_queue',
-        'make_pair',
-        'array',
-        'shared_ptr',
-        'abort',
+        'tanh',
         'terminate',
-        'abs',
-        'acos',
+        'to_underlying',
+        'tolower',
+        'toupper',
         'vfprintf',
+        'visit',
         'vprintf',
-        'vsprintf',
-        'endl',
-        'initializer_list',
-        'unique_ptr',
-        'complex',
-        'imaginary',
-        'std',
-        'string',
-        'wstring',
-        'cin',
-        'cout',
-        'cerr',
-        'clog',
-        'stdin',
-        'stdout',
-        'stderr',
-        'stringstream',
-        'istringstream',
-        'ostringstream'
+        'vsprintf'
+      ];
+
+      const BUILT_INS = [
+        '_Bool',
+        '_Complex',
+        '_Imaginary'
+      ];
+
+      const LITERALS = [
+        'NULL',
+        'false',
+        'nullopt',
+        'nullptr',
+        'true'
       ];
 
       const CPP_KEYWORDS = {
-        keyword: 'int float while private char char8_t char16_t char32_t catch import module export virtual operator sizeof ' +
-          'dynamic_cast|10 typedef const_cast|10 const for static_cast|10 union namespace ' +
-          'unsigned long volatile static protected bool template mutable if public friend ' +
-          'do goto auto void enum else break extern using asm case typeid wchar_t ' +
-          'short reinterpret_cast|10 default double register explicit signed typename try this ' +
-          'switch continue inline delete alignas alignof constexpr consteval constinit decltype ' +
-          'concept co_await co_return co_yield requires ' +
-          'noexcept static_assert thread_local restrict final override ' +
-          'atomic_bool atomic_char atomic_schar ' +
-          'atomic_uchar atomic_short atomic_ushort atomic_int atomic_uint atomic_long atomic_ulong atomic_llong ' +
-          'atomic_ullong new throw return ' +
-          'and and_eq bitand bitor compl not not_eq or or_eq xor xor_eq struct',
-        built_in: '_Bool _Complex _Imaginary',
-        _relevance_hints: COMMON_CPP_HINTS,
-        literal: 'true false nullptr NULL'
+        type: [...RESERVED_TYPES, ...TYPES],
+        keyword: RESERVED_KEYWORDS,
+        built_in: BUILT_INS,
+        literal: LITERALS
       };
 
       const FUNCTION_DISPATCH = {
-        className: "function.dispatch",
+        className: 'function.dispatch',
         relevance: 0,
-        keywords: CPP_KEYWORDS,
+        keywords: {
+          // only for relevance, not highlighting
+          _hint: COMMON_FUNCTIONS
+        },
         begin: concat(
           /\b/,
           /(?!decltype)/,
@@ -3252,7 +3436,7 @@ var hljs = (function () {
           /(?!for)/,
           /(?!while)/,
           hljs.IDENT_RE,
-          lookahead(/\s*\(/))
+          lookahead(/(<[^<>]+>|)\s*\(/))
       };
 
       const EXPRESSION_CONTAINS = [
@@ -3264,7 +3448,6 @@ var hljs = (function () {
         NUMBERS,
         STRINGS
       ];
-
 
       const EXPRESSION_CONTEXT = {
         // This mode covers expression context where we can't expect a function
@@ -3388,7 +3571,7 @@ var hljs = (function () {
         keywords: CPP_KEYWORDS,
         illegal: '</',
         classNameAliases: {
-          "function.dispatch": "built_in"
+          'function.dispatch': 'built_in'
         },
         contains: [].concat(
           EXPRESSION_CONTEXT,
@@ -3398,7 +3581,7 @@ var hljs = (function () {
           [
             PREPROCESSOR,
             { // containers: ie, `vector <int> rooms (9);`
-              begin: '\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<',
+              begin: '\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array|tuple|optional|variant|function)\\s*<',
               end: '>',
               keywords: CPP_KEYWORDS,
               contains: [
@@ -3418,8 +3601,8 @@ var hljs = (function () {
                 /\w+/
               ],
               className: {
-                1: "keyword",
-                3: "title.class"
+                1: 'keyword',
+                3: 'title.class'
               }
             }
           ])
@@ -3757,7 +3940,7 @@ var hljs = (function () {
             begin: '#',
             end: '$',
             keywords: {
-              'meta-keyword': 'if else elif endif define undef warning error line region endregion pragma checksum'
+              keyword: 'if else elif endif define undef warning error line region endregion pragma checksum'
             }
           },
           STRING,
@@ -3809,7 +3992,7 @@ var hljs = (function () {
             excludeEnd: true,
             contains: [
               {
-                className: 'meta-string',
+                className: 'string',
                 begin: /"/,
                 end: /"/
               }
@@ -5865,7 +6048,7 @@ var hljs = (function () {
             end: /\)/,
             contains: [
               hljs.inherit(STRING, {
-                className: 'meta-string'
+                className: 'string'
               })
             ]
           }
@@ -6217,8 +6400,9 @@ var hljs = (function () {
             begin: '::(' + PSEUDO_ELEMENTS.join('|') + ')'
           },
           {
-            begin: '\\(',
-            end: '\\)',
+            begin: /\(/,
+            end: /\)/,
+            relevance: 0,
             contains: VALUE_WITH_RULESETS
           }, // argument list of parametric mixins
           {
@@ -6389,7 +6573,7 @@ var hljs = (function () {
         end: /$/,
         keywords: {
           $pattern: /[\.\w]+/,
-          'meta-keyword': '.PHONY'
+          keyword: '.PHONY'
         }
       };
       /* Targets */
@@ -6443,7 +6627,7 @@ var hljs = (function () {
         begin: /\s/,
         contains: [
           {
-            className: 'meta-keyword',
+            className: 'keyword',
             begin: /#?[a-z_][a-z1-9_-]+/,
             illegal: /\n/
           }
@@ -6454,10 +6638,10 @@ var hljs = (function () {
         end: /\)/
       });
       const APOS_META_STRING_MODE = hljs.inherit(hljs.APOS_STRING_MODE, {
-        className: 'meta-string'
+        className: 'string'
       });
       const QUOTE_META_STRING_MODE = hljs.inherit(hljs.QUOTE_STRING_MODE, {
-        className: 'meta-string'
+        className: 'string'
       });
       const TAG_INTERNALS = {
         endsWithParent: true,
@@ -7098,7 +7282,7 @@ var hljs = (function () {
             begin: /#\s*[a-z]+\b/,
             end: /$/,
             keywords: {
-              'meta-keyword':
+              keyword:
                 'if else elif endif define undef warning error line ' +
                 'pragma ifdef ifndef include'
             },
@@ -7108,10 +7292,10 @@ var hljs = (function () {
                 relevance: 0
               },
               hljs.inherit(hljs.QUOTE_STRING_MODE, {
-                className: 'meta-string'
+                className: 'string'
               }),
               {
-                className: 'meta-string',
+                className: 'string',
                 begin: /<.*?>/,
                 end: /$/,
                 illegal: '\\n'
@@ -8262,27 +8446,37 @@ var hljs = (function () {
           COMMENT_TYPE,
           hljs.HASH_COMMENT_MODE,
           {
+            match: [
+              /def/, /\s+/,
+              IDENT_RE$1
+            ],
+            scope: {
+              1: "keyword",
+              3: "title.function"
+            },
+            contains: [ PARAMS ]
+          },
+          {
             variants: [
               {
-                className: 'function',
-                beginKeywords: 'def'
+                match: [
+                  /class/, /\s+/,
+                  IDENT_RE$1, /\s*/,
+                  /\(\s*/, IDENT_RE$1,/\s*\)/
+                ],
               },
               {
-                className: 'class',
-                beginKeywords: 'class'
+                match: [
+                  /class/, /\s+/,
+                  IDENT_RE$1
+                ],
               }
             ],
-            end: /:/,
-            illegal: /[${=;\n,]/,
-            contains: [
-              hljs.UNDERSCORE_TITLE_MODE,
-              PARAMS,
-              {
-                begin: /->/,
-                endsWithParent: true,
-                keywords: KEYWORDS
-              }
-            ]
+            scope: {
+              1: "keyword",
+              3: "title.class",
+              6: "title.class.inherited",
+            }
           },
           {
             className: 'meta',
@@ -8441,7 +8635,7 @@ var hljs = (function () {
                   begin: /@[a-zA-Z]+/
                 },
                 {
-                  className: 'meta-keyword',
+                  className: 'keyword',
                   begin: /\\[a-zA-Z]+/,
                 }
               ]
@@ -9114,7 +9308,7 @@ var hljs = (function () {
             end: '\\]',
             contains: [
               {
-                className: 'meta-string',
+                className: 'string',
                 begin: /"/,
                 end: /"/
               }
@@ -11030,7 +11224,7 @@ var hljs = (function () {
         begin: /[\t ]*#(const|disable|else|elseif|enable|end|externalsource|if|region)\b/,
         end: /$/,
         keywords: {
-          'meta-keyword':
+          keyword:
             'const disable else elseif enable end externalsource if region then'
         },
         contains: [ COMMENT ]
