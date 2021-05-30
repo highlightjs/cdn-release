@@ -1,11 +1,10 @@
 hljs.registerLanguage("scala",(()=>{"use strict";return e=>{const n={
 className:"subst",variants:[{begin:"\\$[A-Za-z0-9_]+"},{begin:/\$\{/,end:/\}/}]
-},a={className:"string",variants:[{begin:'"',end:'"',illegal:"\\n",
-contains:[e.BACKSLASH_ESCAPE]},{begin:'"""',end:'"""',relevance:10},{
-begin:'[a-z]+"',end:'"',illegal:"\\n",contains:[e.BACKSLASH_ESCAPE,n]},{
-className:"string",begin:'[a-z]+"""',end:'"""',contains:[n],relevance:10}]},s={
-className:"type",begin:"\\b[A-Z][A-Za-z0-9_]*",relevance:0},t={
-className:"title",
+},a={className:"string",variants:[{begin:'"""',end:'"""'},{begin:'"',end:'"',
+illegal:"\\n",contains:[e.BACKSLASH_ESCAPE]},{begin:'[a-z]+"',end:'"',
+illegal:"\\n",contains:[e.BACKSLASH_ESCAPE,n]},{className:"string",
+begin:'[a-z]+"""',end:'"""',contains:[n],relevance:10}]},s={className:"type",
+begin:"\\b[A-Z][A-Za-z0-9_]*",relevance:0},t={className:"title",
 begin:/[^0-9\n\t "'(),.`{}\[\]:;][^\n\t "'(),.`{}\[\]:;]+|[^0-9\n\t "'(),.`{}\[\]:;=]/,
 relevance:0},i={className:"class",beginKeywords:"class object trait type",
 end:/[:={\[\n;]/,excludeEnd:!0,

@@ -13,7 +13,7 @@ keyword:"byte short char int long boolean float double void def as in assert tra
 className:"class",beginKeywords:"class interface trait enum",end:/\{/,
 illegal:":",contains:[{beginKeywords:"extends implements"
 },n.UNDERSCORE_TITLE_MODE]},{className:"meta",begin:"@[A-Za-z]+",relevance:0},{
-className:"attr",begin:a+"[ \t]*:"},{begin:/\?/,end:/:/,relevance:0,
+className:"attr",begin:a+"[ \t]*:",relevance:0},{begin:/\?/,end:/:/,relevance:0,
 contains:[t,r,s,i,"self"]},{className:"symbol",
 begin:"^[ \t]*"+(l=a+":",((...e)=>e.map((e=>(e=>e?"string"==typeof e?e:e.source:null)(e))).join(""))("(?=",l,")")),
 excludeBegin:!0,end:a+":",relevance:0}],illegal:/#|<\//};var l}})());
