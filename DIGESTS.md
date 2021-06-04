@@ -6,11 +6,11 @@ To do this you simply need to add the `integrity` attribute for each JavaScript 
 
 ```html
 <script
-  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.0/highlight.min.js"
-  integrity="sha384-JhrcP2el6g7GGqn12Y7l6KpZJxafMktR3L92+vrwi4M/JnTc/mN+XofR7OphdDG6"></script>
+  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"
+  integrity="sha384-ebDmtzOyoZuq2QOXz6Vl9+fZW1dNVSNR3+gs8N2o3QCdPqe5ujyEEJlDOUXq5Lak"></script>
 <!-- including any other grammars you might need to load -->
 <script
-  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.0/languages/go.min.js"
+  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/languages/go.min.js"
   integrity="sha384-rFquZ/snj+7+GynX2xDPDsD7DQIE6w8n91ynSWfX8Q0Pg9UmITvNLOf/noTwAKmF"></script>
 ```
 
@@ -19,8 +19,8 @@ The full list of digests for every file can be found below.
 ### Digests
 
 ```
-sha384-l83MYD2E1VnNYddV0ywNi9dXjB917+yNueni9Li16NnXbO6uxe7c/egezP+7SoJC highlight.js
-sha384-JhrcP2el6g7GGqn12Y7l6KpZJxafMktR3L92+vrwi4M/JnTc/mN+XofR7OphdDG6 highlight.min.js
+sha384-3j0RkbmRE9wEoSiNGtsw3MqlMF+Slv2/rVxB+asVm7nkFAwNveYZsj+wCwz4FPI/ highlight.js
+sha384-ebDmtzOyoZuq2QOXz6Vl9+fZW1dNVSNR3+gs8N2o3QCdPqe5ujyEEJlDOUXq5Lak highlight.min.js
 sha384-NWHdaIpFOBbCQOkrmIusM6AZ5LR3bByH8AuX8qS3Lzb2MuHwnjPs/YWJ39d/fY/X languages/1c.min.js
 sha384-9RPpdBWEe4KUcJFCsNL8VJ1jqedvQoBq516fGycfsKte9lhnenclSG6Mjy7AT8Vs languages/ada.min.js
 sha384-boH1YwT5yf1m2dGRJ29v5ftrLFsCggP4qAs4V+bgeMxfDLY7EuiTAX6M0s/3FdVs languages/angelscript.min.js
@@ -162,9 +162,9 @@ sha384-5imR8/IVcOkVbVpmhbDq6VOaWTdy+HsbC49/QBJXdF7Zpz8yzB3HK6bnQGwPkQsz language
 sha384-jN3aCxjtJVdTu+GK+EuA0M50SGoelksNiJ/pzn7l7cSaO/WXj55eYAat6juI78Gt languages/xquery.min.js
 sha384-abeixzzZ05eZgGmXLe2EtRtR9T2jDVgA8Lhz7IKoj0tWq1+ko3qpsrSo0eweTZVv languages/yaml.min.js
 sha384-+M/YColDaI1z5pftDUPxi/0RBiRR7Xm6sXnd1XmugHNlKP1S33xH9DSeG3KWUQLm languages/zephir.min.js
+sha384-3VbsSBnv1eeMbYKX8Bt/tQb7utmhuPZAJW4OXoVhYTxN0frz1YI32LqnOngydKSp languages/abnf.min.js
 sha384-I+OMngbuO3AP53k6ta+x45OtllZleLs11AKTr5B00mJPycr4RNSMYWJaL8LUB3KJ languages/accesslog.min.js
 sha384-47MBMFEL/pUOgVlSxBPCS9gRp5aPQ+KRXRj7+FAh6aJwNag9ep1q+v+wyUMIhAkE languages/actionscript.min.js
-sha384-3VbsSBnv1eeMbYKX8Bt/tQb7utmhuPZAJW4OXoVhYTxN0frz1YI32LqnOngydKSp languages/abnf.min.js
 sha384-84q4TSlDiNrzNiRMvUNhxqELuLzbX0CZT2f0EtjjqZ54tG+xlFK5eDOF+S8Pehj/ languages/applescript.min.js
 sha384-jw2gEjCRHPj2RXW1vCPGeEHE4fixRL2hHSp6xs2ak5X6hLhFPlztJnRpyANZZ0xB languages/asciidoc.min.js
 sha384-USET+805UPk+cALknI5/hL/S9d0F4eIGWUOfgb/4JnHxXV2mgqEsB3GedDFYFcW/ languages/aspectj.min.js
@@ -172,7 +172,6 @@ sha384-5FzHOY/fBHJ56z2IOJwkr9Q1gzJll72Y9cmxw1MJOEX0DZuEkSpoEdZ1HpMUqhMd language
 sha384-HDuv/itO5FCUQ+NjjACWB3sYitrIcbYA80An2YzfrHXt+mYlU+X6C4ykyC0mVb+I languages/c.min.js
 sha384-hf6kHeR2UvAFPP+DkcnDZBHntFKjqlDwhi6hP8BLBK4Wihzci3eg4OCXH6xuTG0H languages/coffeescript.min.js
 sha384-VvmPP3N0+gIwDHLJ1E93BG1HmvpGFLY8QNMLZDDvRTEUp2Jq+C00BQJ09FaMZlsh languages/cpp.min.js
-sha384-t8wAvsvWGJhCU9O6LJ/VoqH2rBjwyAmXEP953n3+8iJH8A61rlrOzYkMyfBroS6u languages/css.min.js
 sha384-MblaGx4cKJLmLbCb4ZALL7J8rBhaT7UpN4rZ58LJmbnby5cNmFxPrbNLPPr5qczv languages/diff.min.js
 sha384-d/i79mEEitmTXCjmb2Xn/m98r1+zWXnmrBNQNIQ7oP/fbF1osWDpcT6GSdeymWPM languages/erlang-repl.min.js
 sha384-v4CIFhGhfa9UZWSnbKZB1ncTKkmk7rOeq3m1QSUwG+3/x8KUVCwdqVQIFg4teK3e languages/fortran.min.js
@@ -193,6 +192,7 @@ sha384-M4Qtyn+cFpVbub3Hqd+7bVpVMrsVMfajiJIvUlixvhSuNjrS//2gV2HOA7/Wh+EV language
 sha384-ynyGSwe6iiAamaRqvLD33DxSxLMsNHlwSwKHC9iCqordPQ0PeFFm/rPXFY9ninyB languages/mathematica.min.js
 sha384-kQ6X8lDIoXQZnshIcJ8fT6Gs4IvkypEE0h8TT8rWDW8iKb9T01hV4DqjNcr5yRsU languages/nginx.min.js
 sha384-o7ZK/6fHNWwhch0E4EgenW4zhAiUSsc+z+bCMOuhpvPB63HEy9EdrELysH/tDwjQ languages/perl.min.js
+sha384-t8wAvsvWGJhCU9O6LJ/VoqH2rBjwyAmXEP953n3+8iJH8A61rlrOzYkMyfBroS6u languages/css.min.js
 sha384-NQtg0cypBkcBchzbHYrTe9EygoXZSyeL2D3/5dsdhxrkMO0MqS2qPGKgoD227YnY languages/processing.min.js
 sha384-YKEyFfSCVDXIuwx1m0vPetRPRuSJ3Ip40qqdRXtVn+WjKnZm0rAAxRmMci0SuSQL languages/qml.min.js
 sha384-BvSisPwXSlPPkqSecjysL7oWgYzojvnkt8lPvJhSUO6i6TQgUfWvw3/KVgBxAHCS languages/r.min.js

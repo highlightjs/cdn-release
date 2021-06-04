@@ -1,5 +1,5 @@
 /*!
-  Highlight.js v11.0.0 (git: 21857218b9)
+  Highlight.js v11.0.1 (git: 1cf31f015d)
   (c) 2006-2021 Ivan Sagalaev and other contributors
   License: BSD-3-Clause
  */
@@ -1540,7 +1540,7 @@ var hljs = (function () {
       return mode;
     }
 
-    var version = "11.0.0";
+    var version = "11.0.1";
 
     /*
     Syntax highlighting with language autodetection.
