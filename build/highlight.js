@@ -1,5 +1,5 @@
 /*
-  Highlight.js 10.7.2 (00233d63)
+  Highlight.js 10.7.3 (0c4cc8a1)
   License: BSD-3-Clause
   Copyright (c) 2006-2021, Ivan Sagalaev
 */
@@ -1236,7 +1236,7 @@ var hljs = (function () {
       return mode;
     }
 
-    var version = "10.7.2";
+    var version = "10.7.3";
 
     // @ts-nocheck
 

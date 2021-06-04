@@ -6,11 +6,11 @@ To do this you simply need to add the `integrity` attribute for each JavaScript 
 
 ```html
 <script
-  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"
-  integrity="sha384-3s6jGaYCRJMSo8TSyvHYG4ejjGQaqxMeQYtHIY2dahoVW25bu+lzC0UhJ3RXN5nK"></script>
+  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/highlight.min.js"
+  integrity="sha384-HZamDBqM32XGjdRzMxAmExsu4OjbnAfjMHfJFfPip4yyWdH2djNbNQ/NgZi+E/K0"></script>
 <!-- including any other grammars you might need to load -->
 <script
-  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/languages/go.min.js"
+  src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.3/languages/go.min.js"
   integrity="sha384-r//R3lkWktD0i/068BOYOm3KJWtJa/Jod3Bqpe6BjNfQcwjrkAQE8E1WOgG+kMLB"></script>
 ```
 
@@ -19,8 +19,8 @@ The full list of digests for every file can be found below.
 ### Digests
 
 ```
-sha384-M8uYbITruoLUNTRVhhEtJMxGiSQaX0/0i+8FJ66umTm6vTNwZsYVEFx4NA8ZnRZ/ highlight.js
-sha384-3s6jGaYCRJMSo8TSyvHYG4ejjGQaqxMeQYtHIY2dahoVW25bu+lzC0UhJ3RXN5nK highlight.min.js
+sha384-wlNn0czCe3g3KgmT1bLlLDsk2rE1whAX1HFKQUrwpOD+4rcG081WUTwoeF6yGhtF highlight.js
+sha384-HZamDBqM32XGjdRzMxAmExsu4OjbnAfjMHfJFfPip4yyWdH2djNbNQ/NgZi+E/K0 highlight.min.js
 sha384-drSCJz+Uf5VQh0+swr3WO+o+gEJ37PsQdi2+6PEIiaGoHt9sNS1/z5pUFN4y34az languages/1c.min.js
 sha384-7apqh9UrywWnvcxicn3u69b6szdsa6D2HdEsWd2/k+Y0dEDwueRNf5X41NI64vSv languages/ada.min.js
 sha384-QCw8P5JGQy032rDry/zg1r3bKF4QfRKbmr+BNqbz9yJMwHAep5TKJoLvw47Ndqnd languages/angelscript.min.js
