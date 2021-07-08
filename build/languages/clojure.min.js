@@ -13,5 +13,5 @@ relevance:0,starts:h},g=[f,i,m,p,c,u,l,o,d,s],b={beginKeywords:r,keywords:{
 $pattern:n,keyword:r},end:'(\\[|#|\\d|"|:|\\{|\\)|\\(|$)',contains:[{
 className:"title",begin:n,relevance:0,excludeEnd:!0,endsParent:!0}].concat(g)}
 ;return f.contains=[e.COMMENT("comment",""),b,y,h],
-h.contains=g,l.contains=g,p.contains=[l],{name:"Clojure",aliases:["clj"],
+h.contains=g,l.contains=g,p.contains=[l],{name:"Clojure",aliases:["clj","edn"],
 illegal:/\S/,contains:[f,i,m,p,c,u,l,o,d]}}})());

@@ -12,13 +12,14 @@ begin:RegExp(["(?:__)?[a-zA-Z]{2,}_[a-zA-Z](?:_?[a-zA-Z])+:[a-zA-Z]*","[lgc]__?[
 },{endsParent:!0,variants:a},{endsParent:!0,relevance:0,variants:[{
 begin:/[a-zA-Z@]+/},{begin:/[^a-zA-Z@]?/}]}]},{className:"params",relevance:0,
 begin:/#+\d?/},{variants:a},{className:"built_in",relevance:0,begin:/[$&^_]/},{
-className:"meta",begin:"% !TeX",end:"$",relevance:10},n.COMMENT("%","$",{
-relevance:0})],i={begin:/\{/,end:/\}/,relevance:0,contains:["self",...t]
-},r=n.inherit(i,{relevance:0,endsParent:!0,contains:[i,...t]}),s={begin:/\[/,
-end:/\]/,endsParent:!0,relevance:0,contains:[i,...t]},c={begin:/\s+/,relevance:0
-},l=[r],o=[s],d=(e,n)=>({contains:[c],starts:{relevance:0,contains:e,starts:n}
-}),g=(e,n)=>({begin:"\\\\"+e+"(?![a-zA-Z@:_])",keywords:{$pattern:/\\[a-zA-Z]+/,
-keyword:"\\"+e},relevance:0,contains:[c],starts:n}),m=(e,a)=>n.inherit({
+className:"meta",begin:/% ?!(T[eE]X|tex|BIB|bib)/,end:"$",relevance:10
+},n.COMMENT("%","$",{relevance:0})],i={begin:/\{/,end:/\}/,relevance:0,
+contains:["self",...t]},r=n.inherit(i,{relevance:0,endsParent:!0,
+contains:[i,...t]}),s={begin:/\[/,end:/\]/,endsParent:!0,relevance:0,
+contains:[i,...t]},c={begin:/\s+/,relevance:0},l=[r],o=[s],d=(e,n)=>({
+contains:[c],starts:{relevance:0,contains:e,starts:n}}),g=(e,n)=>({
+begin:"\\\\"+e+"(?![a-zA-Z@:_])",keywords:{$pattern:/\\[a-zA-Z]+/,keyword:"\\"+e
+},relevance:0,contains:[c],starts:n}),m=(e,a)=>n.inherit({
 begin:"\\\\begin(?=[ \t]*(\\r?\\n[ \t]*)?\\{"+e+"\\})",keywords:{
 $pattern:/\\[a-zA-Z]+/,keyword:"\\begin"},relevance:0
 },d(l,a)),b=(e="string")=>n.END_SAME_AS_BEGIN({className:e,begin:/(.|\r?\n)/,

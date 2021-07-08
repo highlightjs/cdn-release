@@ -1,5 +1,5 @@
 /*!
-  Highlight.js v11.0.1 (git: 1cf31f015d)
+  Highlight.js v11.1.0 (git: 83ad2fbd99)
   (c) 2006-2021 Ivan Sagalaev and other contributors
   License: BSD-3-Clause
  */
@@ -39,7 +39,7 @@ var hljs = (function () {
 
     var deepFreeze$1 = deepFreezeEs6.exports;
 
-    
+    /** @typedef {import('highlight.js').CallbackResponse} CallbackResponse */
     /** @typedef {import('highlight.js').CompiledMode} CompiledMode */
     /** @implements CallbackResponse */
 
@@ -1540,7 +1540,7 @@ var hljs = (function () {
       return mode;
     }
 
-    var version = "11.0.1";
+    var version = "11.1.0";
 
     /*
     Syntax highlighting with language autodetection.
@@ -1654,7 +1654,6 @@ var hljs = (function () {
        * @param {string} codeOrLanguageName - the language to use for highlighting
        * @param {string | HighlightOptions} optionsOrCode - the code to highlight
        * @param {boolean} [ignoreIllegals] - whether to ignore illegal matches, default is to bail
-       * @param {CompiledMode} [continuation] - current continuation mode, if any
        *
        * @returns {HighlightResult} Result - an object that represents the result
        * @property {string} language - the language name
@@ -1664,16 +1663,13 @@ var hljs = (function () {
        * @property {CompiledMode} top - top of the current mode stack
        * @property {boolean} illegal - indicates whether any illegal matches were found
       */
-      function highlight(codeOrLanguageName, optionsOrCode, ignoreIllegals, continuation) {
+      function highlight(codeOrLanguageName, optionsOrCode, ignoreIllegals) {
         let code = "";
         let languageName = "";
         if (typeof optionsOrCode === "object") {
           code = codeOrLanguageName;
           ignoreIllegals = optionsOrCode.ignoreIllegals;
           languageName = optionsOrCode.language;
-          // continuation not supported at all via the new API
-          // eslint-disable-next-line no-undefined
-          continuation = undefined;
         } else {
           // old API
           deprecated("10.7.0", "highlight(lang, code, ...args) has been deprecated.");
@@ -1699,7 +1695,7 @@ var hljs = (function () {
         // in which case we don't even need to call highlight
         const result = context.result
           ? context.result
-          : _highlight(context.language, context.code, ignoreIllegals, continuation);
+          : _highlight(context.language, context.code, ignoreIllegals);
 
         result.code = context.code;
         // the plugin can change anything in result to suite it
@@ -2463,7 +2459,7 @@ var hljs = (function () {
       }
 
       /**
-       *
+       * DEPRECATED
        * @param {HighlightedHTMLElement} el
        */
       function deprecateHighlightBlock(el) {
@@ -3661,6 +3657,7 @@ var hljs = (function () {
         'base',
         'break',
         'case',
+        'catch',
         'class',
         'const',
         'continue',
@@ -4072,6 +4069,10 @@ var hljs = (function () {
             '|dpi|dpcm|dppx' +
             ')?',
           relevance: 0
+        },
+        CSS_VARIABLE: {
+          className: "attr",
+          begin: /--[A-Za-z][A-Za-z0-9_-]*/
         }
       };
     };
@@ -4554,6 +4555,7 @@ var hljs = (function () {
           //   end: /\)/,
           //   contains: [ hljs.CSS_NUMBER_MODE ]
           // },
+          modes.CSS_VARIABLE,
           {
             className: 'attribute',
             begin: '\\b(' + ATTRIBUTES.join('|') + ')\\b'
@@ -5669,7 +5671,7 @@ var hljs = (function () {
 
       const UPPER_CASE_CONSTANT = {
         relevance: 0,
-        match: /\b[A-Z][A-Z_]+\b/,
+        match: /\b[A-Z][A-Z_0-9]+\b/,
         className: "variable.constant"
       };
 
@@ -6300,6 +6302,7 @@ var hljs = (function () {
           {
             begin: /-(webkit|moz|ms|o)-/
           },
+          modes.CSS_VARIABLE,
           {
             className: 'attribute',
             begin: '\\b(' + ATTRIBUTES.join('|') + ')\\b',
@@ -6935,12 +6938,16 @@ var hljs = (function () {
           },
           // whatever else, lower relevance (might not be a link at all)
           {
-            begin: /\[.+?\]\(.*?\)/,
+            begin: /\[.*?\]\(.*?\)/,
             relevance: 0
           }
         ],
         returnBegin: true,
         contains: [
+          {
+            // empty strings for alt or link text
+            match: /\[(?=\])/
+          },
           {
             className: 'string',
             relevance: 0,
@@ -8439,7 +8446,7 @@ var hljs = (function () {
           {
             match: [
               /def/, /\s+/,
-              IDENT_RE$1
+              UNDERSCORE_IDENT_RE
             ],
             scope: {
               1: "keyword",
@@ -8452,14 +8459,14 @@ var hljs = (function () {
               {
                 match: [
                   /class/, /\s+/,
-                  IDENT_RE$1, /\s*/,
-                  /\(\s*/, IDENT_RE$1,/\s*\)/
+                  UNDERSCORE_IDENT_RE, /\s*/,
+                  /\(\s*/, UNDERSCORE_IDENT_RE,/\s*\)/
                 ],
               },
               {
                 match: [
                   /class/, /\s+/,
-                  IDENT_RE$1
+                  UNDERSCORE_IDENT_RE
                 ],
               }
             ],
@@ -8603,20 +8610,15 @@ var hljs = (function () {
                   // doctags shouldn’t be treated as such. See
                   // `test/markup/r/roxygen.txt` for an example.
                   scope: 'doctag',
-                  begin: '@examples',
+                  match: /@examples/,
                   starts: {
-                    contains: [
-                      { begin: /\n/ },
-                      {
-                        begin: /#'\s*(?=@[a-zA-Z]+)/,
-                        endsParent: true,
-                      },
-                      {
-                        begin: /#'/,
-                        end: /$/,
-                        excludeBegin: true,
-                      }
-                    ]
+                    end: lookahead(either(
+                      // end if another doc comment
+                      /\n^#'\s*(?=@[a-zA-Z]+)/,
+                      // or a line with no comment
+                      /\n^(?!#')/
+                    )),
+                    endsParent: true
                   }
                 },
                 {
@@ -8629,8 +8631,8 @@ var hljs = (function () {
                     {
                       scope: 'variable',
                       variants: [
-                        { begin: IDENT_RE },
-                        { begin: /`(?:\\.|[^`\\])+`/ }
+                        { match: IDENT_RE },
+                        { match: /`(?:\\.|[^`\\])+`/ }
                       ],
                       endsParent: true
                     }
@@ -8638,11 +8640,11 @@ var hljs = (function () {
                 },
                 {
                   scope: 'doctag',
-                  begin: /@[a-zA-Z]+/
+                  match: /@[a-zA-Z]+/
                 },
                 {
                   scope: 'keyword',
-                  begin: /\\[a-zA-Z]+/,
+                  match: /\\[a-zA-Z]+/
                 }
               ]
             }
@@ -9008,7 +9010,7 @@ var hljs = (function () {
         },
         NUMBER,
         {
-          // negative-look forward attemps to prevent false matches like:
+          // negative-look forward attempts to prevent false matches like:
           // @ident@ or $ident$ that might indicate this is not ruby at all
           className: "variable",
           begin: '(\\$\\W)|((\\$|@@?)(\\w+))(?=[^@$?])' + `(?![A-Za-z])(?![@$?'])`
@@ -9485,6 +9487,7 @@ var hljs = (function () {
             end: /\)/,
             contains: [ modes.CSS_NUMBER_MODE ]
           },
+          modes.CSS_VARIABLE,
           {
             className: 'attribute',
             begin: '\\b(' + ATTRIBUTES.join('|') + ')\\b'
@@ -11567,7 +11570,11 @@ var hljs = (function () {
     const hljs = HighlightJS;
 
     for (const key of Object.keys(builtIns)) {
-      const languageName = key.replace("grmr_", "");
+      // our builtInLanguages Rollup plugin has to use `_` to allow identifiers to be
+      // compatible with `export` naming conventions, so we need to convert the
+      // identifiers back into the more typical dash style that we use for language
+      // naming via the API
+      const languageName = key.replace("grmr_", "").replace("_", "-");
       hljs.registerLanguage(languageName, builtIns[key]);
     }
 

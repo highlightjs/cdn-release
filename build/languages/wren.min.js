@@ -15,7 +15,7 @@ match:[/class\s+/,n,/\s+is\s+/,n]},{match:[/class\s+/,n]}],scope:{
 match:a(...i),className:"operator"},p={className:"property",
 begin:s(/\./,(b=n,s("(?=",b,")"))),end:n,excludeBegin:!0,relevance:0};var b
 ;const h={relevance:0,match:s(/\b_/,n),scope:"variable"},g={relevance:0,
-match:/[A-Z]+[a-z]+([A-Z]+[a-z]+)*/,scope:"title.class",keywords:{
+match:/\b[A-Z]+[a-z]+([A-Z]+[a-z]+)*/,scope:"title.class",keywords:{
 _:["Bool","Class","Fiber","Fn","List","Map","Null","Num","Object","Range","Sequence","String","System"]
 }},f=e.C_NUMBER_MODE,v={match:[n,/\s*/,/=/,/\s*/,/\(/,n,/\)\s*\{/],scope:{
 1:"title.function",3:"operator",6:"params"}},d=e.COMMENT(/\/\*\*/,/\*\//,{

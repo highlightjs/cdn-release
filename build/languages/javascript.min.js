@@ -68,5 +68,5 @@ begin:"\\b(?!function)"+b.UNDERSCORE_IDENT_RE+"\\([^()]*(\\([^()]*(\\([^()]*\\)[
 returnBegin:!0,label:"func.def",contains:[w,b.inherit(b.TITLE_MODE,{begin:g,
 className:"title.function"})]},{match:/\.\.\./,relevance:0},M,{match:"\\$"+g,
 relevance:0},{match:[/\bconstructor(?=\s*\()/],className:{1:"title.function"},
-contains:[w]},T,{relevance:0,match:/\b[A-Z][A-Z_]+\b/,
+contains:[w]},T,{relevance:0,match:/\b[A-Z][A-Z_0-9]+\b/,
 className:"variable.constant"},R,k,{match:/\$[(.]/}]}}})());

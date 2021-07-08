@@ -75,7 +75,7 @@ begin:"\\b(?!function)"+b.UNDERSCORE_IDENT_RE+"\\([^()]*(\\([^()]*(\\([^()]*\\)[
 returnBegin:!0,label:"func.def",contains:[S,b.inherit(b.TITLE_MODE,{begin:d,
 className:"title.function"})]},{match:/\.\.\./,relevance:0},k,{match:"\\$"+d,
 relevance:0},{match:[/\bconstructor(?=\s*\()/],className:{1:"title.function"},
-contains:[S]},x,{relevance:0,match:/\b[A-Z][A-Z_]+\b/,
+contains:[S]},x,{relevance:0,match:/\b[A-Z][A-Z_0-9]+\b/,
 className:"variable.constant"},O,M,{match:/\$[(.]/}]}}(b)
 ;return Object.assign(m.keywords,d),
 m.exports.PARAMS_CONTAINS.push(g),m.contains=m.contains.concat([g,{

@@ -6,14 +6,15 @@ ATTRIBUTE_SELECTOR_MODE:{scope:"selector-attr",begin:/\[/,end:/\]/,illegal:"$",
 contains:[e.APOS_STRING_MODE,e.QUOTE_STRING_MODE]},CSS_NUMBER_MODE:{
 scope:"number",
 begin:e.NUMBER_RE+"(%|em|ex|ch|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|px|deg|grad|rad|turn|s|ms|Hz|kHz|dpi|dpcm|dppx)?",
-relevance:0}}))(n),l=[n.APOS_STRING_MODE,n.QUOTE_STRING_MODE];return{name:"CSS",
+relevance:0},CSS_VARIABLE:{className:"attr",begin:/--[A-Za-z][A-Za-z0-9_-]*/}
+}))(n),l=[n.APOS_STRING_MODE,n.QUOTE_STRING_MODE];return{name:"CSS",
 case_insensitive:!0,illegal:/[=|'\$]/,keywords:{keyframePosition:"from to"},
 classNameAliases:{keyframePosition:"selector-tag"},
 contains:[n.C_BLOCK_COMMENT_MODE,{begin:/-(webkit|moz|ms|o)-(?=[a-z])/
 },a.CSS_NUMBER_MODE,{className:"selector-id",begin:/#[A-Za-z0-9_-]+/,relevance:0
 },{className:"selector-class",begin:"\\.[a-zA-Z-][a-zA-Z0-9_-]*",relevance:0
 },a.ATTRIBUTE_SELECTOR_MODE,{className:"selector-pseudo",variants:[{
-begin:":("+i.join("|")+")"},{begin:"::("+o.join("|")+")"}]},{
+begin:":("+i.join("|")+")"},{begin:"::("+o.join("|")+")"}]},a.CSS_VARIABLE,{
 className:"attribute",begin:"\\b("+r.join("|")+")\\b"},{begin:":",end:"[;}]",
 contains:[a.HEXCOLOR,a.IMPORTANT,a.CSS_NUMBER_MODE,...l,{
 begin:/(url|data-uri)\(/,end:/\)/,relevance:0,keywords:{built_in:"url data-uri"

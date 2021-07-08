@@ -6,11 +6,11 @@ ATTRIBUTE_SELECTOR_MODE:{scope:"selector-attr",begin:/\[/,end:/\]/,illegal:"$",
 contains:[e.APOS_STRING_MODE,e.QUOTE_STRING_MODE]},CSS_NUMBER_MODE:{
 scope:"number",
 begin:e.NUMBER_RE+"(%|em|ex|ch|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|px|deg|grad|rad|turn|s|ms|Hz|kHz|dpi|dpcm|dppx)?",
-relevance:0}}))(a),l=r,d="([\\w-]+|@\\{[\\w-]+\\})",c=[],g=[],b=e=>({
-className:"string",begin:"~?"+e+".*?"+e}),m=(e,t,i)=>({className:e,begin:t,
-relevance:i}),p={$pattern:/[a-z-]+/,keyword:"and or not only",
-attribute:t.join(" ")},u={begin:"\\(",end:"\\)",contains:g,keywords:p,
-relevance:0}
+relevance:0},CSS_VARIABLE:{className:"attr",begin:/--[A-Za-z][A-Za-z0-9_-]*/}
+}))(a),l=r,d="([\\w-]+|@\\{[\\w-]+\\})",c=[],g=[],b=e=>({className:"string",
+begin:"~?"+e+".*?"+e}),m=(e,t,i)=>({className:e,begin:t,relevance:i}),p={
+$pattern:/[a-z-]+/,keyword:"and or not only",attribute:t.join(" ")},u={
+begin:"\\(",end:"\\)",contains:g,keywords:p,relevance:0}
 ;g.push(a.C_LINE_COMMENT_MODE,a.C_BLOCK_COMMENT_MODE,b("'"),b('"'),s.CSS_NUMBER_MODE,{
 begin:"(url|data-uri)\\(",starts:{className:"string",end:"[\\)\\n]",
 excludeEnd:!0}
@@ -19,7 +19,7 @@ className:"attribute",begin:"[\\w-]+\\s*:",end:":",returnBegin:!0,excludeEnd:!0
 },s.IMPORTANT);const h=g.concat({begin:/\{/,end:/\}/,contains:c}),f={
 beginKeywords:"when",endsWithParent:!0,contains:[{beginKeywords:"and not"
 }].concat(g)},w={begin:d+"\\s*:",returnBegin:!0,end:/[;}]/,relevance:0,
-contains:[{begin:/-(webkit|moz|ms|o)-/},{className:"attribute",
+contains:[{begin:/-(webkit|moz|ms|o)-/},s.CSS_VARIABLE,{className:"attribute",
 begin:"\\b("+n.join("|")+")\\b",end:/(?=:)/,starts:{endsWithParent:!0,
 illegal:"[<=$]",relevance:0,contains:g}}]},v={className:"keyword",
 begin:"@(import|media|charset|font-face|(-[a-z]+-)?keyframes|supports|document|namespace|page|viewport|host)\\b",

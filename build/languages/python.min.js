@@ -1,6 +1,6 @@
 hljs.registerLanguage("python",(()=>{"use strict";function e(e){
 return e?"string"==typeof e?e:e.source:null}function n(...n){
-return n.map((n=>e(n))).join("")}const t="[a-zA-Z]\\w*",a=(t,a,s={})=>{
+return n.map((n=>e(n))).join("")}const t="[a-zA-Z_]\\w*",a=(t,a,s={})=>{
 const i=((e,...n)=>{const t=Object.create(null);for(const n in e)t[n]=e[n]
 ;return n.forEach((e=>{for(const n in e)t[n]=e[n]})),t})({scope:"comment",
 begin:t,end:a,contains:[]},s);i.contains.push({scope:"doctag",
