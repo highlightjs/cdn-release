@@ -1,5 +1,5 @@
 /*!
-  Highlight.js v11.1.0 (git: 83ad2fbd99)
+  Highlight.js v11.2.0 (git: 2a5c592e5e)
   (c) 2006-2021 Ivan Sagalaev and other contributors
   License: BSD-3-Clause
  */
@@ -1529,7 +1529,7 @@ function expandOrCloneMode(mode) {
   return mode;
 }
 
-var version = "11.1.0";
+var version = "11.2.0";
 
 /*
 Syntax highlighting with language autodetection.
@@ -1950,7 +1950,7 @@ const HLJS = function(hljs) {
         }
       }
       do {
-        if (top.scope && !top.isMultiClass) {
+        if (top.scope) {
           emitter.closeNode();
         }
         if (!top.skip && !top.subLanguage) {
