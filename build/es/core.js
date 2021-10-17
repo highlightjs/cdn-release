@@ -1,5 +1,5 @@
 /*!
-  Highlight.js v11.2.0 (git: 2a5c592e5e)
+  Highlight.js v11.3.0 (git: 0ce39797ee)
   (c) 2006-2021 Ivan Sagalaev and other contributors
   License: BSD-3-Clause
  */
@@ -386,6 +386,22 @@ function lookahead(re) {
 }
 
 /**
+ * @param {RegExp | string } re
+ * @returns {string}
+ */
+function anyNumberOfTimes(re) {
+  return concat('(?:', re, ')*');
+}
+
+/**
+ * @param {RegExp | string } re
+ * @returns {string}
+ */
+function optional(re) {
+  return concat('(?:', re, ')?');
+}
+
+/**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
@@ -394,6 +410,10 @@ function concat(...args) {
   return joined;
 }
 
+/**
+ * @param { Array<string | RegExp | Object> } args
+ * @returns {object}
+ */
 function stripOptionsFromArgs(args) {
   const opts = args[args.length - 1];
 
@@ -413,15 +433,16 @@ function stripOptionsFromArgs(args) {
  * @returns {string}
  */
 function either(...args) {
+  /** @type { object & {capture?: boolean} }  */
   const opts = stripOptionsFromArgs(args);
-  const joined = '(' +
-    (opts.capture ? "" : "?:") +
-    args.map((x) => source(x)).join("|") + ")";
+  const joined = '('
+    + (opts.capture ? "" : "?:")
+    + args.map((x) => source(x)).join("|") + ")";
   return joined;
 }
 
 /**
- * @param {RegExp} re
+ * @param {RegExp | string} re
  * @returns {number}
  */
 function countMatchGroups(re) {
@@ -1011,7 +1032,7 @@ const MultiClassError = new Error();
  * are 1, 2, and 5.  This function handles this behavior.
  *
  * @param {CompiledMode} mode
- * @param {Array<RegExp>} regexes
+ * @param {Array<RegExp | string>} regexes
  * @param {{key: "beginScope"|"endScope"}} opts
  */
 function remapScopeNames(mode, regexes, { key }) {
@@ -1050,7 +1071,7 @@ function beginMultiClass(mode) {
     throw MultiClassError;
   }
 
-  remapScopeNames(mode, mode.begin, {key: "beginScope"});
+  remapScopeNames(mode, mode.begin, { key: "beginScope" });
   mode.begin = _rewriteBackreferences(mode.begin, { joinWith: "" });
 }
 
@@ -1070,7 +1091,7 @@ function endMultiClass(mode) {
     throw MultiClassError;
   }
 
-  remapScopeNames(mode, mode.end, {key: "endScope"});
+  remapScopeNames(mode, mode.end, { key: "endScope" });
   mode.end = _rewriteBackreferences(mode.end, { joinWith: "" });
 }
 
@@ -1137,7 +1158,10 @@ function compileLanguage(language) {
   function langRe(value, global) {
     return new RegExp(
       source(value),
-      'm' + (language.case_insensitive ? 'i' : '') + (global ? 'g' : '')
+      'm'
+      + (language.case_insensitive ? 'i' : '')
+      + (language.unicodeRegex ? 'u' : '')
+      + (global ? 'g' : '')
     );
   }
 
@@ -1435,10 +1459,10 @@ function compileLanguage(language) {
 
     if (parent) {
       if (!mode.begin) mode.begin = /\B|\b/;
-      cmode.beginRe = langRe(mode.begin);
+      cmode.beginRe = langRe(cmode.begin);
       if (!mode.end && !mode.endsWithParent) mode.end = /\B|\b/;
-      if (mode.end) cmode.endRe = langRe(mode.end);
-      cmode.terminatorEnd = source(mode.end) || '';
+      if (mode.end) cmode.endRe = langRe(cmode.end);
+      cmode.terminatorEnd = source(cmode.end) || '';
       if (mode.endsWithParent && parent.terminatorEnd) {
         cmode.terminatorEnd += (mode.end ? '|' : '') + parent.terminatorEnd;
       }
@@ -1529,7 +1553,15 @@ function expandOrCloneMode(mode) {
   return mode;
 }
 
-var version = "11.2.0";
+var version = "11.3.0";
+
+class HTMLInjectionError extends Error {
+  constructor(reason, html) {
+    super(reason);
+    this.name = "HTMLInjectionError";
+    this.html = html;
+  }
+}
 
 /*
 Syntax highlighting with language autodetection.
@@ -1539,6 +1571,7 @@ https://highlightjs.org/
 /**
 @typedef {import('highlight.js').Mode} Mode
 @typedef {import('highlight.js').CompiledMode} CompiledMode
+@typedef {import('highlight.js').CompiledScope} CompiledScope
 @typedef {import('highlight.js').Language} Language
 @typedef {import('highlight.js').HLJSApi} HLJSApi
 @typedef {import('highlight.js').HLJSPlugin} HLJSPlugin
@@ -1587,6 +1620,7 @@ const HLJS = function(hljs) {
   /** @type HLJSOptions */
   let options = {
     ignoreUnescapedHTML: false,
+    throwUnescapedHTML: false,
     noHighlightRe: /^(no-?highlight)$/i,
     languageDetectRe: /\blang(?:uage)?-([\w-]+)\b/i,
     classPrefix: 'hljs-',
@@ -1791,7 +1825,7 @@ const HLJS = function(hljs) {
     }
 
     /**
-     * @param {CompiledMode} mode
+     * @param {CompiledScope} scope
      * @param {RegExpMatchArray} match
      */
     function emitMultiClass(scope, match) {
@@ -2245,11 +2279,24 @@ const HLJS = function(hljs) {
     fire("before:highlightElement",
       { el: element, language: language });
 
-    // we should be all text, no child nodes
-    if (!options.ignoreUnescapedHTML && element.children.length > 0) {
-      console.warn("One of your code blocks includes unescaped HTML. This is a potentially serious security risk.");
-      console.warn("https://github.com/highlightjs/highlight.js/issues/2886");
-      console.warn(element);
+    // we should be all text, no child nodes (unescaped HTML) - this is possibly
+    // an HTML injection attack - it's likely too late if this is already in
+    // production (the code has likely already done its damage by the time
+    // we're seeing it)... but we yell loudly about this so that hopefully it's
+    // more likely to be caught in development before making it to production
+    if (element.children.length > 0) {
+      if (!options.ignoreUnescapedHTML) {
+        console.warn("One of your code blocks includes unescaped HTML. This is a potentially serious security risk.");
+        console.warn("https://github.com/highlightjs/highlight.js/issues/2886");
+        console.warn(element);
+      }
+      if (options.throwUnescapedHTML) {
+        const err = new HTMLInjectionError(
+          "One of your code blocks includes unescaped HTML.",
+          element.innerHTML
+        );
+        throw err;
+      }
     }
 
     node = element;
@@ -2483,6 +2530,14 @@ const HLJS = function(hljs) {
   hljs.safeMode = function() { SAFE_MODE = true; };
   hljs.versionString = version;
 
+  hljs.regex = {
+    concat: concat,
+    lookahead: lookahead,
+    either: either,
+    optional: optional,
+    anyNumberOfTimes: anyNumberOfTimes
+  };
+
   for (const key in MODES) {
     // @ts-ignore
     if (typeof MODES[key] === "object") {
@@ -2500,4 +2555,4 @@ const HLJS = function(hljs) {
 // export an "instance" of the highlighter
 var highlight = HLJS({});
 
-export default highlight;
+export { highlight as default };
