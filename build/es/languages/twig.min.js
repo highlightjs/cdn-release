@@ -1,3 +1,4 @@
+/*! `twig` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return e=>{
 var a="attribute block constant cycle date dump include max min parent random range source template_from_string",t={
 beginKeywords:a,keywords:{name:a},relevance:0,contains:[{className:"params",

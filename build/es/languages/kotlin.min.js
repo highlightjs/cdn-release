@@ -1,3 +1,4 @@
+/*! `kotlin` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict"
 ;var e="\\.([0-9](_*[0-9])*)",n="[0-9a-fA-F](_*[0-9a-fA-F])*",a={
 className:"number",variants:[{

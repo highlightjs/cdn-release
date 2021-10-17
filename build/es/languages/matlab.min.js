@@ -1,3 +1,4 @@
+/*! `matlab` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return e=>{var a={relevance:0,contains:[{
 begin:"('|\\.')+"}]};return{name:"Matlab",keywords:{
 keyword:"arguments break case catch classdef continue else elseif end enumeration events for function global if methods otherwise parfor persistent properties return spmd switch try while",

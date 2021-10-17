@@ -1,3 +1,4 @@
+/*! `php` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return e=>{const r={className:"variable",
 begin:"\\$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(?![A-Za-z0-9])(?![$])"},t={
 className:"meta",variants:[{begin:/<\?php/,relevance:10},{begin:/<\?[=]?/},{

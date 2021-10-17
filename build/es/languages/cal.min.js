@@ -1,3 +1,4 @@
+/*! `cal` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return e=>{
 const n="div mod in and or not xor asserterror begin case do downto else end exit for if of repeat then to until while with var",r=[e.C_LINE_COMMENT_MODE,e.COMMENT(/\{/,/\}/,{
 relevance:0}),e.COMMENT(/\(\*/,/\*\)/,{relevance:10})],a={className:"string",

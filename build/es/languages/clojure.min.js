@@ -1,3 +1,4 @@
+/*! `clojure` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return e=>{
 const t="a-zA-Z_\\-!.?+*=<>&#'",n="["+t+"]["+t+"0-9/;:]*",r="def defonce defprotocol defstruct defmulti defmethod defn- defn defmacro deftype defrecord",a={
 $pattern:n,

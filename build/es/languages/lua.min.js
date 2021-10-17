@@ -1,3 +1,4 @@
+/*! `lua` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return e=>{
 const t="\\[=*\\[",a="\\]=*\\]",n={begin:t,end:a,contains:["self"]
 },r=[e.COMMENT("--(?!\\[=*\\[)","$"),e.COMMENT("--\\[=*\\[",a,{contains:[n],

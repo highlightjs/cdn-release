@@ -1,3 +1,4 @@
+/*! `capnproto` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return n=>({name:"Cap\u2019n Proto",
 aliases:["capnp"],keywords:{
 keyword:["struct","enum","interface","union","group","import","using","const","annotation","extends","in","of","on","as","with","from","fixed"],

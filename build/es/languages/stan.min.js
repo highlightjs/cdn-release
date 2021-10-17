@@ -1,3 +1,4 @@
+/*! `stan` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return _=>{const e=_.COMMENT(/\/\*/,/\*\//,{
 relevance:0,contains:[{className:"doctag",match:/@(return|param)/}]}),l={
 className:"meta",begin:/^#include\b/,end:/$/,relevance:0,keywords:"include",

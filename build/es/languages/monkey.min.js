@@ -1,3 +1,4 @@
+/*! `monkey` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return e=>{const n={className:"number",
 relevance:0,variants:[{begin:"[$][a-fA-F0-9]+"},e.NUMBER_MODE]};return{
 name:"Monkey",case_insensitive:!0,keywords:{

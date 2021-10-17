@@ -1,3 +1,4 @@
+/*! `objectivec` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return e=>{
 const _=/[a-zA-Z@][a-zA-Z0-9_]*/,n={$pattern:_,
 keyword:["@interface","@class","@protocol","@implementation"]};return{

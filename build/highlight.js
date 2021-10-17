@@ -1,5 +1,5 @@
 /*!
-  Highlight.js v11.3.0 (git: 0ce39797ee)
+  Highlight.js v11.3.1 (git: 2a972d8658)
   (c) 2006-2021 Ivan Sagalaev and other contributors
   License: BSD-3-Clause
  */
@@ -1556,7 +1556,7 @@ var hljs = (function () {
       return mode;
     }
 
-    var version = "11.3.0";
+    var version = "11.3.1";
 
     class HTMLInjectionError extends Error {
       constructor(reason, html) {

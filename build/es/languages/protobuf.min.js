@@ -1,3 +1,4 @@
+/*! `protobuf` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return e=>({name:"Protocol Buffers",
 keywords:{
 keyword:"package import option optional required repeated group oneof",

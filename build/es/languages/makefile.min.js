@@ -1,3 +1,4 @@
+/*! `makefile` grammar compiled for Highlight.js 11.3.1 */
 var hljsGrammar=(()=>{"use strict";return e=>{const a={className:"variable",
 variants:[{begin:"\\$\\("+e.UNDERSCORE_IDENT_RE+"\\)",
 contains:[e.BACKSLASH_ESCAPE]},{begin:/\$[@%<?\^\+\*]/}]},i={className:"string",
