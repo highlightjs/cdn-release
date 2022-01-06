@@ -1,6 +1,6 @@
 /*!
-  Highlight.js v11.3.1 (git: 2a972d8658)
-  (c) 2006-2021 Ivan Sagalaev and other contributors
+  Highlight.js v11.4.0 (git: 2d0e7c1094)
+  (c) 2006-2022 Ivan Sagalaev and other contributors
   License: BSD-3-Clause
  */
 var deepFreezeEs6 = {exports: {}};
@@ -425,11 +425,13 @@ function stripOptionsFromArgs(args) {
   }
 }
 
+/** @typedef { {capture?: boolean} } RegexEitherOptions */
+
 /**
  * Any of the passed expresssions may match
  *
  * Creates a huge this | this | that | that match
- * @param {(RegExp | string)[] } args
+ * @param {(RegExp | string)[] | [...(RegExp | string)[], RegexEitherOptions]} args
  * @returns {string}
  */
 function either(...args) {
@@ -1553,7 +1555,7 @@ function expandOrCloneMode(mode) {
   return mode;
 }
 
-var version = "11.3.1";
+var version = "11.4.0";
 
 class HTMLInjectionError extends Error {
   constructor(reason, html) {
@@ -2287,7 +2289,8 @@ const HLJS = function(hljs) {
     if (element.children.length > 0) {
       if (!options.ignoreUnescapedHTML) {
         console.warn("One of your code blocks includes unescaped HTML. This is a potentially serious security risk.");
-        console.warn("https://github.com/highlightjs/highlight.js/issues/2886");
+        console.warn("https://github.com/highlightjs/highlight.js/wiki/security");
+        console.warn("The element with unescaped HTML:");
         console.warn(element);
       }
       if (options.throwUnescapedHTML) {
@@ -3838,7 +3841,7 @@ function cpp(hljs) {
       [
         PREPROCESSOR,
         { // containers: ie, `vector <int> rooms (9);`
-          begin: '\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array|tuple|optional|variant|function)\\s*<',
+          begin: '\\b(deque|list|queue|priority_queue|pair|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array|tuple|optional|variant|function)\\s*<(?!<)',
           end: '>',
           keywords: CPP_KEYWORDS,
           contains: [
@@ -5451,7 +5454,8 @@ function java(hljs) {
     'module',
     'requires',
     'exports',
-    'do'
+    'do',
+    'sealed'
   ];
 
   const BUILT_INS = [
@@ -5556,6 +5560,11 @@ function java(hljs) {
           1: "keyword",
           3: "title.class"
         }
+      },
+      {
+        // Exceptions for hyphenated keywords
+        match: /non-sealed/,
+        scope: "keyword"
       },
       {
         begin: [
@@ -6075,10 +6084,14 @@ function javascript(hljs) {
     regex.either(
       // Hard coded exceptions
       /\bJSON/,
-      // Float32Array
-      /\b[A-Z][a-z]+([A-Z][a-z]+|\d)*/,
-      // CSSFactory
-      /\b[A-Z]{2,}([A-Z][a-z]+|\d)+/,
+      // Float32Array, OutT
+      /\b[A-Z][a-z]+([A-Z][a-z]*|\d)*/,
+      // CSSFactory, CSSFactoryT
+      /\b[A-Z]{2,}([A-Z][a-z]+|\d)+([A-Z][a-z]*)*/,
+      // FPs, FPsT
+      /\b[A-Z]{2,}[a-z]+([A-Z][a-z]+|\d)*([A-Z][a-z]*)*/,
+      // P
+      // single letters are not highlighted
       // BLAH
       // this will be flagged as a UPPER_CASE_CONSTANT instead
     ),
@@ -6191,8 +6204,10 @@ function javascript(hljs) {
       /const|var|let/, /\s+/,
       IDENT_RE$1, /\s*/,
       /=\s*/,
+      /(async\s*)?/, // async is optional
       regex.lookahead(FUNC_LEAD_IN_RE)
     ],
+    keywords: "async",
     className: {
       1: "keyword",
       3: "title.function"
@@ -8271,15 +8286,20 @@ Category: common
  * @returns {LanguageDetail}
  * */
 function php(hljs) {
+  const regex = hljs.regex;
+  const IDENT_RE_CORE = '[a-zA-Z0-9_\x7f-\xff]*' +
+    // negative look-ahead tries to avoid matching patterns that are not
+    // Perl at all like $ident$, @ident@, etc.
+    '(?![A-Za-z0-9])(?![$]))';
+  const IDENT_RE = regex.concat("([a-zA-Z_\\x7f-\\xff]", IDENT_RE_CORE);
+  // Will not detect camelCase classes
+  const PASCAL_CASE_CLASS_NAME_RE = regex.concat("([A-Z]", IDENT_RE_CORE);
   const VARIABLE = {
-    className: 'variable',
-    begin: '\\$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*' +
-      // negative look-ahead tries to avoid matching patterns that are not
-      // Perl at all like $ident$, @ident@, etc.
-      `(?![A-Za-z0-9])(?![$])`
+    scope: 'variable',
+    match: '\\$+' + IDENT_RE,
   };
   const PREPROCESSOR = {
-    className: 'meta',
+    scope: 'meta',
     variants: [
       { begin: /<\?php/, relevance: 10 }, // boost for obvious PHP
       { begin: /<\?[=]?/ },
@@ -8287,7 +8307,7 @@ function php(hljs) {
     ]
   };
   const SUBST = {
-    className: 'subst',
+    scope: 'subst',
     variants: [
       { begin: /\$\w+/ },
       { begin: /\{\$/, end: /\}/ }
@@ -8305,100 +8325,406 @@ function php(hljs) {
     end: /[ \t]*(\w+)\b/,
     contains: hljs.QUOTE_STRING_MODE.contains.concat(SUBST),
   });
+  // list of valid whitespaces because non-breaking space might be part of a IDENT_RE
+  const WHITESPACE = '[ \t\n]';
   const STRING = {
-    className: 'string',
-    contains: [hljs.BACKSLASH_ESCAPE, PREPROCESSOR],
+    scope: 'string',
     variants: [
-      hljs.inherit(SINGLE_QUOTED, {
-        begin: "b'", end: "'",
-      }),
-      hljs.inherit(DOUBLE_QUOTED, {
-        begin: 'b"', end: '"',
-      }),
       DOUBLE_QUOTED,
       SINGLE_QUOTED,
       HEREDOC
     ]
   };
   const NUMBER = {
-    className: 'number',
+    scope: 'number',
     variants: [
-      { begin: `\\b0b[01]+(?:_[01]+)*\\b` }, // Binary w/ underscore support
-      { begin: `\\b0o[0-7]+(?:_[0-7]+)*\\b` }, // Octals w/ underscore support
-      { begin: `\\b0x[\\da-f]+(?:_[\\da-f]+)*\\b` }, // Hex w/ underscore support
+      { begin: `\\b0[bB][01]+(?:_[01]+)*\\b` }, // Binary w/ underscore support
+      { begin: `\\b0[oO][0-7]+(?:_[0-7]+)*\\b` }, // Octals w/ underscore support
+      { begin: `\\b0[xX][\\da-fA-F]+(?:_[\\da-fA-F]+)*\\b` }, // Hex w/ underscore support
       // Decimals w/ underscore support, with optional fragments and scientific exponent (e) suffix.
-      { begin: `(?:\\b\\d+(?:_\\d+)*(\\.(?:\\d+(?:_\\d+)*))?|\\B\\.\\d+)(?:e[+-]?\\d+)?` }
+      { begin: `(?:\\b\\d+(?:_\\d+)*(\\.(?:\\d+(?:_\\d+)*))?|\\B\\.\\d+)(?:[eE][+-]?\\d+)?` }
     ],
     relevance: 0
   };
-  const KEYWORDS = {
-    keyword:
+  const LITERALS = [
+    "false",
+    "null",
+    "true"
+  ];
+  const KWS = [
     // Magic constants:
     // <https://www.php.net/manual/en/language.constants.predefined.php>
-    '__CLASS__ __DIR__ __FILE__ __FUNCTION__ __LINE__ __METHOD__ __NAMESPACE__ __TRAIT__ ' +
+    "__CLASS__",
+    "__DIR__",
+    "__FILE__",
+    "__FUNCTION__",
+    "__COMPILER_HALT_OFFSET__",
+    "__LINE__",
+    "__METHOD__",
+    "__NAMESPACE__",
+    "__TRAIT__",
     // Function that look like language construct or language construct that look like function:
     // List of keywords that may not require parenthesis
-    'die echo exit include include_once print require require_once ' +
+    "die",
+    "echo",
+    "exit",
+    "include",
+    "include_once",
+    "print",
+    "require",
+    "require_once",
     // These are not language construct (function) but operate on the currently-executing function and can access the current symbol table
     // 'compact extract func_get_arg func_get_args func_num_args get_called_class get_parent_class ' +
     // Other keywords:
     // <https://www.php.net/manual/en/reserved.php>
     // <https://www.php.net/manual/en/language.types.type-juggling.php>
-    'array abstract and as binary bool boolean break callable case catch class clone const continue declare ' +
-    'default do double else elseif empty enddeclare endfor endforeach endif endswitch endwhile enum eval extends ' +
-    'final finally float for foreach from global goto if implements instanceof insteadof int integer interface ' +
-    'isset iterable list match|0 mixed new object or private protected public real return string switch throw trait ' +
-    'try unset use var void while xor yield',
-    literal: 'false null true',
-    built_in:
+    "array",
+    "abstract",
+    "and",
+    "as",
+    "binary",
+    "bool",
+    "boolean",
+    "break",
+    "callable",
+    "case",
+    "catch",
+    "class",
+    "clone",
+    "const",
+    "continue",
+    "declare",
+    "default",
+    "do",
+    "double",
+    "else",
+    "elseif",
+    "empty",
+    "enddeclare",
+    "endfor",
+    "endforeach",
+    "endif",
+    "endswitch",
+    "endwhile",
+    "enum",
+    "eval",
+    "extends",
+    "final",
+    "finally",
+    "float",
+    "for",
+    "foreach",
+    "from",
+    "global",
+    "goto",
+    "if",
+    "implements",
+    "instanceof",
+    "insteadof",
+    "int",
+    "integer",
+    "interface",
+    "isset",
+    "iterable",
+    "list",
+    "match|0",
+    "mixed",
+    "new",
+    "never",
+    "object",
+    "or",
+    "private",
+    "protected",
+    "public",
+    "readonly",
+    "real",
+    "return",
+    "string",
+    "switch",
+    "throw",
+    "trait",
+    "try",
+    "unset",
+    "use",
+    "var",
+    "void",
+    "while",
+    "xor",
+    "yield"
+  ];
+
+  const BUILT_INS = [
     // Standard PHP library:
     // <https://www.php.net/manual/en/book.spl.php>
-    'Error|0 ' + // error is too common a name esp since PHP is case in-sensitive
-    'AppendIterator ArgumentCountError ArithmeticError ArrayIterator ArrayObject AssertionError BadFunctionCallException BadMethodCallException CachingIterator CallbackFilterIterator CompileError Countable DirectoryIterator DivisionByZeroError DomainException EmptyIterator ErrorException Exception FilesystemIterator FilterIterator GlobIterator InfiniteIterator InvalidArgumentException IteratorIterator LengthException LimitIterator LogicException MultipleIterator NoRewindIterator OutOfBoundsException OutOfRangeException OuterIterator OverflowException ParentIterator ParseError RangeException RecursiveArrayIterator RecursiveCachingIterator RecursiveCallbackFilterIterator RecursiveDirectoryIterator RecursiveFilterIterator RecursiveIterator RecursiveIteratorIterator RecursiveRegexIterator RecursiveTreeIterator RegexIterator RuntimeException SeekableIterator SplDoublyLinkedList SplFileInfo SplFileObject SplFixedArray SplHeap SplMaxHeap SplMinHeap SplObjectStorage SplObserver SplObserver SplPriorityQueue SplQueue SplStack SplSubject SplSubject SplTempFileObject TypeError UnderflowException UnexpectedValueException UnhandledMatchError ' +
+    "Error|0",
+    "AppendIterator",
+    "ArgumentCountError",
+    "ArithmeticError",
+    "ArrayIterator",
+    "ArrayObject",
+    "AssertionError",
+    "BadFunctionCallException",
+    "BadMethodCallException",
+    "CachingIterator",
+    "CallbackFilterIterator",
+    "CompileError",
+    "Countable",
+    "DirectoryIterator",
+    "DivisionByZeroError",
+    "DomainException",
+    "EmptyIterator",
+    "ErrorException",
+    "Exception",
+    "FilesystemIterator",
+    "FilterIterator",
+    "GlobIterator",
+    "InfiniteIterator",
+    "InvalidArgumentException",
+    "IteratorIterator",
+    "LengthException",
+    "LimitIterator",
+    "LogicException",
+    "MultipleIterator",
+    "NoRewindIterator",
+    "OutOfBoundsException",
+    "OutOfRangeException",
+    "OuterIterator",
+    "OverflowException",
+    "ParentIterator",
+    "ParseError",
+    "RangeException",
+    "RecursiveArrayIterator",
+    "RecursiveCachingIterator",
+    "RecursiveCallbackFilterIterator",
+    "RecursiveDirectoryIterator",
+    "RecursiveFilterIterator",
+    "RecursiveIterator",
+    "RecursiveIteratorIterator",
+    "RecursiveRegexIterator",
+    "RecursiveTreeIterator",
+    "RegexIterator",
+    "RuntimeException",
+    "SeekableIterator",
+    "SplDoublyLinkedList",
+    "SplFileInfo",
+    "SplFileObject",
+    "SplFixedArray",
+    "SplHeap",
+    "SplMaxHeap",
+    "SplMinHeap",
+    "SplObjectStorage",
+    "SplObserver",
+    "SplPriorityQueue",
+    "SplQueue",
+    "SplStack",
+    "SplSubject",
+    "SplTempFileObject",
+    "TypeError",
+    "UnderflowException",
+    "UnexpectedValueException",
+    "UnhandledMatchError",
     // Reserved interfaces:
     // <https://www.php.net/manual/en/reserved.interfaces.php>
-    'ArrayAccess Closure Generator Iterator IteratorAggregate Serializable Stringable Throwable Traversable WeakReference WeakMap ' +
+    "ArrayAccess",
+    "BackedEnum",
+    "Closure",
+    "Fiber",
+    "Generator",
+    "Iterator",
+    "IteratorAggregate",
+    "Serializable",
+    "Stringable",
+    "Throwable",
+    "Traversable",
+    "UnitEnum",
+    "WeakReference",
+    "WeakMap",
     // Reserved classes:
     // <https://www.php.net/manual/en/reserved.classes.php>
-    'Directory __PHP_Incomplete_Class parent php_user_filter self static stdClass'
+    "Directory",
+    "__PHP_Incomplete_Class",
+    "parent",
+    "php_user_filter",
+    "self",
+    "static",
+    "stdClass"
+  ];
+
+  /** Dual-case keywords
+   *
+   * ["then","FILE"] =>
+   *     ["then", "THEN", "FILE", "file"]
+   *
+   * @param {string[]} items */
+  const dualCase = (items) => {
+    /** @type string[] */
+    const result = [];
+    items.forEach(item => {
+      result.push(item);
+      if (item.toLowerCase() === item) {
+        result.push(item.toUpperCase());
+      } else {
+        result.push(item.toLowerCase());
+      }
+    });
+    return result;
   };
+
+  const KEYWORDS = {
+    keyword: KWS,
+    literal: dualCase(LITERALS),
+    built_in: BUILT_INS,
+  };
+
+  /**
+   * @param {string[]} items */
+  const normalizeKeywords = (items) => {
+    return items.map(item => {
+      return item.replace(/\|\d+$/, "");
+    });
+  };
+
+  const CONSTRUCTOR_CALL = {
+    variants: [
+      {
+        match: [
+          /new/,
+          regex.concat(WHITESPACE, "+"),
+          // to prevent built ins from being confused as the class constructor call
+          regex.concat("(?!", normalizeKeywords(BUILT_INS).join("\\b|"), "\\b)"),
+          regex.concat(/\\?/, IDENT_RE),
+          regex.concat(WHITESPACE, "*", /\(/),
+        ],
+        scope: {
+          1: "keyword",
+          4: "title.class",
+        },
+      }
+    ]
+  };
+
+  const FUNCTION_INVOKE = {
+    relevance: 0,
+    match: [
+      /\b/,
+      // to prevent keywords from being confused as the function title
+      regex.concat("(?!fn\\b|function\\b|", normalizeKeywords(KWS).join("\\b|"), "|", normalizeKeywords(BUILT_INS).join("\\b|"), "\\b)"),
+      IDENT_RE,
+      regex.concat(WHITESPACE, "*"),
+      regex.lookahead(/(?=\()/)
+    ],
+    scope: {
+      3: "title.function.invoke",
+    }
+  };
+
+  const CONSTANT_REFERENCE = regex.concat(IDENT_RE, "\\b(?!\\()");
+
+  const LEFT_AND_RIGHT_SIDE_OF_DOUBLE_COLON = {
+    variants: [
+      {
+        match: [
+          regex.concat(
+            /::/,
+            regex.lookahead(/(?!class\b)/)
+          ),
+          CONSTANT_REFERENCE,
+        ],
+        scope: {
+          2: "variable.constant",
+        },
+      },
+      {
+        match: [
+          /::/,
+          /class/,
+        ],
+        scope: {
+          2: "variable.language",
+        },
+      },
+      {
+        match: [
+          PASCAL_CASE_CLASS_NAME_RE,
+          regex.concat(
+            "::",
+            regex.lookahead(/(?!class\b)/)
+          ),
+        ],
+        scope: {
+          1: "title.class",
+        },
+      },
+      {
+        match: [
+          PASCAL_CASE_CLASS_NAME_RE,
+          /::/,
+          /class/,
+        ],
+        scope: {
+          1: "title.class",
+          3: "variable.language",
+        },
+      }
+    ]
+  };
+
   return {
-    case_insensitive: true,
+    case_insensitive: false,
     keywords: KEYWORDS,
     contains: [
       hljs.HASH_COMMENT_MODE,
-      hljs.COMMENT('//', '$', {contains: [PREPROCESSOR]}),
+      hljs.COMMENT('//', '$'),
       hljs.COMMENT(
         '/\\*',
         '\\*/',
         {
           contains: [
             {
-              className: 'doctag',
-              begin: '@[A-Za-z]+'
+              scope: 'doctag',
+              match: '@[A-Za-z]+'
             }
           ]
         }
       ),
-      hljs.COMMENT(
-        '__halt_compiler.+?;',
-        false,
-        {
-          endsWithParent: true,
-          keywords: '__halt_compiler'
+      {
+        match: /__halt_compiler\(\);/,
+        keywords: '__halt_compiler',
+        starts: {
+          scope: "comment",
+          end: hljs.MATCH_NOTHING_RE,
+          contains: [
+            {
+              match: /\?>/,
+              scope: "meta",
+              endsParent: true
+            }
+          ]
         }
-      ),
+      },
       PREPROCESSOR,
       {
-        className: 'keyword', begin: /\$this\b/
+        scope: 'variable.language',
+        match: /\$this\b/
       },
       VARIABLE,
+      FUNCTION_INVOKE,
+      LEFT_AND_RIGHT_SIDE_OF_DOUBLE_COLON,
       {
-        // swallow composed identifiers to avoid parsing them as keywords
-        begin: /(::|->)+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/
+        match: [
+          /const/,
+          /\s/,
+          IDENT_RE,
+          /\s*=/,
+        ],
+        scope: {
+          1: "keyword",
+          3: "variable.constant",
+        },
       },
+      CONSTRUCTOR_CALL,
       {
-        className: 'function',
+        scope: 'function',
         relevance: 0,
         beginKeywords: 'fn function', end: /[;{]/, excludeEnd: true,
         illegal: '[$%\\[]',
@@ -8412,7 +8738,7 @@ function php(hljs) {
             endsParent: true
           },
           {
-            className: 'params',
+            scope: 'params',
             begin: '\\(', end: '\\)',
             excludeBegin: true,
             excludeEnd: true,
@@ -8420,6 +8746,7 @@ function php(hljs) {
             contains: [
               'self',
               VARIABLE,
+              LEFT_AND_RIGHT_SIDE_OF_DOUBLE_COLON,
               hljs.C_BLOCK_COMMENT_MODE,
               STRING,
               NUMBER
@@ -8428,7 +8755,7 @@ function php(hljs) {
         ]
       },
       {
-        className: 'class',
+        scope: 'class',
         variants: [
           { beginKeywords: "enum", illegal: /[($"]/ },
           { beginKeywords: "class interface trait", illegal: /[:($"]/ }
@@ -8441,18 +8768,31 @@ function php(hljs) {
           hljs.UNDERSCORE_TITLE_MODE
         ]
       },
+      // both use and namespace still use "old style" rules (vs multi-match)
+      // because the namespace name can include `\` and we still want each
+      // element to be treated as its own *individual* title
       {
         beginKeywords: 'namespace',
         relevance: 0,
         end: ';',
         illegal: /[.']/,
-        contains: [hljs.UNDERSCORE_TITLE_MODE]
+        contains: [
+          hljs.inherit(hljs.UNDERSCORE_TITLE_MODE, { scope: "title.class" })
+        ]
       },
       {
         beginKeywords: 'use',
         relevance: 0,
         end: ';',
-        contains: [hljs.UNDERSCORE_TITLE_MODE]
+        contains: [
+          // TODO: title.function vs title.class
+          {
+            match: /\b(as|const|function)\b/,
+            scope: "keyword"
+          },
+          // TODO: could be title.class or title.function
+          hljs.UNDERSCORE_TITLE_MODE
+        ]
       },
       STRING,
       NUMBER
@@ -8788,6 +9128,12 @@ function python(hljs) {
   // https://docs.python.org/3.9/reference/lexical_analysis.html#numeric-literals
   const digitpart = '[0-9](_?[0-9])*';
   const pointfloat = `(\\b(${digitpart}))?\\.(${digitpart})|\\b(${digitpart})\\.`;
+  // Whitespace after a number (or any lexical token) is needed only if its absence
+  // would change the tokenization
+  // https://docs.python.org/3.9/reference/lexical_analysis.html#whitespace-between-tokens
+  // We deviate slightly, requiring a word boundary or a keyword
+  // to avoid accidentally recognizing *prefixes* (e.g., `0` in `0x41` or `08` or `0__1`)
+  const lookahead = `\\b|${RESERVED_WORDS.join('|')}`;
   const NUMBER = {
     className: 'number',
     relevance: 0,
@@ -8803,7 +9149,7 @@ function python(hljs) {
       // because both MUST contain a decimal point and so cannot be confused with
       // the interior part of an identifier
       {
-        begin: `(\\b(${digitpart})|(${pointfloat}))[eE][+-]?(${digitpart})[jJ]?\\b`
+        begin: `(\\b(${digitpart})|(${pointfloat}))[eE][+-]?(${digitpart})[jJ]?(?=${lookahead})`
       },
       {
         begin: `(${pointfloat})[jJ]?`
@@ -8816,22 +9162,22 @@ function python(hljs) {
       // decinteger is optionally imaginary
       // https://docs.python.org/3.9/reference/lexical_analysis.html#imaginary-literals
       {
-        begin: '\\b([1-9](_?[0-9])*|0+(_?0)*)[lLjJ]?\\b'
+        begin: `\\b([1-9](_?[0-9])*|0+(_?0)*)[lLjJ]?(?=${lookahead})`
       },
       {
-        begin: '\\b0[bB](_?[01])+[lL]?\\b'
+        begin: `\\b0[bB](_?[01])+[lL]?(?=${lookahead})`
       },
       {
-        begin: '\\b0[oO](_?[0-7])+[lL]?\\b'
+        begin: `\\b0[oO](_?[0-7])+[lL]?(?=${lookahead})`
       },
       {
-        begin: '\\b0[xX](_?[0-9a-fA-F])+[lL]?\\b'
+        begin: `\\b0[xX](_?[0-9a-fA-F])+[lL]?(?=${lookahead})`
       },
 
       // imagnumber (digitpart-based)
       // https://docs.python.org/3.9/reference/lexical_analysis.html#imaginary-literals
       {
-        begin: `\\b(${digitpart})[jJ]\\b`
+        begin: `\\b(${digitpart})[jJ](?=${lookahead})`
       }
     ]
   };
@@ -8911,7 +9257,7 @@ function python(hljs) {
       hljs.HASH_COMMENT_MODE,
       {
         match: [
-          /def/, /\s+/,
+          /\bdef/, /\s+/,
           IDENT_RE,
         ],
         scope: {
@@ -8924,14 +9270,14 @@ function python(hljs) {
         variants: [
           {
             match: [
-              /class/, /\s+/,
+              /\bclass/, /\s+/,
               IDENT_RE, /\s*/,
               /\(\s*/, IDENT_RE,/\s*\)/
             ],
           },
           {
             match: [
-              /class/, /\s+/,
+              /\bclass/, /\s+/,
               IDENT_RE
             ],
           }
@@ -10867,7 +11213,7 @@ const precedencegroupKeywords = [
 ];
 
 // Keywords that start with a number sign (#).
-// #available is handled separately.
+// #(un)available is handled separately.
 const numberSignKeywords = [
   '#colorLiteral',
   '#column',
@@ -11033,7 +11379,7 @@ const keywordAttributes = [
   'usableFromInline'
 ];
 
-// Contextual keywords used in @available and #available.
+// Contextual keywords used in @available and #(un)available.
 const availabilityKeywords = [
   'iOS',
   'iOSApplicationExtension',
@@ -11264,7 +11610,7 @@ function swift(hljs) {
 
   // https://docs.swift.org/swift-book/ReferenceManual/Attributes.html
   const AVAILABLE_ATTRIBUTE = {
-    match: /(@|#)available/,
+    match: /(@|#(un)?)available/,
     className: "keyword",
     starts: {
       contains: [
