@@ -1,5 +1,5 @@
 /*!
-  Highlight.js v11.5.0 (git: 7a62552656)
+  Highlight.js v11.5.1 (git: b8f233c8e2)
   (c) 2006-2022 Ivan Sagalaev and other contributors
   License: BSD-3-Clause
  */
@@ -1555,7 +1555,7 @@ function expandOrCloneMode(mode) {
   return mode;
 }
 
-var version = "11.5.0";
+var version = "11.5.1";
 
 class HTMLInjectionError extends Error {
   constructor(reason, html) {

@@ -6,7 +6,7 @@
     "syntax"
   ],
   "homepage": "https://highlightjs.org/",
-  "version": "11.5.0",
+  "version": "11.5.1",
   "author": {
     "name": "Ivan Sagalaev",
     "email": "maniac@softwaremaniacs.org"
@@ -32,7 +32,10 @@
     "type": "git",
     "url": "git://github.com/highlightjs/highlight.js.git"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css",
+    "*.scss"
+  ],
   "scripts": {
     "mocha": "mocha",
     "lint": "eslint src/*.js src/lib/*.js demo/*.js tools/**/*.js --ignore-pattern vendor",
