@@ -1,6 +1,6 @@
 /*!
-  Highlight.js v11.5.1 (git: b8f233c8e2)
-  (c) 2006-2022 Ivan Sagalaev and other contributors
+  Highlight.js v11.6.0 (git: bed790f3f3)
+  (c) 2006-2022 undefined and other contributors
   License: BSD-3-Clause
  */
 var deepFreezeEs6 = {exports: {}};
@@ -33,8 +33,6 @@ function deepFreeze(obj) {
 
 deepFreezeEs6.exports = deepFreeze;
 deepFreezeEs6.exports.default = deepFreeze;
-
-var deepFreeze$1 = deepFreezeEs6.exports;
 
 /** @typedef {import('highlight.js').CallbackResponse} CallbackResponse */
 /** @typedef {import('highlight.js').CompiledMode} CompiledMode */
@@ -101,7 +99,7 @@ function inherit$1(original, ...objects) {
  * @property {() => string} value
  */
 
-/** @typedef {{kind?: string, sublanguage?: boolean}} Node */
+/** @typedef {{scope?: string, language?: string, sublanguage?: boolean}} Node */
 /** @typedef {{walk: (r: Renderer) => void}} Tree */
 /** */
 
@@ -112,7 +110,9 @@ const SPAN_CLOSE = '</span>';
  *
  * @param {Node} node */
 const emitsWrappingTags = (node) => {
-  return !!node.kind;
+  // rarely we can have a sublanguage where language is undefined
+  // TODO: track down why
+  return !!node.scope || (node.sublanguage && node.language);
 };
 
 /**
@@ -120,7 +120,7 @@ const emitsWrappingTags = (node) => {
  * @param {string} name
  * @param {{prefix:string}} options
  */
-const expandScopeName = (name, { prefix }) => {
+const scopeToCSSClass = (name, { prefix }) => {
   if (name.includes(".")) {
     const pieces = name.split(".");
     return [
@@ -160,13 +160,13 @@ class HTMLRenderer {
   openNode(node) {
     if (!emitsWrappingTags(node)) return;
 
-    let scope = node.kind;
+    let className = "";
     if (node.sublanguage) {
-      scope = `language-${scope}`;
+      className = `language-${node.language}`;
     } else {
-      scope = expandScopeName(scope, { prefix: this.classPrefix });
+      className = scopeToCSSClass(node.scope, { prefix: this.classPrefix });
     }
-    this.span(scope);
+    this.span(className);
   }
 
   /**
@@ -197,15 +197,23 @@ class HTMLRenderer {
   }
 }
 
-/** @typedef {{kind?: string, sublanguage?: boolean, children: Node[]} | string} Node */
-/** @typedef {{kind?: string, sublanguage?: boolean, children: Node[]} } DataNode */
+/** @typedef {{scope?: string, language?: string, sublanguage?: boolean, children: Node[]} | string} Node */
+/** @typedef {{scope?: string, language?: string, sublanguage?: boolean, children: Node[]} } DataNode */
 /** @typedef {import('highlight.js').Emitter} Emitter */
 /**  */
+
+/** @returns {DataNode} */
+const newNode = (opts = {}) => {
+  /** @type DataNode */
+  const result = { children: [] };
+  Object.assign(result, opts);
+  return result;
+};
 
 class TokenTree {
   constructor() {
     /** @type DataNode */
-    this.rootNode = { children: [] };
+    this.rootNode = newNode();
     this.stack = [this.rootNode];
   }
 
@@ -220,10 +228,10 @@ class TokenTree {
     this.top.children.push(node);
   }
 
-  /** @param {string} kind */
-  openNode(kind) {
+  /** @param {string} scope */
+  openNode(scope) {
     /** @type Node */
-    const node = { kind, children: [] };
+    const node = newNode({ scope });
     this.add(node);
     this.stack.push(node);
   }
@@ -295,11 +303,11 @@ class TokenTree {
 
   Minimal interface:
 
-  - addKeyword(text, kind)
+  - addKeyword(text, scope)
   - addText(text)
   - addSublanguage(emitter, subLanguageName)
   - finalize()
-  - openNode(kind)
+  - openNode(scope)
   - closeNode()
   - closeAllNodes()
   - toHTML()
@@ -320,12 +328,12 @@ class TokenTreeEmitter extends TokenTree {
 
   /**
    * @param {string} text
-   * @param {string} kind
+   * @param {string} scope
    */
-  addKeyword(text, kind) {
+  addKeyword(text, scope) {
     if (text === "") { return; }
 
-    this.openNode(kind);
+    this.openNode(scope);
     this.addText(text);
     this.closeNode();
   }
@@ -346,8 +354,8 @@ class TokenTreeEmitter extends TokenTree {
   addSublanguage(emitter, name) {
     /** @type DataNode */
     const node = emitter.root;
-    node.kind = name;
     node.sublanguage = true;
+    node.language = name;
     this.add(node);
   }
 
@@ -1555,7 +1563,7 @@ function expandOrCloneMode(mode) {
   return mode;
 }
 
-var version = "11.5.1";
+var version = "11.6.0";
 
 class HTMLInjectionError extends Error {
   constructor(reason, html) {
@@ -1787,7 +1795,7 @@ const HLJS = function(hljs) {
         lastIndex = top.keywordPatternRe.lastIndex;
         match = top.keywordPatternRe.exec(modeBuffer);
       }
-      buf += modeBuffer.substr(lastIndex);
+      buf += modeBuffer.substring(lastIndex);
       emitter.addText(buf);
     }
 
@@ -1962,7 +1970,7 @@ const HLJS = function(hljs) {
      */
     function doEndMatch(match) {
       const lexeme = match[0];
-      const matchPlusRemainder = codeToHighlight.substr(match.index);
+      const matchPlusRemainder = codeToHighlight.substring(match.index);
 
       const endMode = endOfMode(top, match, matchPlusRemainder);
       if (!endMode) { return NO_MATCH; }
@@ -2135,7 +2143,7 @@ const HLJS = function(hljs) {
         const processedCount = processLexeme(beforeMatch, match);
         index = match.index + processedCount;
       }
-      processLexeme(codeToHighlight.substr(index));
+      processLexeme(codeToHighlight.substring(index));
       emitter.closeAllNodes();
       emitter.finalize();
       result = emitter.toHTML();
@@ -2545,7 +2553,7 @@ const HLJS = function(hljs) {
     // @ts-ignore
     if (typeof MODES[key] === "object") {
       // @ts-ignore
-      deepFreeze$1(MODES[key]);
+      deepFreezeEs6.exports(MODES[key]);
     }
   }
 

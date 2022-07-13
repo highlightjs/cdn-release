@@ -1,6 +1,6 @@
 /*!
-  Highlight.js v11.5.1 (git: b8f233c8e2)
-  (c) 2006-2022 Ivan Sagalaev and other contributors
+  Highlight.js v11.6.0 (git: bed790f3f3)
+  (c) 2006-2022 undefined and other contributors
   License: BSD-3-Clause
  */
 var deepFreezeEs6 = {exports: {}};
@@ -33,8 +33,6 @@ function deepFreeze(obj) {
 
 deepFreezeEs6.exports = deepFreeze;
 deepFreezeEs6.exports.default = deepFreeze;
-
-var deepFreeze$1 = deepFreezeEs6.exports;
 
 /** @typedef {import('highlight.js').CallbackResponse} CallbackResponse */
 /** @typedef {import('highlight.js').CompiledMode} CompiledMode */
@@ -101,7 +99,7 @@ function inherit$1(original, ...objects) {
  * @property {() => string} value
  */
 
-/** @typedef {{kind?: string, sublanguage?: boolean}} Node */
+/** @typedef {{scope?: string, language?: string, sublanguage?: boolean}} Node */
 /** @typedef {{walk: (r: Renderer) => void}} Tree */
 /** */
 
@@ -112,7 +110,9 @@ const SPAN_CLOSE = '</span>';
  *
  * @param {Node} node */
 const emitsWrappingTags = (node) => {
-  return !!node.kind;
+  // rarely we can have a sublanguage where language is undefined
+  // TODO: track down why
+  return !!node.scope || (node.sublanguage && node.language);
 };
 
 /**
@@ -120,7 +120,7 @@ const emitsWrappingTags = (node) => {
  * @param {string} name
  * @param {{prefix:string}} options
  */
-const expandScopeName = (name, { prefix }) => {
+const scopeToCSSClass = (name, { prefix }) => {
   if (name.includes(".")) {
     const pieces = name.split(".");
     return [
@@ -160,13 +160,13 @@ class HTMLRenderer {
   openNode(node) {
     if (!emitsWrappingTags(node)) return;
 
-    let scope = node.kind;
+    let className = "";
     if (node.sublanguage) {
-      scope = `language-${scope}`;
+      className = `language-${node.language}`;
     } else {
-      scope = expandScopeName(scope, { prefix: this.classPrefix });
+      className = scopeToCSSClass(node.scope, { prefix: this.classPrefix });
     }
-    this.span(scope);
+    this.span(className);
   }
 
   /**
@@ -197,15 +197,23 @@ class HTMLRenderer {
   }
 }
 
-/** @typedef {{kind?: string, sublanguage?: boolean, children: Node[]} | string} Node */
-/** @typedef {{kind?: string, sublanguage?: boolean, children: Node[]} } DataNode */
+/** @typedef {{scope?: string, language?: string, sublanguage?: boolean, children: Node[]} | string} Node */
+/** @typedef {{scope?: string, language?: string, sublanguage?: boolean, children: Node[]} } DataNode */
 /** @typedef {import('highlight.js').Emitter} Emitter */
 /**  */
+
+/** @returns {DataNode} */
+const newNode = (opts = {}) => {
+  /** @type DataNode */
+  const result = { children: [] };
+  Object.assign(result, opts);
+  return result;
+};
 
 class TokenTree {
   constructor() {
     /** @type DataNode */
-    this.rootNode = { children: [] };
+    this.rootNode = newNode();
     this.stack = [this.rootNode];
   }
 
@@ -220,10 +228,10 @@ class TokenTree {
     this.top.children.push(node);
   }
 
-  /** @param {string} kind */
-  openNode(kind) {
+  /** @param {string} scope */
+  openNode(scope) {
     /** @type Node */
-    const node = { kind, children: [] };
+    const node = newNode({ scope });
     this.add(node);
     this.stack.push(node);
   }
@@ -295,11 +303,11 @@ class TokenTree {
 
   Minimal interface:
 
-  - addKeyword(text, kind)
+  - addKeyword(text, scope)
   - addText(text)
   - addSublanguage(emitter, subLanguageName)
   - finalize()
-  - openNode(kind)
+  - openNode(scope)
   - closeNode()
   - closeAllNodes()
   - toHTML()
@@ -320,12 +328,12 @@ class TokenTreeEmitter extends TokenTree {
 
   /**
    * @param {string} text
-   * @param {string} kind
+   * @param {string} scope
    */
-  addKeyword(text, kind) {
+  addKeyword(text, scope) {
     if (text === "") { return; }
 
-    this.openNode(kind);
+    this.openNode(scope);
     this.addText(text);
     this.closeNode();
   }
@@ -346,8 +354,8 @@ class TokenTreeEmitter extends TokenTree {
   addSublanguage(emitter, name) {
     /** @type DataNode */
     const node = emitter.root;
-    node.kind = name;
     node.sublanguage = true;
+    node.language = name;
     this.add(node);
   }
 
@@ -1555,7 +1563,7 @@ function expandOrCloneMode(mode) {
   return mode;
 }
 
-var version = "11.5.1";
+var version = "11.6.0";
 
 class HTMLInjectionError extends Error {
   constructor(reason, html) {
@@ -1787,7 +1795,7 @@ const HLJS = function(hljs) {
         lastIndex = top.keywordPatternRe.lastIndex;
         match = top.keywordPatternRe.exec(modeBuffer);
       }
-      buf += modeBuffer.substr(lastIndex);
+      buf += modeBuffer.substring(lastIndex);
       emitter.addText(buf);
     }
 
@@ -1962,7 +1970,7 @@ const HLJS = function(hljs) {
      */
     function doEndMatch(match) {
       const lexeme = match[0];
-      const matchPlusRemainder = codeToHighlight.substr(match.index);
+      const matchPlusRemainder = codeToHighlight.substring(match.index);
 
       const endMode = endOfMode(top, match, matchPlusRemainder);
       if (!endMode) { return NO_MATCH; }
@@ -2135,7 +2143,7 @@ const HLJS = function(hljs) {
         const processedCount = processLexeme(beforeMatch, match);
         index = match.index + processedCount;
       }
-      processLexeme(codeToHighlight.substr(index));
+      processLexeme(codeToHighlight.substring(index));
       emitter.closeAllNodes();
       emitter.finalize();
       result = emitter.toHTML();
@@ -2545,7 +2553,7 @@ const HLJS = function(hljs) {
     // @ts-ignore
     if (typeof MODES$1[key] === "object") {
       // @ts-ignore
-      deepFreeze$1(MODES$1[key]);
+      deepFreezeEs6.exports(MODES$1[key]);
     }
   }
 
@@ -3832,7 +3840,7 @@ function cpp(hljs) {
 Language: C#
 Author: Jason Diamond <jason@diamond.name>
 Contributor: Nicolas LLOBERA <nllobera@gmail.com>, Pieter Vantorre <pietervantorre@gmail.com>, David Pine <david.pine@microsoft.com>
-Website: https://docs.microsoft.com/en-us/dotnet/csharp/
+Website: https://docs.microsoft.com/dotnet/csharp/
 Category: common
 */
 
@@ -3923,6 +3931,7 @@ function csharp(hljs) {
     'record',
     'ref',
     'return',
+    'scoped',
     'sealed',
     'sizeof',
     'stackalloc',
@@ -4912,6 +4921,7 @@ function css(hljs) {
             relevance: 0, // from keywords
             keywords: { built_in: "url data-uri" },
             contains: [
+              ...STRINGS,
               {
                 className: "string",
                 // any character other than `)` as in `url()` will be the start
@@ -5161,6 +5171,83 @@ function go(hljs) {
           }
         ]
       }
+    ]
+  };
+}
+
+/*
+ Language: GraphQL
+ Author: John Foster (GH jf990), and others
+ Description: GraphQL is a query language for APIs
+ Category: web, common
+*/
+
+/** @type LanguageFn */
+function graphql(hljs) {
+  const regex = hljs.regex;
+  const GQL_NAME = /[_A-Za-z][_0-9A-Za-z]*/;
+  return {
+    name: "GraphQL",
+    aliases: [ "gql" ],
+    case_insensitive: true,
+    disableAutodetect: false,
+    keywords: {
+      keyword: [
+        "query",
+        "mutation",
+        "subscription",
+        "type",
+        "input",
+        "schema",
+        "directive",
+        "interface",
+        "union",
+        "scalar",
+        "fragment",
+        "enum",
+        "on"
+      ],
+      literal: [
+        "true",
+        "false",
+        "null"
+      ]
+    },
+    contains: [
+      hljs.HASH_COMMENT_MODE,
+      hljs.QUOTE_STRING_MODE,
+      hljs.NUMBER_MODE,
+      {
+        scope: "punctuation",
+        match: /[.]{3}/,
+        relevance: 0
+      },
+      {
+        scope: "punctuation",
+        begin: /[\!\(\)\:\=\[\]\{\|\}]{1}/,
+        relevance: 0
+      },
+      {
+        scope: "variable",
+        begin: /\$/,
+        end: /\W/,
+        excludeEnd: true,
+        relevance: 0
+      },
+      {
+        scope: "meta",
+        match: /@\w+/,
+        excludeEnd: true
+      },
+      {
+        scope: "symbol",
+        begin: regex.concat(GQL_NAME, regex.lookahead(/\s*:/)),
+        relevance: 0
+      }
+    ],
+    illegal: [
+      /[;<']/,
+      /BEGIN/
     ]
   };
 }
@@ -5507,7 +5594,7 @@ function java(hljs) {
           /\s+/,
           JAVA_IDENT_RE,
           /\s+/,
-          /=/
+          /=(?!=)/
         ],
         className: {
           1: "type",
@@ -5795,7 +5882,7 @@ function javascript(hljs) {
       // `<From extends string>`
       // technically this could be HTML, but it smells like a type
       let m;
-      const afterMatch = match.input.substr(afterMatchIndex);
+      const afterMatch = match.input.substring(afterMatchIndex);
       // NOTE: This is ugh, but added specifically for https://github.com/highlightjs/highlight.js/issues/3276
       if ((m = afterMatch.match(/^\s+extends\s+/))) {
         if (m.index === 0) {
@@ -6323,24 +6410,31 @@ function json(hljs) {
     className: "punctuation",
     relevance: 0
   };
-  // normally we would rely on `keywords` for this but using a mode here allows us
-  // to use the very tight `illegal: \S` rule later to flag any other character
-  // as illegal indicating that despite looking like JSON we do not truly have
-  // JSON and thus improve false-positively greatly since JSON will try and claim
-  // all sorts of JSON looking stuff
-  const LITERALS = { beginKeywords: [
+  const LITERALS = [
     "true",
     "false",
     "null"
-  ].join(" ") };
+  ];
+  // NOTE: normally we would rely on `keywords` for this but using a mode here allows us
+  // - to use the very tight `illegal: \S` rule later to flag any other character
+  // - as illegal indicating that despite looking like JSON we do not truly have
+  // - JSON and thus improve false-positively greatly since JSON will try and claim
+  // - all sorts of JSON looking stuff
+  const LITERALS_MODE = {
+    scope: "literal",
+    beginKeywords: LITERALS.join(" "),
+  };
 
   return {
     name: 'JSON',
+    keywords:{
+      literal: LITERALS,
+    },
     contains: [
       ATTRIBUTE,
       PUNCTUATION,
       hljs.QUOTE_STRING_MODE,
-      LITERALS,
+      LITERALS_MODE,
       hljs.C_NUMBER_MODE,
       hljs.C_LINE_COMMENT_MODE,
       hljs.C_BLOCK_COMMENT_MODE
@@ -6441,7 +6535,10 @@ function kotlin(hljs) {
       {
         begin: /\(/,
         end: /\)/,
-        contains: [ hljs.inherit(STRING, { className: 'string' }) ]
+        contains: [
+          hljs.inherit(STRING, { className: 'string' }),
+          "self"
+        ]
       }
     ]
   };
@@ -6549,8 +6646,15 @@ function kotlin(hljs) {
         ]
       },
       {
-        className: 'class',
-        beginKeywords: 'class interface trait', // remove 'trait' when removed from KEYWORDS
+        begin: [
+          /class|interface|trait/,
+          /\s+/,
+          hljs.UNDERSCORE_IDENT_RE
+        ],
+        beginScope: {
+          3: "title.class"
+        },
+        keywords: 'class interface trait',
         end: /[:\{(]|$/,
         excludeEnd: true,
         illegal: 'extends implements',
@@ -6568,7 +6672,7 @@ function kotlin(hljs) {
           {
             className: 'type',
             begin: /[,:]\s*/,
-            end: /[<\(,]|$/,
+            end: /[<\(,){\s]|$/,
             excludeBegin: true,
             returnEnd: true
           },
@@ -6667,7 +6771,9 @@ function less(hljs) {
       returnBegin: true,
       excludeEnd: true
     },
-    modes.IMPORTANT
+    modes.IMPORTANT,
+    { beginKeywords: 'and not' },
+    modes.FUNCTION_DISPATCH
   );
 
   const VALUE_WITH_RULESETS = VALUE_MODES.concat({
@@ -6763,6 +6869,7 @@ function less(hljs) {
       MIXIN_GUARD_MODE,
       IDENT_MODE('keyword', 'all\\b'),
       IDENT_MODE('variable', '@\\{' + IDENT_RE + '\\}'), // otherwise it’s identified as tag
+      
       {
         begin: '\\b(' + TAGS.join('|') + ')\\b',
         className: 'selector-tag'
@@ -6805,7 +6912,9 @@ function less(hljs) {
     VAR_RULE_MODE,
     PSEUDO_SELECTOR_MODE,
     RULE_MODE,
-    SELECTOR_MODE
+    SELECTOR_MODE,
+    MIXIN_GUARD_MODE,
+    modes.FUNCTION_DISPATCH
   );
 
   return {
@@ -6990,9 +7099,15 @@ Audit: 2020
 /** @type LanguageFn */
 function xml(hljs) {
   const regex = hljs.regex;
-  // Element names can contain letters, digits, hyphens, underscores, and periods
-  const TAG_NAME_RE = regex.concat(/[A-Z_]/, regex.optional(/[A-Z0-9_.-]*:/), /[A-Z0-9_.-]*/);
-  const XML_IDENT_RE = /[A-Za-z0-9._:-]+/;
+  // XML names can have the following additional letters: https://www.w3.org/TR/xml/#NT-NameChar
+  // OTHER_NAME_CHARS = /[:\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]/;
+  // Element names start with NAME_START_CHAR followed by optional other Unicode letters, ASCII digits, hyphens, underscores, and periods
+  // const TAG_NAME_RE = regex.concat(/[A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/, regex.optional(/[A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]*:/), /[A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]*/);;
+  // const XML_IDENT_RE = /[A-Z_a-z:\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]+/;
+  // const TAG_NAME_RE = regex.concat(/[A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]/, regex.optional(/[A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]*:/), /[A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]*/);
+  // however, to cater for performance and more Unicode support rely simply on the Unicode letter class
+  const TAG_NAME_RE = regex.concat(/[\p{L}_]/u, regex.optional(/[\p{L}0-9_.-]*:/u), /[\p{L}0-9_.-]*/u);
+  const XML_IDENT_RE = /[\p{L}0-9._:-]+/u;
   const XML_ENTITIES = {
     className: 'symbol',
     begin: /&[a-z]+;|&#[0-9]+;|&#x[a-f0-9]+;/
@@ -7063,6 +7178,7 @@ function xml(hljs) {
       'svg'
     ],
     case_insensitive: true,
+    unicodeRegex: true,
     contains: [
       {
         className: 'meta',
@@ -8866,6 +8982,7 @@ function python(hljs) {
     'async',
     'await',
     'break',
+    'case',
     'class',
     'continue',
     'def',
@@ -8882,6 +8999,7 @@ function python(hljs) {
     'in',
     'is',
     'lambda',
+    'match',
     'nonlocal|10',
     'not',
     'or',
@@ -10107,7 +10225,7 @@ function rust(hljs) {
     "file!",
     "format!",
     "format_args!",
-    "include_bin!",
+    "include_bytes!",
     "include_str!",
     "line!",
     "local_data_key!",
@@ -10268,7 +10386,8 @@ function rust(hljs) {
         begin: hljs.IDENT_RE + '::',
         keywords: {
           keyword: "Self",
-          built_in: BUILTINS
+          built_in: BUILTINS,
+          type: TYPES
         }
       },
       {
@@ -10353,6 +10472,7 @@ function scss(hljs) {
       {
         begin: /:/,
         end: /[;}{]/,
+        relevance: 0,
         contains: [
           modes.BLOCK_COMMENT,
           VARIABLE,
@@ -10360,7 +10480,8 @@ function scss(hljs) {
           modes.CSS_NUMBER_MODE,
           hljs.QUOTE_STRING_MODE,
           hljs.APOS_STRING_MODE,
-          modes.IMPORTANT
+          modes.IMPORTANT,
+          modes.FUNCTION_DISPATCH
         ]
       },
       // matching these here allows us to treat them more like regular CSS
@@ -11146,6 +11267,7 @@ const keywords = [
   // will result in additional modes being created to scan for those keywords to
   // avoid conflicts with other rules
   'actor',
+  'any', // contextual
   'associatedtype',
   'async',
   'await',
@@ -11162,6 +11284,7 @@ const keywords = [
   'defer',
   'deinit',
   'didSet', // contextual
+  'distributed',
   'do',
   'dynamic', // contextual
   'else',
@@ -12175,6 +12298,144 @@ function vbnet(hljs) {
 }
 
 /*
+Language: WebAssembly
+Website: https://webassembly.org
+Description:  Wasm is designed as a portable compilation target for programming languages, enabling deployment on the web for client and server applications.
+Category: web, common
+Audit: 2020
+*/
+
+/** @type LanguageFn */
+function wasm(hljs) {
+  hljs.regex;
+  const BLOCK_COMMENT = hljs.COMMENT(/\(;/, /;\)/);
+  BLOCK_COMMENT.contains.push("self");
+  const LINE_COMMENT = hljs.COMMENT(/;;/, /$/);
+
+  const KWS = [
+    "anyfunc",
+    "block",
+    "br",
+    "br_if",
+    "br_table",
+    "call",
+    "call_indirect",
+    "data",
+    "drop",
+    "elem",
+    "else",
+    "end",
+    "export",
+    "func",
+    "global.get",
+    "global.set",
+    "local.get",
+    "local.set",
+    "local.tee",
+    "get_global",
+    "get_local",
+    "global",
+    "if",
+    "import",
+    "local",
+    "loop",
+    "memory",
+    "memory.grow",
+    "memory.size",
+    "module",
+    "mut",
+    "nop",
+    "offset",
+    "param",
+    "result",
+    "return",
+    "select",
+    "set_global",
+    "set_local",
+    "start",
+    "table",
+    "tee_local",
+    "then",
+    "type",
+    "unreachable"
+  ];
+
+  const FUNCTION_REFERENCE = {
+    begin: [
+      /(?:func|call|call_indirect)/,
+      /\s+/,
+      /\$[^\s)]+/
+    ],
+    className: {
+      1: "keyword",
+      3: "title.function"
+    }
+  };
+
+  const ARGUMENT = {
+    className: "variable",
+    begin: /\$[\w_]+/
+  };
+
+  const PARENS = {
+    match: /(\((?!;)|\))+/,
+    className: "punctuation",
+    relevance: 0
+  };
+
+  const NUMBER = {
+    className: "number",
+    relevance: 0,
+    // borrowed from Prism, TODO: split out into variants
+    match: /[+-]?\b(?:\d(?:_?\d)*(?:\.\d(?:_?\d)*)?(?:[eE][+-]?\d(?:_?\d)*)?|0x[\da-fA-F](?:_?[\da-fA-F])*(?:\.[\da-fA-F](?:_?[\da-fA-D])*)?(?:[pP][+-]?\d(?:_?\d)*)?)\b|\binf\b|\bnan(?::0x[\da-fA-F](?:_?[\da-fA-D])*)?\b/
+  };
+
+  const TYPE = {
+    // look-ahead prevents us from gobbling up opcodes
+    match: /(i32|i64|f32|f64)(?!\.)/,
+    className: "type"
+  };
+
+  const MATH_OPERATIONS = {
+    className: "keyword",
+    // borrowed from Prism, TODO: split out into variants
+    match: /\b(f32|f64|i32|i64)(?:\.(?:abs|add|and|ceil|clz|const|convert_[su]\/i(?:32|64)|copysign|ctz|demote\/f64|div(?:_[su])?|eqz?|extend_[su]\/i32|floor|ge(?:_[su])?|gt(?:_[su])?|le(?:_[su])?|load(?:(?:8|16|32)_[su])?|lt(?:_[su])?|max|min|mul|nearest|neg?|or|popcnt|promote\/f32|reinterpret\/[fi](?:32|64)|rem_[su]|rot[lr]|shl|shr_[su]|store(?:8|16|32)?|sqrt|sub|trunc(?:_[su]\/f(?:32|64))?|wrap\/i64|xor))\b/
+  };
+
+  const OFFSET_ALIGN = {
+    match: [
+      /(?:offset|align)/,
+      /\s*/,
+      /=/
+    ],
+    className: {
+      1: "keyword",
+      3: "operator"
+    }
+  };
+
+  return {
+    name: 'WebAssembly',
+    keywords: {
+      $pattern: /[\w.]+/,
+      keyword: KWS
+    },
+    contains: [
+      LINE_COMMENT,
+      BLOCK_COMMENT,
+      OFFSET_ALIGN,
+      ARGUMENT,
+      PARENS,
+      FUNCTION_REFERENCE,
+      hljs.QUOTE_STRING_MODE,
+      TYPE,
+      MATH_OPERATIONS,
+      NUMBER
+    ]
+  };
+}
+
+/*
 Language: YAML
 Description: Yet Another Markdown Language
 Author: Stefan Wienert <stwienert@gmail.com>
@@ -12376,6 +12637,7 @@ var builtIns = /*#__PURE__*/Object.freeze({
     grmr_css: css,
     grmr_diff: diff,
     grmr_go: go,
+    grmr_graphql: graphql,
     grmr_ini: ini,
     grmr_java: java,
     grmr_javascript: javascript,
@@ -12402,6 +12664,7 @@ var builtIns = /*#__PURE__*/Object.freeze({
     grmr_swift: swift,
     grmr_typescript: typescript,
     grmr_vbnet: vbnet,
+    grmr_wasm: wasm,
     grmr_yaml: yaml
 });
 
