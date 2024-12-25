@@ -1,5 +1,5 @@
 /*!
-  Highlight.js v11.11.0 (git: 40883e19c5)
+  Highlight.js v11.11.1 (git: 08cb242e7d)
   (c) 2006-2024 Josh Goebel <hello@joshgoebel.com> and other contributors
   License: BSD-3-Clause
  */
@@ -1555,7 +1555,7 @@ function expandOrCloneMode(mode) {
   return mode;
 }
 
-var version = "11.11.0";
+var version = "11.11.1";
 
 class HTMLInjectionError extends Error {
   constructor(reason, html) {
@@ -10786,6 +10786,11 @@ function rust(hljs) {
         illegal: null
       }),
       {
+        className: 'symbol',
+        // negative lookahead to avoid matching `'`
+        begin: /'[a-zA-Z_][a-zA-Z0-9_]*(?!')/
+      },
+      {
         scope: 'string',
         variants: [
           { begin: /b?r(#*)"(.|\n)*?"\1(?!#)/ },
@@ -10795,15 +10800,11 @@ function rust(hljs) {
             contains: [
               {
                 scope: "char.escape",
-                match: /\\(\w|x\w{2}|u\w{4}|U\w{8})/
+                match: /\\('|\w|x\w{2}|u\w{4}|U\w{8})/
               }
             ]
           }
         ]
-      },
-      {
-        className: 'symbol',
-        begin: /'[a-zA-Z_][a-zA-Z0-9_]*/
       },
       {
         className: 'number',
