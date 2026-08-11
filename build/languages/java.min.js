@@ -1,4 +1,4 @@
-/*! `java` grammar compiled for Highlight.js 11.11.1 */
+/*! `java` grammar compiled for Highlight.js 11.11.2 */
 (()=>{var e=(()=>{"use strict"
 ;var e="[0-9](_*[0-9])*",a=`\\.(${e})`,n="[0-9a-fA-F](_*[0-9a-fA-F])*",s={
 className:"number",variants:[{

@@ -1,4 +1,4 @@
-/*! `typescript` grammar compiled for Highlight.js 11.11.1 */
+/*! `typescript` grammar compiled for Highlight.js 11.11.2 */
 (()=>{var e=(()=>{"use strict"
 ;const e="[A-Za-z$_][0-9A-Za-z$_]*",n=["as","in","of","if","for","while","finally","var","new","function","do","return","void","else","break","catch","instanceof","with","throw","case","default","try","switch","continue","typeof","delete","let","yield","const","class","debugger","async","await","static","import","from","export","extends","using"],a=["true","false","null","undefined","NaN","Infinity"],t=["Object","Function","Boolean","Symbol","Math","Date","Number","BigInt","String","RegExp","Array","Float32Array","Float64Array","Int8Array","Uint8Array","Uint8ClampedArray","Int16Array","Int32Array","Uint16Array","Uint32Array","BigInt64Array","BigUint64Array","Set","Map","WeakSet","WeakMap","ArrayBuffer","SharedArrayBuffer","Atomics","DataView","JSON","Promise","Generator","GeneratorFunction","AsyncFunction","Reflect","Proxy","Intl","WebAssembly"],s=["Error","EvalError","InternalError","RangeError","ReferenceError","SyntaxError","TypeError","URIError"],c=["setInterval","setTimeout","clearInterval","clearTimeout","require","exports","eval","isFinite","isNaN","parseFloat","parseInt","decodeURI","decodeURIComponent","encodeURI","encodeURIComponent","escape","unescape"],r=["arguments","this","super","console","window","document","localStorage","sessionStorage","module","global"],i=[].concat(c,t,s)
 ;function o(o){const l=o.regex,d=e,b={begin:/<[A-Za-z0-9\\._:-]+/,
@@ -44,7 +44,7 @@ className:"title.class",keywords:{_:[...t,...s]}},O={variants:[{
 match:[/function/,/\s+/,d,/(?=\s*\()/]},{match:[/function/,/\s*(?=\()/]}],
 className:{1:"keyword",3:"title.function"},label:"func.def",contains:[R],
 illegal:/%/},I={
-match:l.concat(/\b/,(C=[...c,"super","import"].map((e=>e+"\\s*\\(")),
+match:l.concat(/\b/,(C=[...c,"super","import","await"].map((e=>e+"\\s*\\(")),
 l.concat("(?!",C.join("|"),")")),d,l.lookahead(/\s*\(/)),
 className:"title.function",relevance:0};var C;const T={
 begin:l.concat(/\./,l.lookahead(l.concat(d,/(?![0-9A-Za-z$_(])/))),end:d,
@@ -55,7 +55,7 @@ contains:[{begin:/\(\)/},R]
 match:[/const|var|let/,/\s+/,d,/\s*/,/=\s*/,/(async\s*)?/,l.lookahead(B)],
 keywords:"async",className:{1:"keyword",3:"title.function"},contains:[R]}
 ;return{name:"JavaScript",aliases:["js","jsx","mjs","cjs"],keywords:g,exports:{
-PARAMS_CONTAINS:w,CLASS_REFERENCE:x},illegal:/#(?![$_A-z])/,
+PARAMS_CONTAINS:w,CLASS_REFERENCE:x},illegal:/#(?![$_A-Za-z])/,
 contains:[o.SHEBANG({label:"shebang",binary:"node",relevance:5}),{
 label:"use_strict",className:"meta",relevance:10,
 begin:/^\s*['"]use (strict|asm)['"]/

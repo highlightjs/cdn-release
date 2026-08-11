@@ -1,4 +1,4 @@
-/*! `rust` grammar compiled for Highlight.js 11.11.1 */
+/*! `rust` grammar compiled for Highlight.js 11.11.2 */
 (()=>{var e=(()=>{"use strict";return e=>{
 const t=e.regex,n=/(r#)?/,a=t.concat(n,e.UNDERSCORE_IDENT_RE),i=t.concat(n,e.IDENT_RE),s={
 className:"title.function.invoke",relevance:0,

@@ -1,6 +1,6 @@
 /*!
-  Highlight.js v11.11.1 (git: 08cb242e7d)
-  (c) 2006-2024 Josh Goebel <hello@joshgoebel.com> and other contributors
+  Highlight.js v11.11.2 (git: f273f007f8)
+  (c) 2006-2026 Josh Goebel <hello@joshgoebel.com> and other contributors
   License: BSD-3-Clause
  */
 /* eslint-disable no-multi-assign */
@@ -1555,7 +1555,7 @@ function expandOrCloneMode(mode) {
   return mode;
 }
 
-var version = "11.11.1";
+var version = "11.11.2";
 
 class HTMLInjectionError extends Error {
   constructor(reason, html) {
@@ -2077,12 +2077,15 @@ const HLJS = function(hljs) {
         }
       }
 
-      // edge case for when illegal matches $ (end of line) which is technically
+      // edge case for when illegal matches $ (end of line/text) which is technically
       // a 0 width match but not a begin/end match so it's not caught by the
-      // first handler (when ignoreIllegals is true)
+      // first handler (when `ignoreIllegals` is true)
       if (match.type === "illegal" && lexeme === "") {
-        // advance so we aren't stuck in an infinite loop
-        modeBuffer += "\n";
+        if (match.index === codeToHighlight.length) ; else {
+          // matched literal `\n` (with `$`) so we must manually add the newline
+          // itself to the modeBuffer so it is not lost when we advance the cursor
+          modeBuffer += "\n";
+        }
         return 1;
       }
 
@@ -3764,11 +3767,7 @@ function cpp(hljs) {
       _hint: FUNCTION_HINTS },
     begin: regex.concat(
       /\b/,
-      /(?!decltype)/,
-      /(?!if)/,
-      /(?!for)/,
-      /(?!switch)/,
-      /(?!while)/,
+      `(?!${RESERVED_KEYWORDS.join('|')})`,
       hljs.IDENT_RE,
       regex.lookahead(/(<[^<>]+>|)\s*\(/))
   };
@@ -4109,7 +4108,7 @@ function csharp(hljs) {
     variants: [
       { begin: '\\b(0b[01\']+)' },
       { begin: '(-?)\\b([\\d\']+(\\.[\\d\']*)?|\\.[\\d\']+)(u|U|l|L|ul|UL|f|F|b|B)' },
-      { begin: '(-?)(\\b0[xX][a-fA-F0-9\']+|(\\b[\\d\']+(\\.[\\d\']*)?|\\.[\\d\']+)([eE][-+]?[\\d\']+)?)' }
+      { begin: '(-?)(\\b0[xX][a-fA-F0-9\'_]+|(\\b[\\d\'_]+(\\.[\\d\'_]*)?|\\.[\\d\'_]+)([eE][-+]?[\\d\'_]+)?)' }
     ],
     relevance: 0
   };
@@ -4362,6 +4361,10 @@ const MODES = (hljs) => {
     HEXCOLOR: {
       scope: 'number',
       begin: /#(([0-9a-fA-F]{3,4})|(([0-9a-fA-F]{2}){3,4}))\b/
+    },
+    UNICODE_RANGE: {
+      scope: 'number',
+      begin: /\b[Uu]\+[0-9A-Fa-f][0-9A-Fa-f?]{0,4}(-[0-9A-Fa-f][0-9A-Fa-f]{0,4})?/
     },
     FUNCTION_DISPATCH: {
       className: "built_in",
@@ -5131,6 +5134,7 @@ const ATTRIBUTES = [
   'transition-timing-function',
   'translate',
   'unicode-bidi',
+  'unicode-range',
   'user-modify',
   'user-select',
   'vector-effect',
@@ -5240,9 +5244,10 @@ function css(hljs) {
           modes.HEXCOLOR,
           modes.IMPORTANT,
           modes.CSS_NUMBER_MODE,
+          modes.UNICODE_RANGE,
           ...STRINGS,
           // needed to highlight these as strings and to avoid issues with
-          // illegal characters that might be inside urls that would tigger the
+          // illegal characters that might be inside urls that would trigger the
           // languages illegal stack
           {
             begin: /(url|data-uri)\(/,
@@ -5322,7 +5327,10 @@ function diff(hljs) {
         className: 'meta',
         relevance: 10,
         match: regex.either(
-          /^@@ +-\d+,\d+ +\+\d+,\d+ +@@/,
+          /^@@ +-\d+,\d+ +\+\d+,\d+ +@@/, // @@ -1,2 +1,2 @@
+          /^@@ +-\d+ +\+\d+,\d+ +@@/,     // @@ -1 +1,2 @@
+          /^@@ +-\d+,\d+ +\+\d+ +@@/,     // @@ -1,2 +1 @@
+          /^@@ +-\d+ +\+\d+ +@@/,         // @@ -1 +1 @@
           /^\*\*\* +\d+,\d+ +\*\*\*\*$/,
           /^--- +\d+,\d+ +----$/
         )
@@ -6007,6 +6015,14 @@ function java(hljs) {
 }
 
 const IDENT_RE = '[A-Za-z$_][0-9A-Za-z$_]*';
+const EXTENDED_NUMBER_RE = '([-+]?)(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)|NaN|[-+]?Infinity'; // 0x..., 0..., decimal, float
+
+const EXTENDED_NUMBER_MODE = {
+  scope: 'number',
+  match: EXTENDED_NUMBER_RE,
+  relevance: 0
+};
+
 const KEYWORDS = [
   "as", // for exports
   "in",
@@ -6554,7 +6570,8 @@ function javascript(hljs) {
       noneOf([
         ...BUILT_IN_GLOBALS,
         "super",
-        "import"
+        "import",
+        "await",
       ].map(x => `${x}\\s*\\(`)),
       IDENT_RE$1, regex.lookahead(/\s*\(/)),
     className: "title.function",
@@ -6623,7 +6640,7 @@ function javascript(hljs) {
     keywords: KEYWORDS$1,
     // this will be extended by TypeScript
     exports: { PARAMS_CONTAINS, CLASS_REFERENCE },
-    illegal: /#(?![$_A-z])/,
+    illegal: /#(?![$_A-Za-z])/,
     contains: [
       hljs.SHEBANG({
         label: "shebang",
@@ -6777,15 +6794,15 @@ function javascript(hljs) {
 /*
 Language: JSON
 Description: JSON (JavaScript Object Notation) is a lightweight data-interchange format.
-Author: Ivan Sagalaev <maniac@softwaremaniacs.org>
-Website: http://www.json.org
+Websites: http://www.json.org, https://www.json5.org
 Category: common, protocols, web
 */
+
 
 function json(hljs) {
   const ATTRIBUTE = {
     className: 'attr',
-    begin: /"(\\.|[^\\"\r\n])*"(?=\s*:)/,
+    begin: /(("(\\.|[^\\"\r\n])*")|('(\\.|[^\\'\r\n])*'))(?=\s*:)/,
     relevance: 1.01
   };
   const PUNCTUATION = {
@@ -6810,16 +6827,17 @@ function json(hljs) {
 
   return {
     name: 'JSON',
-    aliases: ['jsonc'],
+    aliases: ['jsonc', 'json5'],
     keywords:{
       literal: LITERALS,
     },
     contains: [
       ATTRIBUTE,
       PUNCTUATION,
+      hljs.APOS_STRING_MODE,
       hljs.QUOTE_STRING_MODE,
       LITERALS_MODE,
-      hljs.C_NUMBER_MODE,
+      EXTENDED_NUMBER_MODE,
       hljs.C_LINE_COMMENT_MODE,
       hljs.C_BLOCK_COMMENT_MODE
     ],
@@ -7145,6 +7163,7 @@ function less(hljs) {
         excludeEnd: true
       }
     },
+    modes.UNICODE_RANGE,
     modes.HEXCOLOR,
     PARENS_MODE,
     IDENT_MODE('variable', '@@?' + IDENT_RE, 10),
@@ -7255,7 +7274,7 @@ function less(hljs) {
       MIXIN_GUARD_MODE,
       IDENT_MODE('keyword', 'all\\b'),
       IDENT_MODE('variable', '@\\{' + IDENT_RE + '\\}'), // otherwise it’s identified as tag
-      
+
       {
         begin: '\\b(' + TAGS.join('|') + ')\\b',
         className: 'selector-tag'
@@ -9137,6 +9156,8 @@ function php(hljs) {
       VARIABLE,
       LEFT_AND_RIGHT_SIDE_OF_DOUBLE_COLON,
       hljs.C_BLOCK_COMMENT_MODE,
+      hljs.C_LINE_COMMENT_MODE,
+      hljs.HASH_COMMENT_MODE,
       STRING,
       NUMBER,
       CONSTRUCTOR_CALL,
@@ -9161,6 +9182,8 @@ function php(hljs) {
     NAMED_ARGUMENT,
     LEFT_AND_RIGHT_SIDE_OF_DOUBLE_COLON,
     hljs.C_BLOCK_COMMENT_MODE,
+    hljs.C_LINE_COMMENT_MODE,
+    hljs.HASH_COMMENT_MODE,
     STRING,
     NUMBER,
     CONSTRUCTOR_CALL,
@@ -9289,6 +9312,8 @@ function php(hljs) {
               VARIABLE,
               LEFT_AND_RIGHT_SIDE_OF_DOUBLE_COLON,
               hljs.C_BLOCK_COMMENT_MODE,
+              hljs.C_LINE_COMMENT_MODE,
+              hljs.HASH_COMMENT_MODE,
               STRING,
               NUMBER
             ]
@@ -10990,6 +11015,7 @@ function scss(hljs) {
           VARIABLE,
           modes.HEXCOLOR,
           modes.CSS_NUMBER_MODE,
+          modes.UNICODE_RANGE,
           hljs.QUOTE_STRING_MODE,
           hljs.APOS_STRING_MODE,
           modes.IMPORTANT,

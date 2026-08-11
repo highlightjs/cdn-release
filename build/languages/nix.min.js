@@ -1,4 +1,4 @@
-/*! `nix` grammar compiled for Highlight.js 11.11.1 */
+/*! `nix` grammar compiled for Highlight.js 11.11.2 */
 (()=>{var e=(()=>{"use strict";return e=>{const t=e.regex,r={
 keyword:["assert","else","if","in","inherit","let","or","rec","then","with"],
 literal:["true","false","null"],
