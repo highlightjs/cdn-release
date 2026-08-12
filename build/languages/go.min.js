@@ -1,4 +1,4 @@
-/*! `go` grammar compiled for Highlight.js 11.11.2 */
+/*! `go` grammar compiled for Highlight.js 11.12.0 */
 (()=>{var e=(()=>{"use strict";return e=>{const a={
 keyword:["break","case","chan","const","continue","default","defer","else","fallthrough","for","func","go","goto","if","import","interface","map","package","range","return","select","struct","switch","type","var"],
 type:["bool","byte","complex64","complex128","error","float32","float64","int8","int16","int32","int64","string","uint8","uint16","uint32","uint64","int","uint","uintptr","rune"],
@@ -12,6 +12,7 @@ match:/-?\b0[xX]\.[a-fA-F0-9](_?[a-fA-F0-9])*[pP][+-]?\d(_?\d)*i?/,relevance:0
 },{
 match:/-?\b0[xX](_?[a-fA-F0-9])+((\.([a-fA-F0-9](_?[a-fA-F0-9])*)?)?[pP][+-]?\d(_?\d)*)?i?/,
 relevance:0},{match:/-?\b0[oO](_?[0-7])*i?/,relevance:0},{
+match:/-?\b0[bB](_?[01])*i?/,relevance:0},{
 match:/-?\.\d(_?\d)*([eE][+-]?\d(_?\d)*)?i?/,relevance:0},{
 match:/-?\b\d(_?\d)*(\.(\d(_?\d)*)?)?([eE][+-]?\d(_?\d)*)?i?/,relevance:0}]},{
 begin:/:=/},{className:"function",beginKeywords:"func",end:"\\s*(\\{|$)",

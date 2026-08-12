@@ -1,4 +1,4 @@
-/*! `xml` grammar compiled for Highlight.js 11.11.2 */
+/*! `xml` grammar compiled for Highlight.js 11.12.0 */
 (()=>{var e=(()=>{"use strict";return e=>{
 const a=e.regex,n=a.concat(/[\p{L}_]/u,a.optional(/[\p{L}0-9_.-]*:/u),/[\p{L}0-9_.-]*/u),s={
 className:"symbol",begin:/&[a-z]+;|&#[0-9]+;|&#x[a-f0-9]+;/},t={begin:/\s/,
@@ -18,10 +18,10 @@ className:"meta",begin:/<![a-z]/,end:/>/,contains:[t,i,l,c]}]}]
 relevance:10},s,{className:"meta",end:/\?>/,variants:[{begin:/<\?xml/,
 relevance:10,contains:[l]},{begin:/<\?[a-z][a-z0-9]+/}]},{className:"tag",
 begin:/<style(?=\s|>)/,end:/>/,keywords:{name:"style"},contains:[r],starts:{
-end:/<\/style>/,returnEnd:!0,subLanguage:["css","xml"]}},{className:"tag",
+end:/<\/style>/,returnEnd:!0,subLanguage:"css"}},{className:"tag",
 begin:/<script(?=\s|>)/,end:/>/,keywords:{name:"script"},contains:[r],starts:{
-end:/<\/script>/,returnEnd:!0,subLanguage:["javascript","handlebars","xml"]}},{
-className:"tag",begin:/<>|<\/>/},{className:"tag",
+end:/<\/script>/,returnEnd:!0,subLanguage:"javascript"}},{className:"tag",
+begin:/<>|<\/>/},{className:"tag",
 begin:a.concat(/</,a.lookahead(a.concat(n,a.either(/\/>/,/>/,/\s/)))),
 end:/\/?>/,contains:[{className:"name",begin:n,relevance:0,starts:r}]},{
 className:"tag",begin:a.concat(/<\//,a.lookahead(a.concat(n,/>/))),contains:[{

@@ -1,6 +1,6 @@
-/*! `typescript` grammar compiled for Highlight.js 11.11.2 */
+/*! `typescript` grammar compiled for Highlight.js 11.12.0 */
 (()=>{var e=(()=>{"use strict"
-;const e="[A-Za-z$_][0-9A-Za-z$_]*",n=["as","in","of","if","for","while","finally","var","new","function","do","return","void","else","break","catch","instanceof","with","throw","case","default","try","switch","continue","typeof","delete","let","yield","const","class","debugger","async","await","static","import","from","export","extends","using"],a=["true","false","null","undefined","NaN","Infinity"],t=["Object","Function","Boolean","Symbol","Math","Date","Number","BigInt","String","RegExp","Array","Float32Array","Float64Array","Int8Array","Uint8Array","Uint8ClampedArray","Int16Array","Int32Array","Uint16Array","Uint32Array","BigInt64Array","BigUint64Array","Set","Map","WeakSet","WeakMap","ArrayBuffer","SharedArrayBuffer","Atomics","DataView","JSON","Promise","Generator","GeneratorFunction","AsyncFunction","Reflect","Proxy","Intl","WebAssembly"],s=["Error","EvalError","InternalError","RangeError","ReferenceError","SyntaxError","TypeError","URIError"],c=["setInterval","setTimeout","clearInterval","clearTimeout","require","exports","eval","isFinite","isNaN","parseFloat","parseInt","decodeURI","decodeURIComponent","encodeURI","encodeURIComponent","escape","unescape"],r=["arguments","this","super","console","window","document","localStorage","sessionStorage","module","global"],i=[].concat(c,t,s)
+;const e="[A-Za-z$_][0-9A-Za-z$_]*",n=["as","in","of","if","for","while","finally","var","new","function","do","return","void","else","break","catch","instanceof","with","throw","case","default","try","switch","continue","typeof","delete","let","yield","const","class","debugger","async","await","static","import","from","export","extends","using"],a=["true","false","null","undefined","NaN","Infinity"],t=["Object","Function","Boolean","Symbol","Math","Date","Number","BigInt","String","RegExp","Array","Float32Array","Float64Array","Int8Array","Uint8Array","Uint8ClampedArray","Int16Array","Int32Array","Uint16Array","Uint32Array","BigInt64Array","BigUint64Array","Set","Map","WeakSet","WeakMap","ArrayBuffer","SharedArrayBuffer","Atomics","DataView","JSON","Promise","Generator","GeneratorFunction","AsyncFunction","Reflect","Proxy","Intl","WebAssembly"],s=["Error","EvalError","InternalError","RangeError","ReferenceError","SyntaxError","TypeError","URIError"],c=["setInterval","setTimeout","clearInterval","clearTimeout","require","exports","eval","isFinite","isNaN","parseFloat","parseInt","decodeURI","decodeURIComponent","encodeURI","encodeURIComponent","escape","unescape"],r=["arguments","this","super","console","window","document","localStorage","sessionStorage","module","self","global"],i=[].concat(c,t,s)
 ;function o(o){const l=o.regex,d=e,b={begin:/<[A-Za-z0-9\\._:-]+/,
 end:/\/[A-Za-z0-9\\._:-]+>|\/>/,isTrulyOpeningTag:(e,n)=>{
 const a=e[0].length+e.index,t=e.input[a]
@@ -19,9 +19,9 @@ begin:"\\b0[xX][0-9a-fA-F](_?[0-9a-fA-F])*n?\\b"},{
 begin:"\\b0[bB][0-1](_?[0-1])*n?\\b"},{begin:"\\b0[oO][0-7](_?[0-7])*n?\\b"},{
 begin:"\\b0[0-7]+n?\\b"}],relevance:0},y={className:"subst",begin:"\\$\\{",
 end:"\\}",keywords:g,contains:[]},p={begin:".?html`",end:"",starts:{end:"`",
-returnEnd:!1,contains:[o.BACKSLASH_ESCAPE,y],subLanguage:"xml"}},N={
+returnEnd:!1,contains:[o.BACKSLASH_ESCAPE,y],subLanguage:"xml"}},f={
 begin:".?css`",end:"",starts:{end:"`",returnEnd:!1,
-contains:[o.BACKSLASH_ESCAPE,y],subLanguage:"css"}},f={begin:".?gql`",end:"",
+contains:[o.BACKSLASH_ESCAPE,y],subLanguage:"css"}},N={begin:".?gql`",end:"",
 starts:{end:"`",returnEnd:!1,contains:[o.BACKSLASH_ESCAPE,y],
 subLanguage:"graphql"}},_={className:"string",begin:"`",end:"`",
 contains:[o.BACKSLASH_ESCAPE,y]},h={className:"comment",
@@ -31,7 +31,7 @@ begin:"@[A-Za-z]+"},{className:"type",begin:"\\{",end:"\\}",excludeEnd:!0,
 excludeBegin:!0,relevance:0},{className:"variable",begin:d+"(?=\\s*(-)|$)",
 endsParent:!0,relevance:0},{begin:/(?=[^\n])\s/,relevance:0}]}]
 }),o.C_BLOCK_COMMENT_MODE,o.C_LINE_COMMENT_MODE]
-},S=[o.APOS_STRING_MODE,o.QUOTE_STRING_MODE,p,N,f,_,{match:/\$\d+/},A]
+},S=[o.APOS_STRING_MODE,o.QUOTE_STRING_MODE,p,f,N,_,{match:/\$\d+/},A]
 ;y.contains=S.concat({begin:/\{/,end:/\}/,keywords:g,contains:["self"].concat(S)
 });const v=[].concat(h,y.contains),w=v.concat([{begin:/(\s*)\(/,end:/\)/,
 keywords:g,contains:["self"].concat(v)}]),R={className:"params",begin:/(\s*)\(/,
@@ -44,7 +44,7 @@ className:"title.class",keywords:{_:[...t,...s]}},O={variants:[{
 match:[/function/,/\s+/,d,/(?=\s*\()/]},{match:[/function/,/\s*(?=\()/]}],
 className:{1:"keyword",3:"title.function"},label:"func.def",contains:[R],
 illegal:/%/},I={
-match:l.concat(/\b/,(C=[...c,"super","import","await"].map((e=>e+"\\s*\\(")),
+match:l.concat(/\b/,(C=[...c,"super","import","await"].map(e=>e+"\\s*\\("),
 l.concat("(?!",C.join("|"),")")),d,l.lookahead(/\s*\(/)),
 className:"title.function",relevance:0};var C;const T={
 begin:l.concat(/\./,l.lookahead(l.concat(d,/(?![0-9A-Za-z$_(])/))),end:d,
@@ -59,7 +59,7 @@ PARAMS_CONTAINS:w,CLASS_REFERENCE:x},illegal:/#(?![$_A-Za-z])/,
 contains:[o.SHEBANG({label:"shebang",binary:"node",relevance:5}),{
 label:"use_strict",className:"meta",relevance:10,
 begin:/^\s*['"]use (strict|asm)['"]/
-},o.APOS_STRING_MODE,o.QUOTE_STRING_MODE,p,N,f,_,h,{match:/\$\d+/},A,x,{
+},o.APOS_STRING_MODE,o.QUOTE_STRING_MODE,p,f,N,_,h,{match:/\$\d+/},A,x,{
 scope:"attr",match:d+l.lookahead(":"),relevance:0},$,{
 begin:"("+o.RE_STARTERS_RE+"|\\b(case|return|throw)\\b)\\s*",
 keywords:"return throw case",relevance:0,contains:[h,o.REGEXP_MODE,{
@@ -85,15 +85,15 @@ keyword:"interface extends",built_in:d},contains:[c.exports.CLASS_REFERENCE]
 },u={$pattern:e,
 keyword:n.concat(["type","interface","public","private","protected","implements","declare","abstract","readonly","enum","override","satisfies"]),
 literal:a,built_in:i.concat(d),"variable.language":r},m={className:"meta",
-begin:"@"+l},E=(e,n,a)=>{const t=e.contains.findIndex((e=>e.label===n))
+begin:"@"+l},E=(e,n,a)=>{const t=e.contains.findIndex(e=>e.label===n)
 ;if(-1===t)throw Error("can not find mode to replace");e.contains.splice(t,1,a)}
 ;Object.assign(c.keywords,u),c.exports.PARAMS_CONTAINS.push(m)
-;const A=c.contains.find((e=>"attr"===e.scope)),y=Object.assign({},A,{
+;const A=c.contains.find(e=>"attr"===e.scope),y=Object.assign({},A,{
 match:s.concat(l,s.lookahead(/\s*\?:/))})
 ;return c.exports.PARAMS_CONTAINS.push([c.exports.CLASS_REFERENCE,A,y]),
 c.contains=c.contains.concat([m,b,g,y]),
 E(c,"shebang",t.SHEBANG()),E(c,"use_strict",{className:"meta",relevance:10,
 begin:/^\s*['"]use strict['"]/
-}),c.contains.find((e=>"func.def"===e.label)).relevance=0,Object.assign(c,{
+}),c.contains.find(e=>"func.def"===e.label).relevance=0,Object.assign(c,{
 name:"TypeScript",aliases:["ts","tsx","mts","cts"]}),c}})()
 ;hljs.registerLanguage("typescript",e)})();

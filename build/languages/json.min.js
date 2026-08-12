@@ -1,4 +1,4 @@
-/*! `json` grammar compiled for Highlight.js 11.11.2 */
+/*! `json` grammar compiled for Highlight.js 11.12.0 */
 (()=>{var e=(()=>{"use strict";const e={scope:"number",
 match:"([-+]?)(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)|NaN|[-+]?Infinity",
 relevance:0};return n=>{const a=["true","false","null"],s={scope:"literal",
